@@ -1,4 +1,4 @@
-package dao;
+package com.ecxilys.persistance;
 
 public class DAOConfigurationException extends RuntimeException {
 	public DAOConfigurationException( String message ) {

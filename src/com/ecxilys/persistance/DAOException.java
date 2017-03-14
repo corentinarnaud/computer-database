@@ -1,4 +1,4 @@
-package dao;
+package com.ecxilys.persistance;
 
 public class DAOException extends RuntimeException {
 	
