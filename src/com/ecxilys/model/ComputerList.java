@@ -1,26 +1,37 @@
 package com.ecxilys.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
-public class ComputerList{
-	private ArrayList<Computer> computer;
+public class ComputerList extends ArrayList<Computer>{
 	
-	public ComputerList(ArrayList<Computer> computer){
-		this.computer=computer;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7470912263550875109L;
+
+
+
+	public ComputerList(){
+		super();
 	}
 	
-	public Computer get(int index){
-		return computer.get(index);
+	public ComputerList(Collection<Computer> list){
+		super(list);
 	}
 	
 	
 	public String toString(){
 		String string ="";
-		for(int i = 0; i<computer.size();i++){
-			string+=computer.get(i)+"\n";
+		for(int i = 0; i<size();i++){
+			string+=get(i)+"\n";
 		}
 		
-		
 		return string;
+	}
+	
+	
+	public ComputerList subList(int fromIndex, int toIndex){
+		return new ComputerList(super.subList(fromIndex, toIndex));
 	}
 }

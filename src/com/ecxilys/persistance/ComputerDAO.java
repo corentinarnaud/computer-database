@@ -17,4 +17,5 @@ public interface ComputerDAO {
 	public Computer findByName(String name);
 	
 	public ComputerList getComputers();
+	
 }

@@ -9,11 +9,13 @@ import com.ecxilys.model.Company;
 import com.ecxilys.model.CompanyList;
 import com.ecxilys.model.Computer;
 import com.ecxilys.model.ComputerList;
+import com.ecxilys.model.Page;
 import com.ecxilys.persistance.DAOFactory;
 import com.ecxilys.persistance.ComputerDAO;
 import com.ecxilys.persistance.CompanyDAO;
 
 public class CLI {
+	private static final String SEPARATOR = "============================================";
 
 	public static void main(String[] args) {
 		String inputString = "";
@@ -54,7 +56,7 @@ public class CLI {
 				showCompanies();
 				break;
 			case "5" :
-				showComputers();
+				showComputers(sc);
 				break;
 			case "6" :
 				showComputer(sc);
@@ -148,11 +150,36 @@ public class CLI {
 		
 	}
 	
-	private static void showComputers(){
+	private static void showComputers(Scanner sc){
+		boolean loop=true;
+		String query ="";
 		ComputerDAO computerDAO=DAOFactory.getInstance().getComputerDAO();
-		ComputerList computerList = computerDAO.getComputers();
+		Page<Computer> computerPage = new Page<Computer>(computerDAO.getComputers());
 		System.out.println("List of computers :");
-		System.out.println(computerList);
+		System.out.println(computerPage.getPage());
+		System.out.println("\t\t\t\tPage "+computerPage.getCurrentPage());
+		
+		while(loop){
+			System.out.println(SEPARATOR);
+			System.out.println("Quit : q  |  Prev : p  |  Next : n");
+			query = sc.nextLine();
+			switch(query){
+			case "q" :
+				loop=false;
+				break;
+			case "p" :
+				System.out.println(computerPage.getPrevPage());
+				System.out.println("\t\t\t\tPage "+computerPage.getCurrentPage());
+				break;
+			case "n" :
+				System.out.println(computerPage.getNextPage());
+				System.out.println("\t\t\t\tPage "+computerPage.getCurrentPage());
+				break;
+			}
+			
+			
+		}
+
 		
 	}
 	

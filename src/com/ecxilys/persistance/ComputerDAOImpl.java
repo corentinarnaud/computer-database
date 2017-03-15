@@ -207,7 +207,7 @@ public class ComputerDAOImpl implements ComputerDAO{
 	@Override
 	public ComputerList getComputers() {
 		try {
-			ArrayList<Computer> list = new ArrayList<Computer>();
+			ComputerList list = new ComputerList();
 			Statement statement = connexion.createStatement();
 			ResultSet resultat = statement.executeQuery( "SELECT id,name, introduced, discontinued, company_id  "
 													   + "FROM computer" );
@@ -230,7 +230,7 @@ public class ComputerDAOImpl implements ComputerDAO{
 				list.add(new Computer(Integer.parseInt(resultat.getString("id")),resultat.getString("name"),comp,
 									introduced,discontinued));
 			}
-			return new ComputerList(list);
+			return list;
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
