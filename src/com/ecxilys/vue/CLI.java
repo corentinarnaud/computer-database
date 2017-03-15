@@ -3,6 +3,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Optional;
 import java.util.Scanner;
 
 import com.ecxilys.model.Company;
@@ -87,7 +88,8 @@ public class CLI {
 			numComp=Integer.parseInt(tmp);
 			if(numComp<0)
 				throw new NumberFormatException();
-			company = companyDAO.findById(numComp);
+			Optional<Company> opt = companyDAO.findById(numComp);
+			company = opt.isPresent() ? opt.get() : null;
 		}
 		
 		
@@ -225,9 +227,9 @@ public class CLI {
 				try{
 					System.out.print("New company (id): ");
 					num=Integer.parseInt(sc.nextLine());
-					Company company=companyDAO.findById(num);
-					if(company!=null){
-						computer.setCompany(company);
+					Optional<Company> company=companyDAO.findById(num);
+					if(company.isPresent()){
+						computer.setCompany(company.get());
 						update=true;
 					}
 					else

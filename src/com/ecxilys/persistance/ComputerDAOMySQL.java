@@ -24,9 +24,9 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 	private static final String SQL_INSERT		="INSERT INTO computer(name,introduced,discontinued,company_id) VALUES (? ,? ,? ,? )";
 	private static final String SQL_UPDATE		="UPDATE computer SET name=?,introduced=?, discontinued=?, company_id=? WHERE id=?";
 	private static final String SQL_DEL   		="DELETE FROM computer WHERE id=?";
-	private static final String SQL_FIND_ID 	="SELECT id,name, introduced, discontinued, company_id FROM computer WHERE id=?";
-	private static final String SQL_FIND_NAME 	="SELECT id,name, introduced, discontinued, company_id FROM computer WHERE name=?";
-	
+	private static final String SQL_FIND_ID 	="SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name FROM computer LEFT JOIN company ON company_id=company.id WHERE computer.id=?";
+	private static final String SQL_FIND_NAME 	="SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name FROM computer LEFT JOIN company ON company_id=company.id WHERE computer.name=?";
+	private static final String SQL_COMPUTERS 	="SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name FROM computer LEFT JOIN company ON company_id=company.id";
 	private Connection connexion;
 	private DateFormat df; 
 
@@ -66,7 +66,7 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 			if(computer.getCompany()==null)
 				addStatement.setString(4, null);
 			else
-				addStatement.setInt(4, computer.getCompany().getId());
+				addStatement.setLong(4, computer.getCompany().getId());
 			
 			int statut = addStatement.executeUpdate();
 			if ( statut == 0 ) {
@@ -114,7 +114,7 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 			if(computer.getCompany()==null)
 				updateStatement.setString(4, null);
 			else
-				updateStatement.setInt(4, computer.getCompany().getId());
+				updateStatement.setLong(4, computer.getCompany().getId());
 			
 			updateStatement.setInt(5, computer.getId());
 			
@@ -156,7 +156,6 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 		PreparedStatement statement = null;
 		ResultSet resultat = null;
 		try {
-			//TODO: JOIN
 			statement = connexion.prepareStatement(SQL_FIND_ID);
 			statement.setString(1, String.valueOf(id));
 			resultat = statement.executeQuery();
@@ -164,8 +163,7 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 				Date introduced = null, discontinued = null;
 				Company comp=null;
 				if(resultat.getString("company_id")!=null){
-					Optional<Company> opt = CompanyDAOMySQL.CONPANYDAO.findById(Integer.parseInt(resultat.getString("company_id")));
-					comp=opt.isPresent() ? opt.get() : null;
+					comp= new Company(resultat.getLong("company_id"),resultat.getString("company.name"));					
 				}
 				
 				if(resultat.getString("introduced")!=null){
@@ -177,7 +175,7 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 				}
 
 				
-				return new Computer(Integer.parseInt(resultat.getString("id")),resultat.getString("name"),comp,
+				return new Computer(Integer.parseInt(resultat.getString("computer.id")),resultat.getString("computer.name"),comp,
 									introduced,discontinued);
 			}
 
@@ -196,7 +194,6 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 		PreparedStatement statement = null;
 		ResultSet resultat = null;
 		try {
-			//TODO: JOIN
 			statement = connexion.prepareStatement(SQL_FIND_NAME);
 			statement.setString(1, name);
 			resultat = statement.executeQuery();
@@ -204,8 +201,7 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 				Date introduced = null, discontinued = null;
 				Company comp=null;
 				if(resultat.getString("company_id")!=null){
-					Optional<Company> opt = CompanyDAOMySQL.CONPANYDAO.findById(Integer.parseInt(resultat.getString("company_id")));
-					comp= opt.isPresent() ? opt.get() : null;
+					comp= new Company(resultat.getLong("company_id"),resultat.getString("company.name"));
 				}
 				
 				if(resultat.getString("introduced")!=null){
@@ -217,7 +213,7 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 				}
 
 				
-				return new Computer(Integer.parseInt(resultat.getString("id")),resultat.getString("name"),comp,
+				return new Computer(Integer.parseInt(resultat.getString("computer.id")),resultat.getString("computer.name"),comp,
 									introduced,discontinued);
 			}
 
@@ -239,14 +235,12 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 			//TODO JOIN
 			ComputerList list = new ComputerList();
 			statement = connexion.createStatement();
-			resultat = statement.executeQuery( "SELECT id,name, introduced, discontinued, company_id  "
-													   + "FROM computer" );
+			resultat = statement.executeQuery(SQL_COMPUTERS);
 			while(resultat.next()){
 				Date introduced = null, discontinued = null;
 				Company comp=null;
 				if(resultat.getString("company_id")!=null){
-					Optional<Company> opt = CompanyDAOMySQL.CONPANYDAO.findById(Integer.parseInt(resultat.getString("company_id")));
-					comp=opt.isPresent() ? opt.get() : null;
+					comp= new Company(resultat.getLong("company_id"),resultat.getString("company.name"));
 				}
 				
 				if(resultat.getString("introduced")!=null){
@@ -258,7 +252,7 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 				}
 
 				
-				list.add(new Computer(Integer.parseInt(resultat.getString("id")),resultat.getString("name"),comp,
+				list.add(new Computer(Integer.parseInt(resultat.getString("computer.id")),resultat.getString("computer.name"),comp,
 									introduced,discontinued));
 			}
 			return list;

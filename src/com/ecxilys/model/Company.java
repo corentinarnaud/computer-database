@@ -3,16 +3,16 @@ package com.ecxilys.model;
 
 
 public class Company{
-	private int id;
+	private long id;
 	private String name;
 	
 	
-	public Company(int id, String name ){
+	public Company(long id, String name ){
 		this.id=id;
 		this.name=name;
 	}
 	
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 	public String getName() {
