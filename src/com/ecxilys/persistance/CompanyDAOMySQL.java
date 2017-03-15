@@ -9,16 +9,17 @@ import java.util.ArrayList;
 import com.ecxilys.model.Company;
 import com.ecxilys.model.CompanyList;
 
-public class CompanyDAOImpl implements CompanyDAO{
+public enum CompanyDAOMySQL implements CompanyDAO{
+	CONPANYDAO();
 	private Connection connexion = null;
 	
-	public CompanyDAOImpl(Connection connect){
-		this.connexion=connect;
+	private CompanyDAOMySQL(){
+		this.connexion=DataBaseConnection.CONNECTION.getConnection();
 	}
 	
 	
 	@Override
-	public Company findById(int id){
+	public Company findById(int id) throws DAOException{
 		try {
 			Statement statement = connexion.createStatement();
 			ResultSet resultat = statement.executeQuery( "SELECT id, name  FROM company WHERE id="+id+" ;" );
@@ -26,15 +27,14 @@ public class CompanyDAOImpl implements CompanyDAO{
 				return new Company(Integer.parseInt(resultat.getString("id")),resultat.getString("name"));
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new DAOException(e);
 		}
 		return null;
 	}
 	
 	
 	@Override
-	public Company findByName(int name){
+	public Company findByName(int name) throws DAOException{
 		try {
 			Statement statement = connexion.createStatement();
 			ResultSet resultat = statement.executeQuery( "SELECT id, name  FROM company WHERE name="+name+" ;" );
@@ -42,8 +42,7 @@ public class CompanyDAOImpl implements CompanyDAO{
 				return new Company(Integer.parseInt(resultat.getString("id")),resultat.getString("name"));
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new DAOException(e);
 		}
 		return null;
 	}
@@ -51,7 +50,7 @@ public class CompanyDAOImpl implements CompanyDAO{
 
 
 	@Override
-	public CompanyList getCompanies() {
+	public CompanyList getCompanies() throws DAOException{
 		try {
 			Statement statement = connexion.createStatement();
 			ResultSet resultat = statement.executeQuery( "SELECT id, name  FROM company");
@@ -61,10 +60,8 @@ public class CompanyDAOImpl implements CompanyDAO{
 			return new CompanyList(list);
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new DAOException(e);
 		}
-		return null;
 	}
 
 

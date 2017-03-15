@@ -17,7 +17,9 @@ import com.ecxilys.model.Company;
 import com.ecxilys.model.Computer;
 import com.ecxilys.model.ComputerList;
 
-public class ComputerDAOImpl implements ComputerDAO{
+public enum ComputerDAOMySQL implements ComputerDAO{
+	COMPUTERDAO;
+	
 	private static final String SQL_INSERT="INSERT INTO computer(name,introduced,discontinued,company_id) VALUES (? ,? ,? ,? )";
 	private static final String SQL_UPDATE="UPDATE computer SET name=?,introduced=?, discontinued=?, company_id=? WHERE id=?";
 	
@@ -25,8 +27,8 @@ public class ComputerDAOImpl implements ComputerDAO{
 	private DateFormat df; 
 
 	
-	public ComputerDAOImpl(Connection connexion){
-		this.connexion=connexion;
+	private ComputerDAOMySQL(){
+		this.connexion=DataBaseConnection.CONNECTION.getConnection();
 		df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	}
@@ -134,6 +136,7 @@ public class ComputerDAOImpl implements ComputerDAO{
 	@Override
 	public Computer findById(int id){
 		try {
+			//TODO: JOIN
 			Statement statement = connexion.createStatement();
 			ResultSet resultat = statement.executeQuery( "SELECT id,name, introduced, discontinued, company_id  "
 													   + "FROM computer WHERE id="+id+";" );
@@ -141,7 +144,7 @@ public class ComputerDAOImpl implements ComputerDAO{
 				Date introduced = null, discontinued = null;
 				Company comp=null;
 				if(resultat.getString("company_id")!=null){
-					comp=DAOFactory.getInstance().getCompanyDAO().findById(Integer.parseInt(resultat.getString("company_id")));
+					comp=CompanyDAOMySQL.CONPANYDAO.findById(Integer.parseInt(resultat.getString("company_id")));
 				}
 				
 				if(resultat.getString("introduced")!=null){
@@ -171,6 +174,7 @@ public class ComputerDAOImpl implements ComputerDAO{
 	@Override
 	public Computer findByName(String name){
 		try {
+			//TODO: JOIN
 			Statement statement = connexion.createStatement();
 			ResultSet resultat = statement.executeQuery( "SELECT id,name, introduced, discontinued, company_id  "
 													   + "FROM computer WHERE name="+name+";" );
@@ -178,7 +182,7 @@ public class ComputerDAOImpl implements ComputerDAO{
 				Date introduced = null, discontinued = null;
 				Company comp=null;
 				if(resultat.getString("company_id")!=null){
-					comp=DAOFactory.getInstance().getCompanyDAO().findById(Integer.parseInt(resultat.getString("company_id")));
+					comp=CompanyDAOMySQL.CONPANYDAO.findById(Integer.parseInt(resultat.getString("company_id")));
 				}
 				
 				if(resultat.getString("introduced")!=null){
@@ -207,6 +211,7 @@ public class ComputerDAOImpl implements ComputerDAO{
 	@Override
 	public ComputerList getComputers() {
 		try {
+			//TODO JOIN
 			ComputerList list = new ComputerList();
 			Statement statement = connexion.createStatement();
 			ResultSet resultat = statement.executeQuery( "SELECT id,name, introduced, discontinued, company_id  "
@@ -215,7 +220,7 @@ public class ComputerDAOImpl implements ComputerDAO{
 				Date introduced = null, discontinued = null;
 				Company comp=null;
 				if(resultat.getString("company_id")!=null){
-					comp=DAOFactory.getInstance().getCompanyDAO().findById(Integer.parseInt(resultat.getString("company_id")));
+					comp=CompanyDAOMySQL.CONPANYDAO.findById(Integer.parseInt(resultat.getString("company_id")));
 				}
 				
 				if(resultat.getString("introduced")!=null){

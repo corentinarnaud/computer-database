@@ -5,10 +5,10 @@ import com.ecxilys.model.CompanyList;
 
 public interface CompanyDAO {
 	
-	public Company findById(int id);
+	public Company findById(int id) throws DAOException;
 	
-	public Company findByName(int name);
+	public Company findByName(int name) throws DAOException;
 	
-	public CompanyList getCompanies();
+	public CompanyList getCompanies() throws DAOException;
 
 }

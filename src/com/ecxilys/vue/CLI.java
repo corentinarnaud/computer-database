@@ -8,10 +8,10 @@ import java.util.Scanner;
 import com.ecxilys.model.Company;
 import com.ecxilys.model.CompanyList;
 import com.ecxilys.model.Computer;
-import com.ecxilys.model.ComputerList;
 import com.ecxilys.model.Page;
-import com.ecxilys.persistance.DAOFactory;
 import com.ecxilys.persistance.ComputerDAO;
+import com.ecxilys.persistance.DAOFactory;
+import com.ecxilys.persistance.DataBaseConnection;
 import com.ecxilys.persistance.CompanyDAO;
 
 public class CLI {
@@ -21,7 +21,7 @@ public class CLI {
 		String inputString = "";
 		Scanner sc = new Scanner(System.in);
 		
-		DAOFactory sqla = DAOFactory.getInstance();
+
 
 		
 		System.out.println("CLI Computer-database");
@@ -63,7 +63,7 @@ public class CLI {
 				break;
 			}
 		}
-		sqla.close();
+		DataBaseConnection.CONNECTION.close();
 
 	}
 
@@ -73,7 +73,7 @@ public class CLI {
 		Date introduced = null, discontinued = null;
 		int numComp,resultId;
 		Company company = null;
-		DAOFactory factory=DAOFactory.getInstance();
+		DAOFactory factory=DAOFactory.DAOFACTORY;
 		CompanyDAO companyDAO = factory.getCompanyDAO();
 		ComputerDAO computerDAO = factory.getComputerDAO(); 
 		DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
@@ -112,7 +112,7 @@ public class CLI {
 	
 	private static void showComputer(Scanner sc){
 		int num;
-        ComputerDAO compDAO=DAOFactory.getInstance().getComputerDAO();
+        ComputerDAO compDAO=DAOFactory.DAOFACTORY.getComputerDAO();
         Computer comp=null;
         
 		System.out.print("\nID of the computer : ");
@@ -130,8 +130,8 @@ public class CLI {
 	
 	private static void delComputer(Scanner sc){
 		int num;
-        ComputerDAO compDAO=DAOFactory.getInstance().getComputerDAO();
-        Computer comp=null;
+        ComputerDAO compDAO=DAOFactory.DAOFACTORY.getComputerDAO();
+
         
 		System.out.print("\nNumber of the computer : ");
 		
@@ -143,7 +143,7 @@ public class CLI {
 	}
 	
 	private static void showCompanies(){
-		CompanyDAO companyDAO=DAOFactory.getInstance().getCompanyDAO();
+		CompanyDAO companyDAO=DAOFactory.DAOFACTORY.getCompanyDAO();
 		CompanyList companyList = companyDAO.getCompanies();
 		System.out.println("List of companies :");
 		System.out.println(companyList);
@@ -153,7 +153,7 @@ public class CLI {
 	private static void showComputers(Scanner sc){
 		boolean loop=true;
 		String query ="";
-		ComputerDAO computerDAO=DAOFactory.getInstance().getComputerDAO();
+		ComputerDAO computerDAO=DAOFactory.DAOFACTORY.getComputerDAO();
 		Page<Computer> computerPage = new Page<Computer>(computerDAO.getComputers());
 		System.out.println("List of computers :");
 		System.out.println(computerPage.getPage());
@@ -187,8 +187,8 @@ public class CLI {
 		int num;
 		String string;
 		boolean loop=true, update=false;
-        ComputerDAO computerDAO=DAOFactory.getInstance().getComputerDAO();
-        CompanyDAO companyDAO=DAOFactory.getInstance().getCompanyDAO();
+        ComputerDAO computerDAO=DAOFactory.DAOFACTORY.getComputerDAO();
+        CompanyDAO companyDAO=DAOFactory.DAOFACTORY.getCompanyDAO();
         Computer computer=null;
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         
