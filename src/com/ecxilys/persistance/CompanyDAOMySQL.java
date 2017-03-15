@@ -1,16 +1,22 @@
 package com.ecxilys.persistance;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Optional;
 
 import com.ecxilys.model.Company;
 import com.ecxilys.model.CompanyList;
 
 public enum CompanyDAOMySQL implements CompanyDAO{
 	CONPANYDAO();
+	private static final String SQL_FIND_ID = "SELECT id, name  FROM company WHERE id=?";
+	private static final String SQL_FIND_Name = "SELECT id, name  FROM company WHERE name=?";
+	
+	
 	private Connection connexion = null;
 	
 	private CompanyDAOMySQL(){
@@ -19,41 +25,58 @@ public enum CompanyDAOMySQL implements CompanyDAO{
 	
 	
 	@Override
-	public Company findById(int id) throws DAOException{
+	public Optional<Company> findById(long id) throws DAOException{
+		PreparedStatement statement = null;
+		ResultSet resultat = null;
+		
 		try {
-			Statement statement = connexion.createStatement();
-			ResultSet resultat = statement.executeQuery( "SELECT id, name  FROM company WHERE id="+id+" ;" );
+			statement = connexion.prepareStatement(SQL_FIND_ID);
+			statement.setLong(1, id);
+			resultat = statement.executeQuery();
 			if(resultat.next())
-				return new Company(Integer.parseInt(resultat.getString("id")),resultat.getString("name"));
+				return Optional.ofNullable(new Company(Integer.parseInt(resultat.getString("id")),resultat.getString("name")));
 
 		} catch (SQLException e) {
 			throw new DAOException(e);
+		} finally {
+			DAOUtils.closePreparedStatement(statement);
+			DAOUtils.closeResultatSet(resultat);
 		}
-		return null;
+		return Optional.empty();
 	}
 	
 	
 	@Override
-	public Company findByName(int name) throws DAOException{
+	public Optional<Company> findByName(String name) throws DAOException{
+		PreparedStatement statement = null;
+		ResultSet resultat = null;
+		
 		try {
-			Statement statement = connexion.createStatement();
-			ResultSet resultat = statement.executeQuery( "SELECT id, name  FROM company WHERE name="+name+" ;" );
+			statement = connexion.prepareStatement(SQL_FIND_Name);
+			statement.setString(1, name());
+			resultat = statement.executeQuery();
 			if(resultat.next())
-				return new Company(Integer.parseInt(resultat.getString("id")),resultat.getString("name"));
+				return Optional.ofNullable(new Company(Integer.parseInt(resultat.getString("id")),resultat.getString("name")));
 
 		} catch (SQLException e) {
 			throw new DAOException(e);
+		} finally{
+			DAOUtils.closePreparedStatement(statement);
+			DAOUtils.closeResultatSet(resultat);
 		}
-		return null;
+		return Optional.empty();
 	}
 
 
 
 	@Override
 	public CompanyList getCompanies() throws DAOException{
+		Statement statement = null;
+		ResultSet resultat = null;
+		
 		try {
-			Statement statement = connexion.createStatement();
-			ResultSet resultat = statement.executeQuery( "SELECT id, name  FROM company");
+			statement = connexion.createStatement();
+			resultat = statement.executeQuery( "SELECT id, name  FROM company");
 			ArrayList<Company> list = new ArrayList<Company>();
 			while(resultat.next())
 				list.add(new Company(Integer.parseInt(resultat.getString("id")),resultat.getString("name")));
@@ -61,6 +84,9 @@ public enum CompanyDAOMySQL implements CompanyDAO{
 
 		} catch (SQLException e) {
 			throw new DAOException(e);
+		}finally{
+			DAOUtils.closeStatement(statement);
+			DAOUtils.closeResultatSet(resultat);
 		}
 	}
 

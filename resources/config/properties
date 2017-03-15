@@ -1,4 +1,0 @@
-url = jdbc:mysql://localhost:3306/computer-database-db?zeroDateTimeBehavior=convertToNull
-driver = com.mysql.jdbc.Driver
-utilisateur = "admincdb"
-motDePasse = "qwerty1234"

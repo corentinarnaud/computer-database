@@ -8,14 +8,14 @@ public interface ComputerDAO {
 	
 	public int add(Computer computer) throws DAOException;
 	
-	public boolean update(Computer computer);
+	public boolean update(Computer computer) throws DAOException;
 	
-	public boolean del(int id);
+	public boolean del(long id) throws DAOException;
 	
-	public Computer findById(int id);
+	public Computer findById(long id) throws DAOException;
 	
-	public Computer findByName(String name);
+	public Computer findByName(String name) throws DAOException;
 	
-	public ComputerList getComputers();
+	public ComputerList getComputers() throws DAOException;
 	
 }

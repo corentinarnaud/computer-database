@@ -2,6 +2,11 @@ package com.ecxilys.persistance;
 
 public class DAOException extends RuntimeException {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8698901543165093606L;
+
 	public DAOException( String message ) {
         super( message );
     }

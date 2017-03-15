@@ -10,20 +10,24 @@ import java.sql.Types;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.Optional;
 
 import com.ecxilys.model.Company;
 import com.ecxilys.model.Computer;
 import com.ecxilys.model.ComputerList;
 
+
 public enum ComputerDAOMySQL implements ComputerDAO{
 	COMPUTERDAO;
 	
-	private static final String SQL_INSERT="INSERT INTO computer(name,introduced,discontinued,company_id) VALUES (? ,? ,? ,? )";
-	private static final String SQL_UPDATE="UPDATE computer SET name=?,introduced=?, discontinued=?, company_id=? WHERE id=?";
+	private static final String SQL_INSERT		="INSERT INTO computer(name,introduced,discontinued,company_id) VALUES (? ,? ,? ,? )";
+	private static final String SQL_UPDATE		="UPDATE computer SET name=?,introduced=?, discontinued=?, company_id=? WHERE id=?";
+	private static final String SQL_DEL   		="DELETE FROM computer WHERE id=?";
+	private static final String SQL_FIND_ID 	="SELECT id,name, introduced, discontinued, company_id FROM computer WHERE id=?";
+	private static final String SQL_FIND_NAME 	="SELECT id,name, introduced, discontinued, company_id FROM computer WHERE name=?";
 	
-	private Connection connexion = null;
+	private Connection connexion;
 	private DateFormat df; 
 
 	
@@ -33,13 +37,17 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 
 	}
 	
+	
+	
 	@Override
 	public int add(Computer computer) throws DAOException{
 		int id=-1;
+		ResultSet valeursAutoGenerees = null;
+		PreparedStatement addStatement = null;
+		
 		try {
-			ResultSet valeursAutoGenerees = null;
 			
-			PreparedStatement addStatement = connexion.prepareStatement(SQL_INSERT,Statement.RETURN_GENERATED_KEYS);
+			addStatement = connexion.prepareStatement(SQL_INSERT,Statement.RETURN_GENERATED_KEYS);
 			addStatement.setString(1, computer.getName());
 
 			
@@ -77,13 +85,17 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 		
 		} catch (SQLException e) {
 			throw new DAOException(e.getMessage(), e.getCause());
+		} finally {
+			DAOUtils.closePreparedStatement(addStatement);
+			DAOUtils.closeResultatSet(valeursAutoGenerees);
 		}
 	}
 	
 	@Override
-	public boolean update(Computer computer){
+	public boolean update(Computer computer) throws DAOException{
+		PreparedStatement updateStatement = null;
 		try {
-			PreparedStatement updateStatement = connexion.prepareStatement(SQL_UPDATE);
+			updateStatement = connexion.prepareStatement(SQL_UPDATE);
 			updateStatement.setString(1, computer.getName());
 
 			
@@ -108,43 +120,52 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 			
 			int statut = updateStatement.executeUpdate();
 			if ( statut == 0 ) {
-	            throw new DAOException( "Échec de la modification de l'ordinateur, aucune ligne modifié dans la table." );
+	            throw new DAOException( "Fail to update computer." );
 	        }
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new DAOException(e);
+		} finally {
+			DAOUtils.closePreparedStatement(updateStatement);
+
 		}
 		return false;
 	}
 	
 	@Override
-	public boolean del(int id){
+	public boolean del(long id) throws DAOException{
+		PreparedStatement statement = null;
 		try {
-			Statement statement = connexion.createStatement();
-			int resultat = statement.executeUpdate( "DELETE FROM computer WHERE id="+id+";" );
+			statement = connexion.prepareStatement(SQL_DEL);
+			statement.setString(1, String.valueOf(id));
+			int resultat = statement.executeUpdate();
 			return resultat == 1;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new DAOException(e);
+		} finally {
+			DAOUtils.closePreparedStatement(statement);
+			
 		}
-		return false;
+
 	}
 	
 	
 	
 	@Override
-	public Computer findById(int id){
+	public Computer findById(long id) throws DAOException{
+		PreparedStatement statement = null;
+		ResultSet resultat = null;
 		try {
 			//TODO: JOIN
-			Statement statement = connexion.createStatement();
-			ResultSet resultat = statement.executeQuery( "SELECT id,name, introduced, discontinued, company_id  "
-													   + "FROM computer WHERE id="+id+";" );
+			statement = connexion.prepareStatement(SQL_FIND_ID);
+			statement.setString(1, String.valueOf(id));
+			resultat = statement.executeQuery();
 			if(resultat.next()){
 				Date introduced = null, discontinued = null;
 				Company comp=null;
 				if(resultat.getString("company_id")!=null){
-					comp=CompanyDAOMySQL.CONPANYDAO.findById(Integer.parseInt(resultat.getString("company_id")));
+					Optional<Company> opt = CompanyDAOMySQL.CONPANYDAO.findById(Integer.parseInt(resultat.getString("company_id")));
+					comp=opt.isPresent() ? opt.get() : null;
 				}
 				
 				if(resultat.getString("introduced")!=null){
@@ -160,29 +181,31 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 									introduced,discontinued);
 			}
 
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (SQLException | ParseException e) {
+			throw new DAOException(e);
+		} finally{
+			DAOUtils.closePreparedStatement(statement);
+			DAOUtils.closeResultatSet(resultat);
 		}
 		return null;
 	}
 	
 	
 	@Override
-	public Computer findByName(String name){
+	public Computer findByName(String name) throws DAOException{
+		PreparedStatement statement = null;
+		ResultSet resultat = null;
 		try {
 			//TODO: JOIN
-			Statement statement = connexion.createStatement();
-			ResultSet resultat = statement.executeQuery( "SELECT id,name, introduced, discontinued, company_id  "
-													   + "FROM computer WHERE name="+name+";" );
+			statement = connexion.prepareStatement(SQL_FIND_NAME);
+			statement.setString(1, name);
+			resultat = statement.executeQuery();
 			if(resultat.next()){
 				Date introduced = null, discontinued = null;
 				Company comp=null;
 				if(resultat.getString("company_id")!=null){
-					comp=CompanyDAOMySQL.CONPANYDAO.findById(Integer.parseInt(resultat.getString("company_id")));
+					Optional<Company> opt = CompanyDAOMySQL.CONPANYDAO.findById(Integer.parseInt(resultat.getString("company_id")));
+					comp= opt.isPresent() ? opt.get() : null;
 				}
 				
 				if(resultat.getString("introduced")!=null){
@@ -198,29 +221,32 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 									introduced,discontinued);
 			}
 
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (ParseException | SQLException e) {
+			throw new DAOException(e);
+		} finally{
+			DAOUtils.closePreparedStatement(statement);
+			DAOUtils.closeResultatSet(resultat);
 		}
 		return null;
 	}
 
 	@Override
-	public ComputerList getComputers() {
+	public ComputerList getComputers() throws DAOException {
+		Statement statement = null;
+		ResultSet resultat = null;
+		
 		try {
 			//TODO JOIN
 			ComputerList list = new ComputerList();
-			Statement statement = connexion.createStatement();
-			ResultSet resultat = statement.executeQuery( "SELECT id,name, introduced, discontinued, company_id  "
+			statement = connexion.createStatement();
+			resultat = statement.executeQuery( "SELECT id,name, introduced, discontinued, company_id  "
 													   + "FROM computer" );
 			while(resultat.next()){
 				Date introduced = null, discontinued = null;
 				Company comp=null;
 				if(resultat.getString("company_id")!=null){
-					comp=CompanyDAOMySQL.CONPANYDAO.findById(Integer.parseInt(resultat.getString("company_id")));
+					Optional<Company> opt = CompanyDAOMySQL.CONPANYDAO.findById(Integer.parseInt(resultat.getString("company_id")));
+					comp=opt.isPresent() ? opt.get() : null;
 				}
 				
 				if(resultat.getString("introduced")!=null){
@@ -237,14 +263,12 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 			}
 			return list;
 
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (ParseException | SQLException e) {
+			throw new DAOException(e);
+		} finally {
+			DAOUtils.closeStatement(statement);
+			DAOUtils.closeResultatSet(resultat);
 		}
-		return null;
 	}
 
 }
