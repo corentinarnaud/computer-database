@@ -1,25 +1,44 @@
 package com.ecxilys.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class CompanyList {
-	private ArrayList<Company> company;
+
+public class CompanyList extends ArrayList<Company>{
+
 	
-	public CompanyList(ArrayList<Company> company){
-		this.company=company;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8769932831218436965L;
+
+
+
+	public CompanyList(List<Company> companyList){
+		super(companyList);
 	}
 	
-	public Company get(int index){
-		return company.get(index);
+	public CompanyList(){
+		super();
 	}
+	
+
+	
+	public CompanyList subList(int fromIndex, int toIndex){
+		return new CompanyList(super.subList(fromIndex, toIndex));
+	}
+	
+	
 	
 	public String toString(){
 		String string ="";
-		for(int i = 0; i<company.size();i++){
-			string+=company.get(i)+"\n";
+		for(int i = 0; i<size();i++){
+			string+=get(i)+"\n";
 		}
 		
 		
 		return string;
 	}
+	
+	
 }

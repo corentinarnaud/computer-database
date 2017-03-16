@@ -1,6 +1,6 @@
 package com.ecxilys.vue;
 
-import java.text.ParseException;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -9,7 +9,6 @@ import java.util.Optional;
 import java.util.Scanner;
 
 import com.ecxilys.model.Company;
-import com.ecxilys.model.CompanyList;
 import com.ecxilys.model.Computer;
 import com.ecxilys.model.Page;
 import com.ecxilys.persistance.DAOException;
@@ -54,7 +53,7 @@ public class CLI {
 				updateComputer(sc);
 				break;
 			case "4" :
-				showCompanies();
+				showCompanies(sc);
 				break;
 			case "5" :
 				showComputers(sc);
@@ -174,13 +173,13 @@ public class CLI {
 		
 	}
 	
-	private static void showCompanies(){
-		CompanyService companyDAO=CompanyService.COMPANYSERVICE;
+	private static void showCompanies(Scanner sc){
+		CompanyService companyService=CompanyService.COMPANYSERVICE;
 		
 		try{
-			CompanyList companyList = companyDAO.getCompanies();
+			Page<Company> companyPage = new Page<Company>(companyService.getCompanies());
 			System.out.println("List of companies :");
-			System.out.println(companyList);
+			showPage(sc, companyPage);
 		} catch (DAOException e){
 			System.out.println("Error when accessing to the base");
 			e.printStackTrace();
@@ -188,58 +187,62 @@ public class CLI {
 		
 	}
 	
-	private static void showComputers(Scanner sc){
-		boolean loop=true;
-		String query ="";
-		ComputerService computerService=ComputerService.COMPUTERSERVICE;
-		
+	
+	private static void showComputers(Scanner sc){		
 		try{
-			Page<Computer> computerPage = new Page<Computer>(computerService.getComputers());
+			ComputerService computerService=ComputerService.COMPUTERSERVICE;
+			Page<Computer> computerPage= new Page<Computer>(computerService.getComputers());
 			System.out.println("List of computers :");
-			System.out.println(computerPage.getPage());
-			System.out.println("\t\t\t\tPage "+computerPage.getCurrentPage());
-			
-			while(loop){
-				System.out.println(SEPARATOR);
-				System.out.println("Quit : q  |  Prev : p  |  Next : n  |  First : f  |  Last : l  |  Go to page :");
-				query = sc.nextLine();
-				switch(query){
-				case "q" :
-					loop=false;
-					break;
-				case "p" :
-					System.out.println(computerPage.getPrevPage());
-					System.out.println("\t\t\t\tPage "+computerPage.getCurrentPage());
-					break;
-				case "n" :
-					System.out.println(computerPage.getNextPage());
-					System.out.println("\t\t\t\tPage "+computerPage.getCurrentPage());
-					break;
-				case "f" :
-					System.out.println(computerPage.getPageN(1));
-					System.out.println("\t\t\t\tPage "+computerPage.getCurrentPage());
-					break;
-				case "l" :
-					System.out.println(computerPage.getPageN(computerPage.getNbPage()));
-					System.out.println("\t\t\t\tPage "+computerPage.getCurrentPage());
-					break;
-				default :
-					try{
-						int page = Integer.parseInt(query);
-						System.out.println(computerPage.getPageN(page));
-						System.out.println("\t\t\t\tPage "+computerPage.getCurrentPage());
-					} catch(NumberFormatException e){
-						System.out.println("Wrong page number");
-					}
-				}
-				
-				
-			}
+			showPage(sc, computerPage);
 		} catch (DAOException e){
 			System.out.println("Error when accessing to the base");
 			e.printStackTrace();
 		}	
-		
+	}
+	
+	private static void showPage(Scanner sc, Page<?> page){
+		boolean loop=true;
+		String query ="";
+
+
+
+		System.out.println(page.getPage());
+		System.out.println("\t\t\t\tPage "+page.getCurrentPage()+"/"+page.getNbPage());
+			
+		while(loop){
+			System.out.println(SEPARATOR);
+			System.out.println("Quit : q  |  Prev : p  |  Next : n  |  First : f  |  Last : l  |  Go to page :");
+			query = sc.nextLine();
+			switch(query){
+			case "q" :
+				loop=false;
+				break;
+			case "p" :
+				System.out.println(page.getPrevPage());
+				System.out.println("\t\t\t\tPage "+page.getCurrentPage());
+				break;
+			case "n" :
+				System.out.println(page.getNextPage());
+				System.out.println("\t\t\t\tPage "+page.getCurrentPage());
+				break;
+			case "f" :
+				System.out.println(page.getPageN(1));
+				System.out.println("\t\t\t\tPage "+page.getCurrentPage());
+				break;
+			case "l" :
+				System.out.println(page.getPageN(page.getNbPage()));
+				System.out.println("\t\t\t\tPage "+page.getCurrentPage());
+				break;
+			default :
+				try{
+					int pageNumber = Integer.parseInt(query);
+					System.out.println(page.getPageN(pageNumber));
+					System.out.println("\t\t\t\tPage "+page.getCurrentPage());
+				} catch(NumberFormatException e){
+					System.out.println("Wrong page number");
+				}
+			}						
+		}		
 	}
 	
 	private static void updateComputer(Scanner sc){
