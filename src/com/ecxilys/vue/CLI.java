@@ -1,8 +1,10 @@
 package com.ecxilys.vue;
-import java.text.DateFormat;
+
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -71,13 +73,13 @@ public class CLI {
 	
 	private static void addComputer(Scanner sc) throws ParseException, NumberFormatException{
 		String name,tmp;
-		Date introduced = null, discontinued = null;
+		LocalDateTime introduced = null, discontinued = null;
 		int numComp,resultId;
 		Company company = null;
 		DAOFactory factory=DAOFactory.DAOFACTORY;
 		CompanyDAO companyDAO = factory.getCompanyDAO();
 		ComputerDAO computerDAO = factory.getComputerDAO(); 
-		DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		
 		System.out.print("\nName : ");
 		name= sc.nextLine();
@@ -97,12 +99,12 @@ public class CLI {
 		System.out.print("Date of introducing at format dd/mm/yyyy : ");
 		tmp= sc.nextLine();
 		if(tmp.compareTo("")!=0){
-			introduced = df.parse(tmp);
+			introduced = LocalDateTime.from(LocalDate.parse(tmp,formatter).atStartOfDay());
 			
 			System.out.print("Date of discontinuing at format dd/mm/yyyy :");
 			tmp= sc.nextLine();
 			if(tmp.compareTo("")!=0){
-				discontinued = df.parse(tmp);
+				discontinued = LocalDateTime.from(LocalDate.parse(tmp,formatter).atStartOfDay());
 			}
 			
 			
@@ -192,7 +194,7 @@ public class CLI {
         ComputerDAO computerDAO=DAOFactory.DAOFACTORY.getComputerDAO();
         CompanyDAO companyDAO=DAOFactory.DAOFACTORY.getCompanyDAO();
         Computer computer=null;
-        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         
 		System.out.print("\nID of computer : ");
 		try{
@@ -240,26 +242,26 @@ public class CLI {
 				
 				break;
 			case "3" :
-				try{
-					System.out.print("Date of introducing (dd/mm/yyyy) :");					
-					computer.setIntroduced(df.parse(sc.nextLine()));
-					update=true;
-				} catch (ParseException e){
-					System.out.println("Wrong date");
-				}
+					try{
+						System.out.print("Date of introducing (dd/mm/yyyy) :");					
+						computer.setIntroduced(LocalDateTime.from(LocalDate.parse(sc.nextLine(),formatter).atStartOfDay()));
+						update=true;
+					}catch (DateTimeParseException e){
+						System.out.println("Wrong format");
+					}
 				break;
 			case "4" :
 				try{
 					System.out.print("Date of discontinuing (dd/mm/yyyy) :");
-					Date discontinued=df.parse(sc.nextLine());
-					if(discontinued.after(computer.getIntroduced())){
+					LocalDateTime discontinued=LocalDateTime.from(LocalDate.parse(sc.nextLine(),formatter).atStartOfDay());
+					if(discontinued.isAfter(computer.getIntroduced())){
 						computer.setDiscontinued(discontinued);
 						update=true;
 					}
 					else
 						System.out.println("Date of discontinuing must be afer date of introducing");
-				} catch (ParseException e){
-					System.out.println("Wrong date");
+				}catch (DateTimeParseException e){
+					System.out.println("Wrong format");
 				}
 				break;
 			case "z" :

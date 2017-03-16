@@ -7,11 +7,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 
 import com.ecxilys.model.Company;
 import com.ecxilys.model.Computer;
@@ -28,12 +26,11 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 	private static final String SQL_FIND_NAME 	="SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name FROM computer LEFT JOIN company ON company_id=company.id WHERE computer.name=?";
 	private static final String SQL_COMPUTERS 	="SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name FROM computer LEFT JOIN company ON company_id=company.id";
 	private Connection connexion;
-	private DateFormat df; 
+
 
 	
 	private ComputerDAOMySQL(){
 		this.connexion=DataBaseConnection.CONNECTION.getConnection();
-		df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	}
 	
@@ -56,11 +53,11 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 				addStatement.setNull(3, Types.TIMESTAMP);
 			}
 			else{
-				addStatement.setTimestamp(2,new Timestamp(computer.getIntroduced().getTime()));
+				addStatement.setTimestamp(2,Timestamp.valueOf(computer.getIntroduced()));
 				if(computer.getDiscontinued()==null)
 					addStatement.setNull(3, Types.TIMESTAMP);
 				else
-					addStatement.setTimestamp(3, new Timestamp(computer.getDiscontinued().getTime()));
+					addStatement.setTimestamp(3, Timestamp.valueOf(computer.getDiscontinued()));
 			}
 
 			if(computer.getCompany()==null)
@@ -104,11 +101,11 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 				updateStatement.setNull(3, Types.TIMESTAMP);
 			}
 			else{
-				updateStatement.setTimestamp(2,new Timestamp(computer.getIntroduced().getTime()));
+				updateStatement.setTimestamp(2,Timestamp.valueOf(computer.getIntroduced()));
 				if(computer.getDiscontinued()==null)
 					updateStatement.setNull(3, Types.TIMESTAMP);
 				else
-					updateStatement.setTimestamp(3, new Timestamp(computer.getDiscontinued().getTime()));
+					updateStatement.setTimestamp(3, Timestamp.valueOf(computer.getDiscontinued()));
 			}
 
 			if(computer.getCompany()==null)
@@ -160,7 +157,7 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 			statement.setString(1, String.valueOf(id));
 			resultat = statement.executeQuery();
 			if(resultat.next()){
-				Date introduced = null, discontinued = null;
+				LocalDateTime introduced = null, discontinued = null;
 				Company comp=null;
 				if(resultat.getString("company_id")!=null){
 					comp= new Company(resultat.getLong("company_id"),resultat.getString("company.name"));					
@@ -168,9 +165,9 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 				
 				if(resultat.getString("introduced")!=null){
 
-					introduced=df.parse(resultat.getString("introduced"));
+					introduced=resultat.getTimestamp("introduced").toLocalDateTime();
 					if(resultat.getString("discontinued")!=null){
-						discontinued=df.parse(resultat.getString("discontinued"));
+						discontinued=resultat.getTimestamp("discontinued").toLocalDateTime();
 					}
 				}
 
@@ -179,7 +176,7 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 									introduced,discontinued);
 			}
 
-		} catch (SQLException | ParseException e) {
+		} catch (SQLException e) {
 			throw new DAOException(e);
 		} finally{
 			DAOUtils.closePreparedStatement(statement);
@@ -198,7 +195,7 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 			statement.setString(1, name);
 			resultat = statement.executeQuery();
 			if(resultat.next()){
-				Date introduced = null, discontinued = null;
+				LocalDateTime introduced = null, discontinued = null;
 				Company comp=null;
 				if(resultat.getString("company_id")!=null){
 					comp= new Company(resultat.getLong("company_id"),resultat.getString("company.name"));
@@ -206,9 +203,9 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 				
 				if(resultat.getString("introduced")!=null){
 
-					introduced=df.parse(resultat.getString("introduced"));
+					introduced=resultat.getTimestamp("introduced").toLocalDateTime();
 					if(resultat.getString("discontinued")!=null){
-						discontinued=df.parse(resultat.getString("discontinued"));
+						discontinued=resultat.getTimestamp("discontinued").toLocalDateTime();
 					}
 				}
 
@@ -217,7 +214,7 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 									introduced,discontinued);
 			}
 
-		} catch (ParseException | SQLException e) {
+		} catch (SQLException e) {
 			throw new DAOException(e);
 		} finally{
 			DAOUtils.closePreparedStatement(statement);
@@ -232,22 +229,21 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 		ResultSet resultat = null;
 		
 		try {
-			//TODO JOIN
 			ComputerList list = new ComputerList();
 			statement = connexion.createStatement();
 			resultat = statement.executeQuery(SQL_COMPUTERS);
 			while(resultat.next()){
-				Date introduced = null, discontinued = null;
+				LocalDateTime introduced = null, discontinued = null;
 				Company comp=null;
 				if(resultat.getString("company_id")!=null){
 					comp= new Company(resultat.getLong("company_id"),resultat.getString("company.name"));
 				}
 				
 				if(resultat.getString("introduced")!=null){
-
-					introduced=df.parse(resultat.getString("introduced"));
+;
+					introduced=resultat.getTimestamp("introduced").toLocalDateTime();
 					if(resultat.getString("discontinued")!=null){
-						discontinued=df.parse(resultat.getString("discontinued"));
+						discontinued=resultat.getTimestamp("discontinued").toLocalDateTime();
 					}
 				}
 
@@ -257,7 +253,7 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 			}
 			return list;
 
-		} catch (ParseException | SQLException e) {
+		} catch (SQLException e) {
 			throw new DAOException(e);
 		} finally {
 			DAOUtils.closeStatement(statement);

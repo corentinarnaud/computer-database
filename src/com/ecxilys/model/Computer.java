@@ -1,54 +1,58 @@
 package com.ecxilys.model;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+
 
 public class Computer {
+	private static final String FORMAT = "MM/dd/yyyy";
+	
 	private int id =-1;
 	private String name;
-	private Company company=null;
-	private Date introduced=null;
-	private Date discontinued=null;
+	private Company company;
+	private LocalDateTime introduced;
+	private LocalDateTime discontinued;
 	
 
 	
-	public Computer(int id, String name, Company company, Date introduced, Date discontinued){
+	public Computer(int id, String name, Company company, LocalDateTime introduced, LocalDateTime discontinued){
 		this.id=id;
 		this.name=name;
+		
+		
 		this.company=company;
-		//if(introduced!=null && discontinued != null && introduce.compareTo(discontinued)>0)
-			//TODO : error
-			
+
 		
 		this.introduced=introduced;
 		this.discontinued=discontinued;
 	}
 	
-	public Computer(String name, Company company, Date introduced, Date discontinued){
+	public Computer(String name, Company company, LocalDateTime introduced, LocalDateTime discontinued){
 		this(-1, name, company, introduced, discontinued);
 	}
 	
 	
 	
 	public String toString(){
-		DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
-		String string = id+"\t"+name+"\t\t";
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(FORMAT);
+		String string = id+"\t"+name+"\t\t\t";
 		if(company!=null)
 			string+=company.getName();
 		else
 			string+="???";
 		string+="\t\t";
 		if(introduced != null){
-			string+=df.format(introduced)+"\t";
+			string+=introduced.format(formatter)+"\t";
 			if(discontinued!=null)
-				string += df.format(discontinued);
+				string += discontinued.format(formatter);
 			else
 				string += "???";
 				
 		}
 		else
-			string += "???\t???";
+			string += "???\t\t???";
 		
 		return string;
 	}
@@ -62,15 +66,15 @@ public class Computer {
 		this.name = name;
 	}
 
-	public Date getIntroduced() {
+	public LocalDateTime getIntroduced() {
 		return introduced;
 	}
 
-	public void setIntroduced(Date introduced) {
+	public void setIntroduced(LocalDateTime introduced) {
 		this.introduced = introduced;
 	}
 
-	public Date getDiscontinued() {
+	public LocalDateTime getDiscontinued() {
 		return discontinued;
 	}
 
@@ -94,7 +98,7 @@ public class Computer {
 
 
 
-	public void setDiscontinued(Date discontinued) {
+	public void setDiscontinued(LocalDateTime discontinued) {
 		this.discontinued = discontinued;
 	}
 
