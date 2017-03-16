@@ -11,7 +11,7 @@ public class Page<E>{
 	
 	public Page(List<E> list){
 		this.list=list;
-		nbPage=list.size();
+		nbPage=(int)Math.ceil((float)list.size()/ELMEMENT_BY_PAGE);
 	}
 	
 	public int getElementByPage(){
@@ -33,11 +33,12 @@ public class Page<E>{
 	
 	
 	public List<E> getPage(){
-		return list.subList(currentPage*ELMEMENT_BY_PAGE, currentPage*ELMEMENT_BY_PAGE+ELMEMENT_BY_PAGE);
+		int toIndex = currentPage*ELMEMENT_BY_PAGE+ELMEMENT_BY_PAGE;
+		return list.subList(currentPage*ELMEMENT_BY_PAGE, toIndex>list.size() ? list.size() : toIndex);
 	}
 	
 	public List<E> getNextPage(){
-		if(currentPage<nbPage)
+		if(currentPage<nbPage-1)
 			currentPage++;
 		return getPage();
 	}
@@ -45,6 +46,13 @@ public class Page<E>{
 	public List<E> getPrevPage(){
 		if(currentPage>0)
 			currentPage--;
+		return getPage();
+	}
+	
+	
+	public List<E> getPageN(int n){
+		if(n-1>=0&&n-1<nbPage)
+			currentPage=n-1;
 		return getPage();
 	}
 	
