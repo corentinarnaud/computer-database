@@ -12,10 +12,12 @@ import com.ecxilys.model.Company;
 import com.ecxilys.model.CompanyList;
 import com.ecxilys.model.Computer;
 import com.ecxilys.model.Page;
-import com.ecxilys.persistance.ComputerDAO;
-import com.ecxilys.persistance.DAOFactory;
+import com.ecxilys.persistance.DAOException;
 import com.ecxilys.persistance.DataBaseConnection;
-import com.ecxilys.persistance.CompanyDAO;
+import com.ecxilys.service.CompanyService;
+import com.ecxilys.service.ComputerService;
+import com.ecxilys.service.ServiceException;
+
 
 public class CLI {
 	private static final String SEPARATOR = "============================================";
@@ -46,7 +48,7 @@ public class CLI {
 					} catch(ParseException e){
 						System.out.println("Wrong Date Format "+e);
 					} catch(NumberFormatException e){
-						System.out.println("Wrong Companie Format");
+						System.out.println("Wrong Company id Format");
 					}
 				break;
 			case "2" :
@@ -76,9 +78,8 @@ public class CLI {
 		LocalDateTime introduced = null, discontinued = null;
 		int numComp,resultId;
 		Company company = null;
-		DAOFactory factory=DAOFactory.DAOFACTORY;
-		CompanyDAO companyDAO = factory.getCompanyDAO();
-		ComputerDAO computerDAO = factory.getComputerDAO(); 
+		CompanyService companyDAO = CompanyService.COMPANYSERVICE;
+		ComputerService computerService = ComputerService.COMPUTERSERVICE; 
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		
 		System.out.print("\nName : ");
@@ -109,175 +110,217 @@ public class CLI {
 			
 			
 		}
-		resultId=computerDAO.add(new Computer(name, company, introduced, discontinued));
-		System.out.println("New computer save, id : "+resultId);
+		try {
+			resultId=computerService.add(new Computer(name, company, introduced, discontinued));
+			System.out.println("New computer save, id : "+resultId);
+		} catch (ServiceException e) {
+			System.out.println(e.getMessage());
+		} catch (DAOException e){
+			System.out.println("Error when accessing to the base");
+			e.printStackTrace();
+		}
+
 		
 	}
 	
 	private static void showComputer(Scanner sc){
 		int num;
-        ComputerDAO compDAO=DAOFactory.DAOFACTORY.getComputerDAO();
-        Computer comp=null;
+        ComputerService compService=ComputerService.COMPUTERSERVICE;
+        Optional<Computer> comp;
         
 		System.out.print("\nID of the computer : ");
 		
 		num=Integer.parseInt(sc.nextLine());
-		
-		comp=compDAO.findById(num);
-		if(comp!=null)
-			System.out.println(comp);
-		else
-			System.out.println("Wrong number");
+		try{
+			comp=compService.findById(num);
+			if(comp.isPresent())
+				System.out.println(comp.get());
+			else
+				System.out.println("Wrong number");
+		} catch (DAOException e){
+			System.out.println("Error when accessing to the base");
+			e.printStackTrace();
+		}
 		
 	}
 	
 	
 	private static void delComputer(Scanner sc){
 		int num;
-        ComputerDAO compDAO=DAOFactory.DAOFACTORY.getComputerDAO();
+        ComputerService compService=ComputerService.COMPUTERSERVICE;
 
         
 		System.out.print("\nNumber of the computer : ");
 		
 		num=Integer.parseInt(sc.nextLine());
 		
-		compDAO.del(num);
-
+		try{
+			compService.del(num);
+		} catch (DAOException e){
+			System.out.println("Error when accessing to the base");
+			e.printStackTrace();
+		}
 		
 	}
 	
 	private static void showCompanies(){
-		CompanyDAO companyDAO=DAOFactory.DAOFACTORY.getCompanyDAO();
-		CompanyList companyList = companyDAO.getCompanies();
-		System.out.println("List of companies :");
-		System.out.println(companyList);
+		CompanyService companyDAO=CompanyService.COMPANYSERVICE;
+		
+		try{
+			CompanyList companyList = companyDAO.getCompanies();
+			System.out.println("List of companies :");
+			System.out.println(companyList);
+		} catch (DAOException e){
+			System.out.println("Error when accessing to the base");
+			e.printStackTrace();
+		}	
 		
 	}
 	
 	private static void showComputers(Scanner sc){
 		boolean loop=true;
 		String query ="";
-		ComputerDAO computerDAO=DAOFactory.DAOFACTORY.getComputerDAO();
-		Page<Computer> computerPage = new Page<Computer>(computerDAO.getComputers());
-		System.out.println("List of computers :");
-		System.out.println(computerPage.getPage());
-		System.out.println("\t\t\t\tPage "+computerPage.getCurrentPage());
+		ComputerService computerService=ComputerService.COMPUTERSERVICE;
 		
-		while(loop){
-			System.out.println(SEPARATOR);
-			System.out.println("Quit : q  |  Prev : p  |  Next : n");
-			query = sc.nextLine();
-			switch(query){
-			case "q" :
-				loop=false;
-				break;
-			case "p" :
-				System.out.println(computerPage.getPrevPage());
-				System.out.println("\t\t\t\tPage "+computerPage.getCurrentPage());
-				break;
-			case "n" :
-				System.out.println(computerPage.getNextPage());
-				System.out.println("\t\t\t\tPage "+computerPage.getCurrentPage());
-				break;
+		try{
+			Page<Computer> computerPage = new Page<Computer>(computerService.getComputers());
+			System.out.println("List of computers :");
+			System.out.println(computerPage.getPage());
+			System.out.println("\t\t\t\tPage "+computerPage.getCurrentPage());
+			
+			while(loop){
+				System.out.println(SEPARATOR);
+				System.out.println("Quit : q  |  Prev : p  |  Next : n");
+				query = sc.nextLine();
+				switch(query){
+				case "q" :
+					loop=false;
+					break;
+				case "p" :
+					System.out.println(computerPage.getPrevPage());
+					System.out.println("\t\t\t\tPage "+computerPage.getCurrentPage());
+					break;
+				case "n" :
+					System.out.println(computerPage.getNextPage());
+					System.out.println("\t\t\t\tPage "+computerPage.getCurrentPage());
+					break;
+				}
+				
+				
 			}
-			
-			
-		}
-
+		} catch (DAOException e){
+			System.out.println("Error when accessing to the base");
+			e.printStackTrace();
+		}	
 		
 	}
 	
 	private static void updateComputer(Scanner sc){
-		int num;
+		int id, companyId;
 		String string;
 		boolean loop=true, update=false;
-        ComputerDAO computerDAO=DAOFactory.DAOFACTORY.getComputerDAO();
-        CompanyDAO companyDAO=DAOFactory.DAOFACTORY.getCompanyDAO();
-        Computer computer=null;
+        ComputerService computerService=ComputerService.COMPUTERSERVICE;
+        CompanyService companyDAO=CompanyService.COMPANYSERVICE;
+        Optional<Computer> computer;
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         
 		System.out.print("\nID of computer : ");
 		try{
-		num=Integer.parseInt(sc.nextLine());
-		
-		computer=computerDAO.findById(num);
-		if(computer!=null)
-			System.out.println(computer);
-		else{
-			System.out.println("Wrong id");
+			id=Integer.parseInt(sc.nextLine());
+		} catch(NumberFormatException e){
+			System.out.println("The id must be an unsignied integer");
 			return;
-		}
+		}	
 		
 		
 		
-		while(loop){
-			System.out.println("Which field ?");
-			System.out.println("1\tName");
-			System.out.println("2\tCompany");
-			System.out.println("3\tDate of introducing");
-			System.out.println("4\tDate of discontinuing");
-			System.out.println("z\tUndo");
-			System.out.println("v\tValid");
-			string=sc.nextLine();
-			switch(string){
-			case "1":
-				System.out.print("New name : ");
-				computer.setName(sc.nextLine());
-				update=true;
-				break;
-			case "2":
-				try{
-					System.out.print("New company (id): ");
-					num=Integer.parseInt(sc.nextLine());
-					Optional<Company> company=companyDAO.findById(num);
-					if(company.isPresent()){
-						computer.setCompany(company.get());
-						update=true;
-					}
-					else
-						System.out.println("Wrong id");
-				}catch(NumberFormatException e){
-					System.out.println("L'id doit être un entier positif");
-				}
-				
-				break;
-			case "3" :
+		try{
+			computer=computerService.findById(id);
+			if(computer.isPresent())
+				System.out.println(computer.get());
+			else{
+				System.out.println("Wrong id");
+				return;
+			}
+			
+			
+			
+			while(loop){
+				System.out.println("Which field ?");
+				System.out.println("1\tName");
+				System.out.println("2\tCompany");
+				System.out.println("3\tDate of introducing");
+				System.out.println("4\tDate of discontinuing");
+				System.out.println("z\tUndo");
+				System.out.println("v\tValid");
+				string=sc.nextLine();
+				switch(string){
+				case "1":
+					System.out.print("New name : ");
+					computer.get().setName(sc.nextLine());
+					update=true;
+					break;
+				case "2":
 					try{
-						System.out.print("Date of introducing (dd/mm/yyyy) :");					
-						computer.setIntroduced(LocalDateTime.from(LocalDate.parse(sc.nextLine(),formatter).atStartOfDay()));
-						update=true;
+						System.out.print("New company (id): ");
+						companyId=Integer.parseInt(sc.nextLine());
+						Optional<Company> company=companyDAO.findById(companyId);
+						if(company.isPresent()){
+							computer.get().setCompany(company.get());
+							update=true;
+						}
+						else
+							System.out.println("Wrong id");
+					}catch(NumberFormatException e){
+						System.out.println("ID must be an unsignied integer");
+					}
+					
+					break;
+				case "3" :
+						try{
+							System.out.print("Date of introducing (dd/mm/yyyy) :");					
+							computer.get().setIntroduced(LocalDateTime.from(LocalDate.parse(sc.nextLine(),formatter).atStartOfDay()));
+							update=true;
+						}catch (DateTimeParseException e){
+							System.out.println("Wrong format");
+						}
+					break;
+				case "4" :
+					try{
+						System.out.print("Date of discontinuing (dd/mm/yyyy) :");
+						LocalDateTime discontinued=LocalDateTime.from(LocalDate.parse(sc.nextLine(),formatter).atStartOfDay());
+						if(discontinued.isAfter(computer.get().getIntroduced())){
+							computer.get().setDiscontinued(discontinued);
+							update=true;
+						}
+						else
+							System.out.println("Date of discontinuing must be afer date of introducing");
 					}catch (DateTimeParseException e){
 						System.out.println("Wrong format");
 					}
-				break;
-			case "4" :
-				try{
-					System.out.print("Date of discontinuing (dd/mm/yyyy) :");
-					LocalDateTime discontinued=LocalDateTime.from(LocalDate.parse(sc.nextLine(),formatter).atStartOfDay());
-					if(discontinued.isAfter(computer.getIntroduced())){
-						computer.setDiscontinued(discontinued);
-						update=true;
-					}
-					else
-						System.out.println("Date of discontinuing must be afer date of introducing");
-				}catch (DateTimeParseException e){
-					System.out.println("Wrong format");
+					break;
+				case "z" :
+					loop=false;
+					break;
+				case "v" :
+					loop=false;
+					break;
 				}
-				break;
-			case "z" :
-				loop=false;
-				break;
-			case "v" :
-				loop=false;
-				break;
 			}
-		}
-		if(update){
-			computerDAO.update(computer);
-		}
+			if(update){
+				if(computerService.update(computer.get()))
+					System.out.println("Computer "+id+" corectly updated");
+				else
+					System.out.println("Computer "+id+" not updated");
+			}
 		
-		} catch(NumberFormatException e){
-			System.out.println("L'id must be an unsignied integer");
+		
+		} catch (ServiceException e) {
+			System.out.println("Computer "+id+" not updated");
+			System.out.println(e.getMessage());
+		} catch (DAOException e){
+			System.out.println("Error when accessing to the base");
+			e.printStackTrace();
 		}
 	}
 }

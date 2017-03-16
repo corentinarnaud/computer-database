@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
+import java.util.Optional;
 
 import com.ecxilys.model.Company;
 import com.ecxilys.model.Computer;
@@ -38,7 +38,7 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 	
 	@Override
 	public int add(Computer computer) throws DAOException{
-		int id=-1;
+		int id;
 		ResultSet valeursAutoGenerees = null;
 		PreparedStatement addStatement = null;
 		
@@ -149,7 +149,7 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 	
 	
 	@Override
-	public Computer findById(long id) throws DAOException{
+	public Optional<Computer> findById(long id) throws DAOException{
 		PreparedStatement statement = null;
 		ResultSet resultat = null;
 		try {
@@ -172,8 +172,8 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 				}
 
 				
-				return new Computer(Integer.parseInt(resultat.getString("computer.id")),resultat.getString("computer.name"),comp,
-									introduced,discontinued);
+				return Optional.ofNullable(new Computer(Integer.parseInt(resultat.getString("computer.id")),resultat.getString("computer.name"),comp,
+									introduced,discontinued));
 			}
 
 		} catch (SQLException e) {
@@ -182,12 +182,12 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 			DAOUtils.closePreparedStatement(statement);
 			DAOUtils.closeResultatSet(resultat);
 		}
-		return null;
+		return Optional.empty();
 	}
 	
 	
 	@Override
-	public Computer findByName(String name) throws DAOException{
+	public Optional<Computer> findByName(String name) throws DAOException{
 		PreparedStatement statement = null;
 		ResultSet resultat = null;
 		try {
@@ -210,8 +210,8 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 				}
 
 				
-				return new Computer(Integer.parseInt(resultat.getString("computer.id")),resultat.getString("computer.name"),comp,
-									introduced,discontinued);
+				return Optional.ofNullable(new Computer(Integer.parseInt(resultat.getString("computer.id")),resultat.getString("computer.name"),comp,
+									introduced,discontinued));
 			}
 
 		} catch (SQLException e) {
@@ -220,7 +220,7 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 			DAOUtils.closePreparedStatement(statement);
 			DAOUtils.closeResultatSet(resultat);
 		}
-		return null;
+		return Optional.empty();
 	}
 
 	@Override
