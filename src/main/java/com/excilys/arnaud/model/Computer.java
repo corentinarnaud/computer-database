@@ -9,7 +9,7 @@ import java.time.format.DateTimeFormatter;
 public class Computer {
 	private static final String FORMAT = "MM/dd/yyyy";
 	
-	private int id =-1;
+	private long id =-1;
 	private String name;
 	private Company company;
 	private LocalDateTime introduced;
@@ -78,13 +78,13 @@ public class Computer {
 		return discontinued;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
 
 
-	public void setId(int id) {
+	public void setId(long id) {
 		//On peut changer l'id que si il n'as pas été initialiser 
 		if(this.id==-1)
 			this.id = id;
@@ -108,13 +108,15 @@ public class Computer {
 		return company;
 	}
 
+
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((company == null) ? 0 : company.hashCode());
 		result = prime * result + ((discontinued == null) ? 0 : discontinued.hashCode());
-		result = prime * result + id;
+		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result + ((introduced == null) ? 0 : introduced.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;

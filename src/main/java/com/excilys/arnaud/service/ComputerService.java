@@ -43,10 +43,10 @@ public enum ComputerService{
 	}
 	
 	
-	private void checkDate(Computer computer) throws ServiceException{
-		if(computer.getIntroduced()!=null && computer.getDiscontinued()!=null 
-				&& computer.getIntroduced().isBefore(computer.getDiscontinued()))
-			return;
+	public static boolean checkDate(Computer computer) throws ServiceException{
+		if(computer.getIntroduced()==null || computer.getDiscontinued()==null 
+				|| computer.getIntroduced().isBefore(computer.getDiscontinued()))
+			return true;
 		throw new ServiceException("Date of discontinuation "+computer.getDiscontinued()
 					    +" must be after date of introduction "+computer.getIntroduced());
 	}

@@ -15,7 +15,7 @@ public interface ComputerDAO {
 	 * @return int : the auto-generated id
 	 * @throws DAOException
 	 */
-	public int add(Computer computer) throws DAOException;
+	public long add(Computer computer) throws DAOException;
 	
 	/**
 	 * @param computer

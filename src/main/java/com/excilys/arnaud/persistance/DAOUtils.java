@@ -1,10 +1,13 @@
 package com.excilys.arnaud.persistance;
 
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+
 
 
 public class DAOUtils {
@@ -38,6 +41,17 @@ public class DAOUtils {
 				throw new DAOException(e);
 			}
 		}	
+	}
+	
+	
+	public static void closeConnection(Connection connection) throws DAOException{
+		if ( connection!=null){
+			try {
+			    connection.close();
+			} catch ( SQLException e ) {
+				throw new DAOException("Fail to disconnect", e);
+			}
+		}
 	}
 	
 	

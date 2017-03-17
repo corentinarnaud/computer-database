@@ -56,4 +56,9 @@ public class Page<E>{
 		return getPage();
 	}
 	
+	
+	public String toString(){
+		return "Page "+currentPage+"/"+nbPage;
+	}
+	
 }

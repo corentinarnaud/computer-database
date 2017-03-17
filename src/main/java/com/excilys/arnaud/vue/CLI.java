@@ -12,7 +12,6 @@ import com.excilys.arnaud.model.Company;
 import com.excilys.arnaud.model.Computer;
 import com.excilys.arnaud.model.Page;
 import com.excilys.arnaud.persistance.DAOException;
-import com.excilys.arnaud.persistance.DataBaseConnection;
 import com.excilys.arnaud.service.CompanyService;
 import com.excilys.arnaud.service.ComputerService;
 import com.excilys.arnaud.service.ServiceException;
@@ -63,7 +62,7 @@ public class CLI {
 				break;
 			}
 		}
-		DataBaseConnection.CONNECTION.close();
+
 
 	}
 

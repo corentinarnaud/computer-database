@@ -25,6 +25,18 @@
     	<version>5.1.6</version>
     	<scope>runtime</scope>
 	</dependency>
+	<dependency>
+	    <groupId>org.slf4j</groupId>
+	    <artifactId>slf4j-api</artifactId>
+	    <version>1.7.24</version>
+	    <scope>compile</scope>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
+	<dependency>
+	    <groupId>org.mockito</groupId>
+	    <artifactId>mockito-all</artifactId>
+	    <version>1.9.5</version>
+	</dependency>
   </dependencies>
   <build>
     <finalName>ComputerDataBase</finalName>

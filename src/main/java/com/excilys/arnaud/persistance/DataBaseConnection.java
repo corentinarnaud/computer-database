@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Optional;
 import java.util.Properties;
 
 public enum DataBaseConnection {
@@ -26,7 +25,6 @@ public enum DataBaseConnection {
     private String base;
     private String arguments;
     
-    private Optional<Connection> connection = Optional.empty();
     
     private DataBaseConnection(){
     	getProperties();
@@ -57,13 +55,16 @@ public enum DataBaseConnection {
     	
     	
     }
-    private void connect() throws DAOConfigurationException, DAOException{
+    
+    
+    public Connection getConnection() throws DAOConfigurationException, DAOException{
     	
 
 		try {
 			
 			Class.forName( driver );
-			connection = Optional.ofNullable(DriverManager.getConnection( base+url+arguments, user, password ));
+			Connection connection = DriverManager.getConnection( base+url+arguments, user, password );
+			return connection;
 		} catch ( ClassNotFoundException e ) {
 			throw new DAOConfigurationException( "Driver not found", e );
 		} catch ( SQLException e ) {
@@ -73,20 +74,7 @@ public enum DataBaseConnection {
 	}
     
     
-    public Connection getConnection(){
-    	if(!connection.isPresent())
-    		connect();
-    	return connection.get();
-    }
+
 	
-	public void close() throws DAOException{
-		if ( connection.isPresent()){
-			try {
-			    connection.get().close();
-			    connection = Optional.empty();
-			} catch ( SQLException e ) {
-				throw new DAOException("Fail to disconnect", e);
-			}
-		}
-	}
+
 }
