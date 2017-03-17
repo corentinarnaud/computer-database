@@ -38,6 +38,20 @@
 	    <version>1.9.5</version>
 	</dependency>
   </dependencies>
+  <reporting>
+  	<plugins>
+  	  <plugin>
+      	<groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>2.17</version>
+        <configuration>
+          <configLocation>config/checkstyle/checkstyle.xml</configLocation>
+          <suppressionsLocation>config/checkstyle/suppressions.xml</suppressionsLocation>
+          <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
   <build>
     <finalName>ComputerDataBase</finalName>
   </build>

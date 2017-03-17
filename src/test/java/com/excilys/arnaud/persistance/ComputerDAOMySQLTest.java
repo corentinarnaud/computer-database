@@ -144,12 +144,12 @@ public class ComputerDAOMySQLTest {
 		update = computerDAOMySQL.update(computer2);
 		resultat = computerDAOMySQL.findById(id);
 		assertTrue(update==true);
-		assertTrue(resultat.equals(computer2));
+		assertTrue(resultat.get().equals(computer2));
 		
 		update = computerDAOMySQL.update(computer1);
 		resultat = computerDAOMySQL.findById(id);
 		assertTrue(update==true);
-		assertTrue(resultat.equals(computer1));
+		assertTrue(resultat.get().equals(computer1));
 		
 		
 		computerDAOMySQL.del(id);

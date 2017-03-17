@@ -70,7 +70,8 @@ public class CLI {
 	private static void addComputer(Scanner sc){
 		String name,tmp;
 		LocalDateTime introduced = null, discontinued = null;
-		int numComp,resultId;
+		int numComp;
+		long resultId;
 		Company company = null;
 		CompanyService companyDAO = CompanyService.COMPANYSERVICE;
 		ComputerService computerService = ComputerService.COMPUTERSERVICE; 

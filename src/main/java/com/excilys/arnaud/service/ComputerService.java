@@ -16,7 +16,7 @@ public enum ComputerService{
 	private ComputerDAO computerDAO = DAOFactory.DAOFACTORY.getComputerDAO();
 	
 	
-	public int add(Computer computer) throws ServiceException{
+	public long add(Computer computer) throws ServiceException{
 		checkDate(computer);
 		return computerDAO.add(computer);
 	}

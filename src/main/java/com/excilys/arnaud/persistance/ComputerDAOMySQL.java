@@ -124,7 +124,8 @@ public enum ComputerDAOMySQL implements ComputerDAO{
 				int statut = updateStatement.executeUpdate();
 				if ( statut == 0 ) {
 		            throw new DAOException( "Fail to update computer." );
-		        }
+		        } else
+		        	return true;
 				
 			} catch (SQLException e) {
 				throw new DAOException(e);
