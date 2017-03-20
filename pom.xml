@@ -2,15 +2,11 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.excilys</groupId>
-  <artifactId>ComputerDataBase</artifactId>
+  <artifactId>ComputerDatabase</artifactId>
   <packaging>war</packaging>
-  <version>1.0-SNAPSHOT</version>
-  <name>ComputerDataBase Maven Webapp</name>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>ComputerDatabase Maven Webapp</name>
   <url>http://maven.apache.org</url>
-   <properties>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
-  </properties>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -18,41 +14,47 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
-	<dependency>
-    	<groupId>mysql</groupId>
-    	<artifactId>mysql-connector-java</artifactId>
-    	<version>5.1.6</version>
-    	<scope>runtime</scope>
-	</dependency>
-	<dependency>
-	    <groupId>org.slf4j</groupId>
-	    <artifactId>slf4j-api</artifactId>
-	    <version>1.7.24</version>
-	    <scope>compile</scope>
-	</dependency>
-	<!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
-	<dependency>
-	    <groupId>org.mockito</groupId>
-	    <artifactId>mockito-all</artifactId>
-	    <version>1.9.5</version>
-	</dependency>
+     <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+  <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>5.1.6</version>
+      <scope>runtime</scope>
+  </dependency>
+  <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.24</version>
+      <scope>compile</scope>
+  </dependency>
+  <!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
+  <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>1.9.5</version>
+  </dependency>
+  <!-- https://mvnrepository.com/artifact/javax.servlet/jsp-api -->
+  <dependency>
+      <groupId>javax.servlet.jsp</groupId>
+      <artifactId>jsp-api</artifactId>
+      <version>2.1</version>
+      <scope>runtime</scope>
+  </dependency> 
+  <!-- https://mvnrepository.com/artifact/jstl/jstl -->
+  <dependency>
+      <groupId>jstl</groupId>
+      <artifactId>jstl</artifactId>
+      <version>1.2</version>
+      <scope>runtime</scope>
+  </dependency> 
+  <!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
+    <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>javax.servlet-api</artifactId>
+        <version>3.1.0</version>
+    </dependency> 
   </dependencies>
-  <reporting>
-  	<plugins>
-  	  <plugin>
-      	<groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.17</version>
-        <configuration>
-          <configLocation>config/checkstyle/checkstyle.xml</configLocation>
-          <suppressionsLocation>config/checkstyle/suppressions.xml</suppressionsLocation>
-          <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
   <build>
-    <finalName>ComputerDataBase</finalName>
+    <finalName>ComputerDatabase</finalName>
   </build>
 </project>

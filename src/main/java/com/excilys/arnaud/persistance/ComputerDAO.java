@@ -1,54 +1,51 @@
 package com.excilys.arnaud.persistance;
 
-import java.util.Optional;
-
 import com.excilys.arnaud.model.Computer;
 import com.excilys.arnaud.model.ComputerList;
-
+import java.util.Optional;
 
 
 public interface ComputerDAO {
 
-	
-	/**
-	 * @param computer
-	 * @return int : the auto-generated id
-	 * @throws DAOException
-	 */
-	public long add(Computer computer) throws DAOException;
-	
-	/**
-	 * @param computer
-	 * @return true if update works, false otherwise
-	 * @throws DAOException
-	 */
-	public boolean update(Computer computer) throws DAOException;
-	
-	/**
-	 * @param id
-	 * @return true if deletion works, false otherwise
-	 * @throws DAOException
-	 */
-	public boolean del(long id) throws DAOException;
-	
-	/**
-	 * @param id
-	 * @return
-	 * @throws DAOException
-	 */
-	public Optional<Computer> findById(long id) throws DAOException;
-	
-	/**
-	 * @param name
-	 * @return
-	 * @throws DAOException
-	 */
-	public Optional<Computer> findByName(String name) throws DAOException;
-	
-	/**
-	 * @return
-	 * @throws DAOException
-	 */
-	public ComputerList getComputers() throws DAOException;
-	
+  /** .
+   * @param computer : Computer to add
+   * @return int : the auto-generated id
+   * @throws DAOException : if the connection fail
+   */
+  public long add(Computer computer) throws DAOException;
+
+  /** .
+   * @param computer : Computer to update
+   * @return true if update works, false otherwise
+   * @throws DAOException : if the connection fail
+   */
+  public boolean update(Computer computer) throws DAOException;
+
+  /** .
+   * @param id : ID of the computer to del
+   * @return true if deletion works, false otherwise
+   * @throws DAOException : if the connection fail
+   */
+  public boolean del(long id) throws DAOException;
+
+  /** .
+   * @param id : ID of the computer to find
+   * @return An optional computer containing the computer find or empty if no computer 
+   * @throws DAOException : if the connection fail
+   */
+  public Optional<Computer> findById(long id) throws DAOException;
+
+  /** .
+   * @param name : name of the computer to find
+   * @return An optional computer containing the computer find or empty if no computer 
+   * @throws DAOException : if the connection fail
+   */
+  public Optional<Computer> findByName(String name) throws DAOException;
+
+  /** .
+   * @return List of computers
+   * @throws DAOException : if the connection fail
+   */
+  public ComputerList getComputers() throws DAOException;
+
 }
