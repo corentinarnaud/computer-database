@@ -11,5 +11,9 @@ public interface CompanyDAO {
   public Optional<Company> findByName(String name) throws DAOException;
 
   public CompanyList getCompanies() throws DAOException;
+  
+  public CompanyList getNCompanies(int begin, int nbCompanies) throws DAOException;
+  
+  public int getNbCompany();
 
 }

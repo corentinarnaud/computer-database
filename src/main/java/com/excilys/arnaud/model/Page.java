@@ -14,6 +14,10 @@ public class Page<E>{
 		nbPage=(int)Math.ceil((float)list.size()/ELMEMENT_BY_PAGE);
 	}
 	
+	public Page(int nbPage){
+    this.nbPage=nbPage;
+  }
+	
 	public int getElementByPage(){
 		return ELMEMENT_BY_PAGE;
 	}
@@ -25,6 +29,10 @@ public class Page<E>{
 	
 	public int getNbPage(){
 		return nbPage;
+	}
+	
+	public int getNbElement(){
+	  return list.size();
 	}
 	
 	public int getCurrentPage(){

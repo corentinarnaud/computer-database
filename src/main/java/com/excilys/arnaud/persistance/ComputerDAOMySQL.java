@@ -31,6 +31,9 @@ public enum ComputerDAOMySQL implements ComputerDAO {
   private static final String SQL_COMPUTERS = 
       "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name " +
       "FROM computer LEFT JOIN company ON company_id=company.id";
+  private static final String SQL_N_COMPUTERS = 
+      "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name " +
+      "FROM computer LEFT JOIN company ON company_id=company.id LIMIT ?, ?";
 
   private ComputerDAOMySQL() {
 
@@ -284,6 +287,50 @@ public enum ComputerDAOMySQL implements ComputerDAO {
       throw new DAOException(e);
     } finally {
       DAOUtils.closeStatement(statement);
+      DAOUtils.closeResultatSet(resultat);
+      DAOUtils.closeConnection(connection);
+    }
+  }
+
+  @Override
+  public ComputerList getNComputers(int begin, int nbComputer) throws DAOException {
+    PreparedStatement statement = null;
+    ResultSet resultat = null;
+    Connection connection = null;
+
+    try {
+      ComputerList list = new ComputerList();
+      connection = DataBaseConnection.CONNECTION.getConnection();
+      statement = connection.prepareStatement(SQL_N_COMPUTERS);
+      statement.setInt(1, begin);
+      statement.setInt(2, nbComputer);
+      resultat = statement.executeQuery();
+      while (resultat.next()) {
+        LocalDateTime introduced = null;
+        LocalDateTime discontinued = null;
+        Company comp = null;
+        if (resultat.getString("company_id") != null) {
+          comp = new Company(resultat.getLong("company_id"), resultat.getString("company.name"));
+        }
+
+        if (resultat.getString("introduced") != null) {
+          ;
+          introduced = resultat.getTimestamp("introduced").toLocalDateTime();
+          if (resultat.getString("discontinued") != null) {
+            discontinued = resultat.getTimestamp("discontinued").toLocalDateTime();
+          }
+        }
+
+        list.add(new Computer(Integer.parseInt(resultat.getString("computer.id")), 
+            resultat.getString("computer.name"),
+            comp, introduced, discontinued));
+      }
+      return list;
+
+    } catch (SQLException e) {
+      throw new DAOException(e);
+    } finally {
+      DAOUtils.closePreparedStatement(statement);
       DAOUtils.closeResultatSet(resultat);
       DAOUtils.closeConnection(connection);
     }

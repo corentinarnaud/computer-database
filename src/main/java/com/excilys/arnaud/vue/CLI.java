@@ -165,8 +165,7 @@ public class CLI {
     CompanyService companyService = CompanyService.COMPANYSERVICE;
 
     try {
-      Page<Company> companyPage = new Page<Company>(
-          companyService.getCompanies());
+      Page<Company> companyPage = companyService.getCompanies();
       System.out.println("List of companies :");
       showPage(sc, companyPage);
     } catch (DAOException e) {
@@ -179,8 +178,7 @@ public class CLI {
   private static void showComputers(Scanner sc) {
     try {
       ComputerService computerService = ComputerService.COMPUTERSERVICE;
-      Page<Computer> computerPage = new Page<Computer>(
-          computerService.getComputers());
+      Page<Computer> computerPage = computerService.getComputers();
       System.out.println("List of computers :");
       showPage(sc, computerPage);
     } catch (DAOException e) {

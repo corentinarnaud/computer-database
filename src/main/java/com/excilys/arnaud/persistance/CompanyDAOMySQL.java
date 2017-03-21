@@ -14,6 +14,9 @@ public enum CompanyDAOMySQL implements CompanyDAO {
   CONPANYDAO();
   private static final String SQL_FIND_ID   = "SELECT name  FROM company WHERE id=?";
   private static final String SQL_FIND_NAME = "SELECT id  FROM company WHERE name=?";
+  private static final String SQL_COMPANIES = "SELECT id, name  FROM company";
+  private static final String SQL_N_COMPANIES = "SELECT id, name  FROM company LIMIT ?, ?";
+  private static final String SQL_COUNT     = "SELECT COUNT(*) FROM company";
 
   @Override
   public Optional<Company> findById(long id) throws DAOException {
@@ -76,13 +79,65 @@ public enum CompanyDAOMySQL implements CompanyDAO {
     try {
       connection = DataBaseConnection.CONNECTION.getConnection();
       statement = connection.createStatement();
-      resultat = statement.executeQuery("SELECT id, name  FROM company");
+      resultat = statement.executeQuery(SQL_COMPANIES);
       ArrayList<Company> list = new ArrayList<Company>();
       while (resultat.next()) {
         list.add(new Company(Integer.parseInt(resultat.getString("id")), 
                                               resultat.getString("name")));
       }
       return new CompanyList(list);
+
+    } catch (SQLException e) {
+      throw new DAOException(e);
+    } finally {
+      DAOUtils.closeStatement(statement);
+      DAOUtils.closeResultatSet(resultat);
+      DAOUtils.closeConnection(connection);
+    }
+  }
+
+  @Override
+  public CompanyList getNCompanies(int begin, int nbCompanies)
+      throws DAOException {
+    PreparedStatement statement = null;
+    ResultSet resultat = null;
+    Connection connection = null;
+
+    try {
+      connection = DataBaseConnection.CONNECTION.getConnection();
+      statement = connection.prepareStatement(SQL_N_COMPANIES);
+      statement.setInt(1, begin);
+      statement.setInt(2, nbCompanies);
+      resultat = statement.executeQuery();
+      ArrayList<Company> list = new ArrayList<Company>();
+      while (resultat.next()) {
+        list.add(new Company(Integer.parseInt(resultat.getString("id")), 
+                                              resultat.getString("name")));
+      }
+      return new CompanyList(list);
+
+    } catch (SQLException e) {
+      throw new DAOException(e);
+    } finally {
+      DAOUtils.closePreparedStatement(statement);
+      DAOUtils.closeResultatSet(resultat);
+      DAOUtils.closeConnection(connection);
+    }
+  }
+
+  @Override
+  public int getNbCompany() {
+    Statement statement = null;
+    ResultSet resultat = null;
+    Connection connection = null;
+
+    try {
+      connection = DataBaseConnection.CONNECTION.getConnection();
+      statement = connection.createStatement();
+      resultat = statement.executeQuery(SQL_COUNT);
+      resultat.next();
+
+      return resultat.getInt(1);
 
     } catch (SQLException e) {
       throw new DAOException(e);

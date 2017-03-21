@@ -8,8 +8,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/Servlet")
-public class Servlet extends HttpServlet {
+import com.excilys.arnaud.model.Company;
+import com.excilys.arnaud.model.Computer;
+import com.excilys.arnaud.model.Page;
+import com.excilys.arnaud.service.CompanyService;
+import com.excilys.arnaud.service.ComputerService;
+
+
+
+@WebServlet("/dashboard")
+public class Dashboard extends HttpServlet {
 
   /** .
    * 
@@ -21,7 +29,15 @@ public class Servlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) 
       throws ServletException, IOException {
-    this.getServletContext().getRequestDispatcher("/WEB-INF/views/dashboard.html")
+    
+    Page<Computer> computerPage = ComputerService.COMPUTERSERVICE.getComputers();
+    
+    
+    request.setAttribute("page", computerPage);
+    
+    
+    
+    this.getServletContext().getRequestDispatcher("/views/dashboard.jsp")
                             .forward(request, response);
   }
 

@@ -47,5 +47,11 @@ public interface ComputerDAO {
    * @throws DAOException : if the connection fail
    */
   public ComputerList getComputers() throws DAOException;
+  
+  /** .
+   * @return List of computers
+   * @throws DAOException : if the connection fail
+   */
+  public ComputerList getNComputers(int begin, int nbComputer) throws DAOException;
 
 }

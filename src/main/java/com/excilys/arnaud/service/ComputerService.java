@@ -2,6 +2,7 @@ package com.excilys.arnaud.service;
 
 import com.excilys.arnaud.model.Computer;
 import com.excilys.arnaud.model.ComputerList;
+import com.excilys.arnaud.model.Page;
 import com.excilys.arnaud.persistance.ComputerDAO;
 import com.excilys.arnaud.persistance.DAOFactory;
 import java.util.Optional;
@@ -32,8 +33,8 @@ public enum ComputerService {
     return computerDAO.findByName(name);
   }
 
-  public ComputerList getComputers() {
-    return computerDAO.getComputers();
+  public Page<Computer> getComputers() {
+    return new Page<Computer>(computerDAO.getComputers());
   }
 
   public static boolean checkDate(Computer computer) throws ServiceException {
