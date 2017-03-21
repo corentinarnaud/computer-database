@@ -1,4 +1,6 @@
-<%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
+<%@ page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ page isELIgnored="false"%>
 <html>
 <head>
 <title>Computer Database</title>
@@ -15,25 +17,25 @@
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a class="navbar-brand" href="dashboard.html"> Application -
+			<a class="navbar-brand" href="/ComputerDatabase/dashboard"> Application -
 				Computer Database </a>
 		</div>
 	</header>
 	<section id="main">
 		<div class="container">
-			<h1 id="homeTitle">${ page.getNbElement() } Computers found</h1>
+			<h1 id="homeTitle">${ nbComputer }Computers found</h1>
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">
 					<form id="searchForm" action="#" method="GET" class="form-inline">
 
 						<input type="search" id="searchbox" name="search"
-							class="form-control" placeholder="Search name" /> <input
-							type="submit" id="searchsubmit" value="Filter by name"
+							class="form-control" placeholder="Search name" /> 
+						<input type="submit" id="searchsubmit" value="Filter by name"
 							class="btn btn-primary" />
 					</form>
 				</div>
 				<div class="pull-right">
-					<a class="btn btn-success" id="addComputer" href="addComputer.html">Add
+					<a class="btn btn-success" id="addComputer" href="/ComputerDatabase/addComputer">Add
 						Computer</a> <a class="btn btn-default" id="editComputer" href="#"
 						onclick="$.fn.toggleEditMode();">Edit</a>
 				</div>
@@ -69,116 +71,18 @@
 				</thead>
 				<!-- Browse attribute computers -->
 				<tbody id="results">
-					<tr>
-						<td class="editMode"><input type="checkbox" name="cb"
-							class="cb" value="0"></td>
-						<td><a href="editComputer.html" onclick="">MacBook Pro</a></td>
-						<td>2006-01-10</td>
-						<td></td>
-						<td>Apple Inc.</td>
+					<c:forEach var="computer" items="${ listComputer }">
+						<tr>
+							<td class="editMode"><input type="checkbox" name="cb"
+								class="cb" value="0"></td>
+							<td><a href="editComputer.jsp" onclick="">${ computer.getName() }</a></td>
+							<td>${ computer.getIntroducedFormated() }</td>
+							<td>${ computer.getDiscontinuedFormated() }</td>
+							<td>${ computer.getCompany().getName() }</td>
 
-					</tr>
-					<tr>
-						<td class="editMode"><input type="checkbox" name="cb"
-							class="cb" value="0"></td>
-						<td><a href="editComputer.html" onclick="">Connection
-								Machine</a></td>
-						<td>1987-01-01</td>
-						<td></td>
-						<td>Thinking Machines</td>
+						</tr>
+					</c:forEach>
 
-					</tr>
-					<tr>
-						<td class="editMode"><input type="checkbox" name="cb"
-							class="cb" value="0"></td>
-						<td><a href="editComputer.html" onclick="">PowerBook</a></td>
-						<td>1991-01-01</td>
-						<td>2006-01-01</td>
-						<td>Apple Inc.</td>
-
-					</tr>
-					<tr>
-						<td class="editMode"><input type="checkbox" name="cb"
-							class="cb" value="0"></td>
-						<td><a href="editComputer.html" onclick="">Commodore 64</a></td>
-						<td>1982-08-01</td>
-						<td>1994-01-01</td>
-						<td>Commodore International</td>
-
-					</tr>
-					<tr>
-						<td class="editMode"><input type="checkbox" name="cb"
-							class="cb" value="0"></td>
-						<td><a href="editComputer.html" onclick="">Altair 8800</a></td>
-						<td>1974-12-19</td>
-						<td></td>
-						<td>Micro Instrumentation and Telemetry Systems</td>
-
-					</tr>
-					<tr>
-						<td class="editMode"><input type="checkbox" name="cb"
-							class="cb" value="0"></td>
-						<td><a href="editComputer.html" onclick="">Canon Cat</a></td>
-						<td>1987-01-01</td>
-						<td></td>
-						<td>Canon</td>
-
-					</tr>
-					<tr>
-						<td class="editMode"><input type="checkbox" name="cb"
-							class="cb" value="0"></td>
-						<td><a href="editComputer.html" onclick="">Nokia 770</a></td>
-						<td></td>
-						<td></td>
-						<td>Nokia</td>
-
-					</tr>
-					<tr>
-						<td class="editMode"><input type="checkbox" name="cb"
-							class="cb" value="0"></td>
-						<td><a href="editComputer.html" onclick="">NeXTcube</a></td>
-						<td>1988-01-01</td>
-						<td>1993-01-01</td>
-						<td>NeXT</td>
-
-					</tr>
-					<tr>
-						<td class="editMode"><input type="checkbox" name="cb"
-							class="cb" value="0"></td>
-						<td><a href="editComputer.html" onclick="">IBM 650</a></td>
-						<td>1953-01-01</td>
-						<td>1962-01-01</td>
-						<td>IBM</td>
-
-					</tr>
-					<tr>
-						<td class="editMode"><input type="checkbox" name="cb"
-							class="cb" value="0"></td>
-						<td><a href="editComputer.html" onclick="">PlayStation 2</a>
-						</td>
-						<td>2000-03-24</td>
-						<td></td>
-						<td>Sony</td>
-
-					</tr>
-					<tr>
-						<td class="editMode"><input type="checkbox" name="cb"
-							class="cb" value="0"></td>
-						<td><a href="editComputer.html" onclick="">Archos 101</a></td>
-						<td></td>
-						<td></td>
-						<td></td>
-
-					</tr>
-					<tr>
-						<td class="editMode"><input type="checkbox" name="cb"
-							class="cb" value="0"></td>
-						<td><a href="editComputer.html" onclick="">Nintendo 3DS</a></td>
-						<td>2010-03-23</td>
-						<td></td>
-						<td>Nintendo</td>
-
-					</tr>
 
 				</tbody>
 			</table>
@@ -188,16 +92,54 @@
 	<footer class="navbar-fixed-bottom">
 		<div class="container text-center">
 			<ul class="pagination">
-				<li><a href="#" aria-label="Previous"> <span
+				<c:if test="${ currentPage >1 }">
+				<li><a href="/ComputerDatabase/dashboard?page=${ currentPage - 1}" aria-label="Previous"> <span
 						aria-hidden="true">&laquo;</span>
 				</a></li>
-				<li><a href="#">1</a></li>
-				<li><a href="#">2</a></li>
-				<li><a href="#">3</a></li>
-				<li><a href="#">4</a></li>
-				<li><a href="#">5</a></li>
-				<li><a href="#" aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+				</c:if>
+				<c:choose>
+					<c:when test="${ currentPage <= 3 }">
+						<c:forEach var="i" begin="1" end="${ maxPage < 5 ? maxPage : 5 }">
+							<c:choose>
+								<c:when test="${ i == currentPage }">
+									<li><a>${ i }</a></li>
+								</c:when>
+								<c:otherwise>
+									<li><a href="/ComputerDatabase/dashboard?page=${ i }">${ i }</a></li>
+								</c:otherwise>
+							</c:choose>
+						</c:forEach>
+					</c:when>
+					<c:when test="${ currentPage > maxPage-3 }">
+						<c:forEach var="i" begin="${ maxPage - 4 }" end="${ maxPage }">
+							<c:choose>
+								<c:when test="${ i == currentPage }">
+									<li><a>${ i }</a></li>
+								</c:when>
+								<c:otherwise>
+									<li><a href="/ComputerDatabase/dashboard?page=${ i }">${ i }</a></li>
+								</c:otherwise>
+							</c:choose>
+						</c:forEach>
+					</c:when>
+					<c:otherwise>
+						<c:forEach var="i" begin="${ currentPage - 2 }" end="${ currentPage + 2 }">
+							<c:choose>
+								<c:when test="${ i == currentPage }">
+									<li><a>${ i }</a></li>
+								</c:when>
+								<c:otherwise>
+									<li><a href="/ComputerDatabase/dashboard?page=${ i }">${ i }</a></li>
+								</c:otherwise>
+							</c:choose>
+						</c:forEach>
+					</c:otherwise>
+				</c:choose>
+				<c:if test="${ currentPage < maxPage }">
+				<li><a href="/ComputerDatabase/dashboard?page=${ currentPage + 1}" aria-label="Next"> <span
+						aria-hidden="true">&raquo;</span>
 				</a></li>
+				</c:if>
 			</ul>
 		</div>
 		<div class="btn-group btn-group-sm pull-right" role="group">

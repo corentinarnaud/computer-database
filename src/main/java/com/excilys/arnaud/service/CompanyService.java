@@ -2,7 +2,6 @@ package com.excilys.arnaud.service;
 
 import com.excilys.arnaud.model.Company;
 import com.excilys.arnaud.model.CompanyList;
-import com.excilys.arnaud.model.Page;
 import com.excilys.arnaud.persistance.CompanyDAO;
 import com.excilys.arnaud.persistance.DAOFactory;
 import java.util.Optional;
@@ -11,7 +10,8 @@ public enum CompanyService {
   COMPANYSERVICE;
 
   private CompanyDAO companyDAO = DAOFactory.DAOFACTORY.getCompanyDAO();
-  private Page<Company> companyPage = null;
+  private CompanyPage companyPage = null;
+  private CompanyList companyList = null;
 
   public Optional<Company> findById(long id) {
     return companyDAO.findById(id);
@@ -22,8 +22,16 @@ public enum CompanyService {
   }
 
   public Page<Company> getCompanies() {
-    return new Page<Company>(companyDAO.getCompanies());
+    if(companyPage==null){
+      companyPage = new CompanyPage();
+    }
+    return companyPage;
   }
   
-
+  public CompanyList getCompanyList() {
+    if(companyList==null){
+      companyList = companyDAO.getCompanies();
+    }
+    return companyList;
+  }
 }

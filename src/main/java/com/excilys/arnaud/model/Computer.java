@@ -52,6 +52,24 @@ public class Computer {
     return string;
   }
 
+  public String getIntroducedFormated(){
+	 if(introduced!=null){
+		 DateTimeFormatter formatter = DateTimeFormatter.ofPattern(FORMAT);
+		 return introduced.format(formatter);
+	  } else {
+		  return "";
+	  }
+  }
+  
+  public String getDiscontinuedFormated(){
+    if(discontinued!=null){
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern(FORMAT);
+      return discontinued.format(formatter);
+    } else {
+      return "";
+    }
+  }
+  
   public String getName() {
     return name;
   }

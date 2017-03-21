@@ -126,7 +126,7 @@ public enum CompanyDAOMySQL implements CompanyDAO {
   }
 
   @Override
-  public int getNbCompany() {
+  public int getNumberOfCompany() {
     Statement statement = null;
     ResultSet resultat = null;
     Connection connection = null;

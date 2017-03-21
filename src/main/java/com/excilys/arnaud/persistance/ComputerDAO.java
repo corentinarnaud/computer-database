@@ -5,7 +5,7 @@ import com.excilys.arnaud.model.ComputerList;
 import java.util.Optional;
 
 
-public interface ComputerDAO {
+public interface ComputerDAO extends DAO{
 
   /** .
    * @param computer : Computer to add
@@ -53,5 +53,17 @@ public interface ComputerDAO {
    * @throws DAOException : if the connection fail
    */
   public ComputerList getNComputers(int begin, int nbComputer) throws DAOException;
+  
+  
+  /** .
+   * @return List of computers that contain patern in name
+   * @throws DAOException : if the connection fail
+   */
+  public ComputerList getNComputers(String pattern, int begin, int nbComputer) throws DAOException;
+  
+  
+  public int getNumberOfComputer() throws DAOException;
+  
+  public int getNumberOfComputer(String pattern) throws DAOException;
 
 }

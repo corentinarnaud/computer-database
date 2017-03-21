@@ -4,7 +4,7 @@ import com.excilys.arnaud.model.Company;
 import com.excilys.arnaud.model.CompanyList;
 import java.util.Optional;
 
-public interface CompanyDAO {
+public interface CompanyDAO extends DAO{
 
   public Optional<Company> findById(long id) throws DAOException;
 
@@ -14,6 +14,6 @@ public interface CompanyDAO {
   
   public CompanyList getNCompanies(int begin, int nbCompanies) throws DAOException;
   
-  public int getNbCompany();
+  public int getNumberOfCompany();
 
 }

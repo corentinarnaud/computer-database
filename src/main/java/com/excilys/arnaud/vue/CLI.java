@@ -2,10 +2,10 @@ package com.excilys.arnaud.vue;
 
 import com.excilys.arnaud.model.Company;
 import com.excilys.arnaud.model.Computer;
-import com.excilys.arnaud.model.Page;
 import com.excilys.arnaud.persistance.DAOException;
 import com.excilys.arnaud.service.CompanyService;
 import com.excilys.arnaud.service.ComputerService;
+import com.excilys.arnaud.service.Page;
 import com.excilys.arnaud.service.ServiceException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -213,17 +213,17 @@ public class CLI {
           System.out.println("\t\t\t\tPage " + page.getCurrentPage());
           break;
         case "f":
-          System.out.println(page.getPageN(1));
+          System.out.println(page.getPageN(0));
           System.out.println("\t\t\t\tPage " + page.getCurrentPage());
           break;
         case "l":
-          System.out.println(page.getPageN(page.getNbPage()));
+          System.out.println(page.getPageN(page.getNbPage()-1));
           System.out.println("\t\t\t\tPage " + page.getCurrentPage());
           break;
         default:
           try {
             int pageNumber = Integer.parseInt(query);
-            System.out.println(page.getPageN(pageNumber));
+            System.out.println(page.getPageN(pageNumber-1));
             System.out.println("\t\t\t\tPage " + page.getCurrentPage());
           } catch (NumberFormatException e) {
             System.out.println("Wrong page number");
