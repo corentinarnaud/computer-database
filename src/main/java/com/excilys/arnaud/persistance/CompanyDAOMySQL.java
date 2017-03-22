@@ -10,6 +10,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public enum CompanyDAOMySQL implements CompanyDAO {
   CONPANYDAO();
   private static final String SQL_FIND_ID   = "SELECT name  FROM company WHERE id=?";
@@ -17,6 +20,7 @@ public enum CompanyDAOMySQL implements CompanyDAO {
   private static final String SQL_COMPANIES = "SELECT id, name  FROM company";
   private static final String SQL_N_COMPANIES = "SELECT id, name  FROM company LIMIT ?, ?";
   private static final String SQL_COUNT     = "SELECT COUNT(*) FROM company";
+  private static final Logger logger = LoggerFactory.getLogger(CompanyDAOMySQL.class);
 
   @Override
   public Optional<Company> findById(long id) throws DAOException {
@@ -34,6 +38,7 @@ public enum CompanyDAOMySQL implements CompanyDAO {
       }
 
     } catch (SQLException e) {
+      logger.debug(e.getMessage());
       throw new DAOException(e);
     } finally {
       DAOUtils.closePreparedStatement(statement);
@@ -60,6 +65,7 @@ public enum CompanyDAOMySQL implements CompanyDAO {
         }
 
       } catch (SQLException e) {
+        logger.debug(e.getMessage());
         throw new DAOException(e);
       } finally {
         DAOUtils.closePreparedStatement(statement);
@@ -88,6 +94,7 @@ public enum CompanyDAOMySQL implements CompanyDAO {
       return new CompanyList(list);
 
     } catch (SQLException e) {
+      logger.debug(e.getMessage());
       throw new DAOException(e);
     } finally {
       DAOUtils.closeStatement(statement);
@@ -117,6 +124,7 @@ public enum CompanyDAOMySQL implements CompanyDAO {
       return new CompanyList(list);
 
     } catch (SQLException e) {
+      logger.debug(e.getMessage());
       throw new DAOException(e);
     } finally {
       DAOUtils.closePreparedStatement(statement);
@@ -140,6 +148,7 @@ public enum CompanyDAOMySQL implements CompanyDAO {
       return resultat.getInt(1);
 
     } catch (SQLException e) {
+      logger.debug(e.getMessage());
       throw new DAOException(e);
     } finally {
       DAOUtils.closeStatement(statement);

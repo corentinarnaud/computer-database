@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Optional;
 
 import javax.servlet.ServletException;
@@ -49,7 +50,7 @@ public class AddComputer extends HttpServlet  {
       
       
 
-      
+      try{
       if(introducedString!=null && !introducedString.isEmpty()){
         introduced = LocalDateTime
             .from(LocalDate.parse(introducedString, formatter).atStartOfDay());
@@ -64,13 +65,12 @@ public class AddComputer extends HttpServlet  {
         company = opt.isPresent() ? opt.get() : null;
       }
       
-    
-
-      try {
         ComputerService.COMPUTERSERVICE.add(new Computer(name, company, introduced, discontinued));
       } catch (ServiceException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
+      } catch( DateTimeParseException e ){
+        
       }
     }
 
