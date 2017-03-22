@@ -11,7 +11,9 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 
 public enum ComputerDAOMySQL implements ComputerDAO {
@@ -441,4 +443,46 @@ public enum ComputerDAOMySQL implements ComputerDAO {
     }
   }
 
+  @Override
+  public boolean[] dels(long[] ids) throws DAOException {
+    PreparedStatement statement = null;
+    Connection connection = null;
+
+    
+    if(ids!= null && ids.length!=0){
+      try {
+        connection = DataBaseConnection.CONNECTION.getConnection();
+        statement = connection.prepareStatement(SQL_DEL);
+        
+        statement.setString(1, String.valueOf(ids[0]));
+        statement.addBatch();
+        
+        for(int i = 1;i<ids.length;i++){
+          statement.setString(1, String.valueOf(ids[i]));
+          statement.addBatch();
+        }
+        int[] resultat = statement.executeBatch();
+        
+        return convertIntToBool(resultat);
+        
+      } catch (SQLException e) {
+        throw new DAOException(e);
+      } finally {
+        DAOUtils.closePreparedStatement(statement);
+        DAOUtils.closeConnection(connection);
+      }
+    }
+    return null;
+  }
+  
+  private boolean[] convertIntToBool(int[] tab){
+    if(tab!=null){
+      boolean[] booleanTab = new boolean[tab.length];
+      for(int i = 0; i<tab.length;i++){
+        booleanTab[i]=tab[i]!=0;
+      }
+      return booleanTab;
+    }
+    return null;
+  }
 }

@@ -67,4 +67,9 @@ public enum ComputerService {
         + computer.getIntroduced());
   }
 
+  public boolean[] dels(long[] longIds) {
+    return computerDAO.dels(longIds);
+    
+  }
+
 }

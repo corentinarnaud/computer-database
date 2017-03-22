@@ -54,8 +54,8 @@ public abstract class Page<E>{
 	
 	public abstract List<E> getPrevPage();
 	
-	
 	public abstract List<E> getPageN(int n);
+	
 	
 	
 	public String toString(){

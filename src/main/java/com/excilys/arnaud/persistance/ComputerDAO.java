@@ -2,6 +2,8 @@ package com.excilys.arnaud.persistance;
 
 import com.excilys.arnaud.model.Computer;
 import com.excilys.arnaud.model.ComputerList;
+
+import java.util.ArrayList;
 import java.util.Optional;
 
 
@@ -22,11 +24,19 @@ public interface ComputerDAO extends DAO{
   public boolean update(Computer computer) throws DAOException;
 
   /** .
-   * @param id : ID of the computer to del
+   * @param id : ID of the computer to delete
    * @return true if deletion works, false otherwise
    * @throws DAOException : if the connection fail
    */
   public boolean del(long id) throws DAOException;
+  
+  /** .
+   * @param ids : IDs of computers to delete
+   * @return true if deletion works, false otherwise
+   * @throws DAOException : if the connection fail
+   */
+  public boolean[] dels(long[] ids) throws DAOException;
+
 
   /** .
    * @param id : ID of the computer to find

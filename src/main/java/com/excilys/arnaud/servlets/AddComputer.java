@@ -45,7 +45,7 @@ public class AddComputer extends HttpServlet  {
     
     
     
-    if(name!=null && !name.isEmpty()){
+    if(name!=null && !name.equals("")){
       
       
 
@@ -65,14 +65,13 @@ public class AddComputer extends HttpServlet  {
       }
       
     
-    }
-    
 
-    try {
-      ComputerService.COMPUTERSERVICE.add(new Computer(name, company, introduced, discontinued));
-    } catch (ServiceException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      try {
+        ComputerService.COMPUTERSERVICE.add(new Computer(name, company, introduced, discontinued));
+      } catch (ServiceException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     }
 
     

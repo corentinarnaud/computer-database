@@ -59,7 +59,16 @@ public class Dashboard extends HttpServlet {
         }
       }
 
-    } else {      
+    } else {
+      paramPage = request.getParameter("elements");
+      if(paramPage!=null){
+        try {
+          int nbElements = Integer.parseInt(paramPage);
+          computerPage.setElementByPage(nbElements);
+        } catch (NumberFormatException e) {
+          
+        }
+      }
       request.setAttribute("listComputer", computerPage.getPage());
     }
     
@@ -72,6 +81,28 @@ public class Dashboard extends HttpServlet {
     
     this.getServletContext().getRequestDispatcher("/views/dashboard.jsp")
                             .forward(request, response);
+  }
+  
+  
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
+    String[] tabId = request.getParameter("selection").split(",");
+    if(tabId!=null && tabId.length!=0 && !tabId[0].isEmpty()){
+      if(tabId.length==1){
+        ComputerService.COMPUTERSERVICE.del(Long.parseLong(tabId[0]));
+      } else {
+        long[] longIds = new long[tabId.length];
+        for(int i = 0;i < tabId.length;i++){
+          longIds[i]=Long.parseLong(tabId[i]);
+        }
+        
+        ComputerService.COMPUTERSERVICE.dels(longIds);
+      }
+         
+    }
+    
+    doGet(request,response);
   }
 
 }

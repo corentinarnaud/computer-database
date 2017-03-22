@@ -6,16 +6,19 @@ import java.util.Optional;
 
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import com.excilys.arnaud.model.Company;
 import com.excilys.arnaud.model.CompanyList;
 
+@RunWith(MockitoJUnitRunner.class)
 public class CompanyDAOMySQLTest {
 	private CompanyDAOMySQL companyDAOMySQL = CompanyDAOMySQL.CONPANYDAO;
 	
 	
 	
-	
+
 	@Test
 	public void findByIdTest(){
 		Optional<Company> company;

@@ -19,35 +19,37 @@ public class ComputerPage extends Page<Computer> {
     this.nbElement = DAOFactory.DAOFACTORY.getComputerDAO().getNumberOfComputer(pattern);
     nbPage=(int)Math.ceil((float)nbElement/ELMEMENT_BY_PAGE);
   }
+ 
+  @Override
+  public List<Computer> getPage() {
+    int begin = ELMEMENT_BY_PAGE*currentPage;
+    this.list = DAOFactory.DAOFACTORY.getComputerDAO().getNComputers(pattern, begin, ELMEMENT_BY_PAGE);
+    this.nbElement = DAOFactory.DAOFACTORY.getComputerDAO().getNumberOfComputer(pattern);
+    return list;
+  }
   
   @Override
   public List<Computer> getNextPage() {
     if(currentPage<nbPage-1) {
       currentPage++;
-      int begin = ELMEMENT_BY_PAGE*currentPage;
-      this.list = DAOFactory.DAOFACTORY.getComputerDAO().getNComputers(pattern, begin, ELMEMENT_BY_PAGE);
     }
-    return list;
+    return getPage();
   }
 
   @Override
   public List<Computer> getPrevPage() {
     if(currentPage>0) {
       currentPage--;
-      int begin = ELMEMENT_BY_PAGE*currentPage;
-      this.list = DAOFactory.DAOFACTORY.getComputerDAO().getNComputers(pattern, begin, ELMEMENT_BY_PAGE);
     }
-    return list;
+    return getPage();
   }
 
   @Override
   public List<Computer> getPageN(int n) {
     if(n>=0 && n<nbPage){
       currentPage=n;
-      int begin = ELMEMENT_BY_PAGE*currentPage;
-      this.list = DAOFactory.DAOFACTORY.getComputerDAO().getNComputers(pattern, begin, ELMEMENT_BY_PAGE);
     }
-    return list;
+    return getPage();
   }
   
   
@@ -61,6 +63,17 @@ public class ComputerPage extends Page<Computer> {
       this.list = DAOFactory.DAOFACTORY.getComputerDAO().getNComputers(this.pattern, 0, ELMEMENT_BY_PAGE);
       this.nbElement = DAOFactory.DAOFACTORY.getComputerDAO().getNumberOfComputer(this.pattern);
       nbPage=(int)Math.ceil((float)nbElement/ELMEMENT_BY_PAGE);
+      currentPage=0;
+    }
+  }
+  
+  @Override
+  public void setElementByPage(int numberOfElement){
+    if(this.ELMEMENT_BY_PAGE != numberOfElement){
+      this.ELMEMENT_BY_PAGE=numberOfElement;
+      this.list = DAOFactory.DAOFACTORY.getComputerDAO().getNComputers(this.pattern, 0, ELMEMENT_BY_PAGE);
+      this.nbElement = DAOFactory.DAOFACTORY.getComputerDAO().getNumberOfComputer(this.pattern);
+      this.nbPage=(int)Math.ceil((float)nbElement/this.ELMEMENT_BY_PAGE);
       currentPage=0;
     }
   }
