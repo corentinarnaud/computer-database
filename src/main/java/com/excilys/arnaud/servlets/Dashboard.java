@@ -33,16 +33,16 @@ public class Dashboard extends HttpServlet {
     String paramPage = request.getParameter("page");
     String paramSearch = request.getParameter("search");
     
-    if(paramSearch != null){
+    if (paramSearch != null) {
       session.setAttribute("search", paramSearch);
-    } else if(session.getAttribute("search")!=null){
+    } else if (session.getAttribute("search")!=null) {
       paramSearch = (String) session.getAttribute("search");
     }
     
     Page<Computer> computerPage = ComputerService.COMPUTERSERVICE.getComputers(paramSearch);
     
-    if(paramPage!=null){
-      switch(paramPage){
+    if (paramPage!=null) {
+      switch (paramPage) {
       case "n" :
         request.setAttribute("listComputer", computerPage.getNextPage());
         break;

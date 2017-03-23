@@ -46,21 +46,21 @@ public class AddComputer extends HttpServlet  {
     
     
     
-    if(name!=null && !name.equals("")){
+    if (name!=null && !name.equals("")) {
       
       
 
-      try{
-      if(introducedString!=null && !introducedString.isEmpty()){
+      try {
+      if (introducedString!=null && !introducedString.isEmpty()) {
         introduced = LocalDateTime
             .from(LocalDate.parse(introducedString, formatter).atStartOfDay());
-        if(discontinuedString!=null && !discontinuedString.isEmpty()){
+        if (discontinuedString!=null && !discontinuedString.isEmpty()) {
           discontinued = LocalDateTime
               .from(LocalDate.parse(discontinuedString, formatter).atStartOfDay());
         }
       }
       
-      if(companyIDString!=null && !companyIDString.isEmpty() && !companyIDString.equals("0")){
+      if (companyIDString!=null && !companyIDString.isEmpty() && !companyIDString.equals("0")) {
         Optional<Company> opt = CompanyService.COMPANYSERVICE.findById(Long.parseLong(companyIDString));
         company = opt.isPresent() ? opt.get() : null;
       }
