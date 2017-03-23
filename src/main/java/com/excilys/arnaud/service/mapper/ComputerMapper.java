@@ -48,7 +48,7 @@ public enum ComputerMapper {
       }
       
       if (computerDto.getCompany() != null) {
-        company = CompanyMapper.COMPANYMAPPER.DtoToCompany(computerDto.getCompany());
+        company = CompanyMapper.COMPANYMAPPER.dtoToCompany(computerDto.getCompany());
       } else {
         company = null;
       }

@@ -6,15 +6,25 @@ import com.excilys.arnaud.model.metier.Company;
 public enum CompanyMapper {
   COMPANYMAPPER;
 
-  public CompanyDto CompanyToDto(Company company) {
+  /** Map a company to a companyDto.
+   * 
+   * @param company A company
+   * @return A companyDto who correspond to company
+   */
+  public CompanyDto companyToDto(Company company) {
     return new CompanyDto(String.valueOf(company.getId()),company.getName());
   }
   
-  public Company DtoToCompany(CompanyDto companyDto) {
+  /** Map a companyDto to a company.
+   * 
+   * @param companyDto a CompanyDto
+   * @return A company who correspond to companyDto
+   */
+  public Company dtoToCompany(CompanyDto companyDto) {
     try {
       return new Company(Long.parseLong(companyDto.getId()), companyDto.getName());
     } catch (NumberFormatException e) {
-      throw new MapperException(companyDto.getId() + " n'est pas un long");
+      throw new MapperException(companyDto.getId() + " must be a long");
     }
   }
 }

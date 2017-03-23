@@ -1,8 +1,10 @@
 package com.excilys.arnaud.model.metier;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import com.excilys.arnaud.model.metier.Company;
 import com.excilys.arnaud.model.metier.Computer;
-import static org.junit.Assert.*;
 import java.time.LocalDate;
 import org.junit.Test;
 
