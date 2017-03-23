@@ -7,6 +7,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public enum DataBaseConnection {
   CONNECTION;
 
@@ -17,7 +20,9 @@ public enum DataBaseConnection {
   private static final String PROPERTY_DRIVER    = "driver";
   private static final String PROPERTY_USER      = "user";
   private static final String PROPERTY_PASSWORD  = "password";
-
+  private static final Logger LOGGER = LoggerFactory.getLogger(DataBaseConnection.class);
+  
+  
   private String url;
   private String driver;
   private String user;
@@ -50,6 +55,7 @@ public enum DataBaseConnection {
       user = properties.getProperty(PROPERTY_USER);
       password = properties.getProperty(PROPERTY_PASSWORD);
     } catch (IOException e) {
+      LOGGER.debug("Fail to load property file " + PROPERTY_FILE);
       throw new DAOConfigurationException(
           "Fail to load property file " + PROPERTY_FILE, e);
     }
@@ -66,8 +72,10 @@ public enum DataBaseConnection {
           .getConnection(base + url + arguments, user, password);
       return connection;
     } catch (ClassNotFoundException e) {
+      LOGGER.debug("Driver not found");
       throw new DAOConfigurationException("Driver not found", e);
     } catch (SQLException e) {
+      LOGGER.debug("Fail to connect to the base");
       throw new DAOException("Fail to connect to the base", e);
     }
 

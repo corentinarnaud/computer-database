@@ -1,7 +1,7 @@
 package com.excilys.arnaud.persistance;
 
-import com.excilys.arnaud.model.Computer;
-import com.excilys.arnaud.model.ComputerList;
+import com.excilys.arnaud.model.metier.Computer;
+import com.excilys.arnaud.model.metier.ComputerList;
 
 import java.util.ArrayList;
 import java.util.Optional;

@@ -1,8 +1,13 @@
-package com.excilys.arnaud.persistance;
+package com.excilys.arnaud.persistance.mysql;
 
-import com.excilys.arnaud.model.Company;
-import com.excilys.arnaud.model.Computer;
-import com.excilys.arnaud.model.ComputerList;
+import com.excilys.arnaud.model.metier.Company;
+import com.excilys.arnaud.model.metier.Computer;
+import com.excilys.arnaud.model.metier.ComputerList;
+import com.excilys.arnaud.persistance.ComputerDAO;
+import com.excilys.arnaud.persistance.DAOException;
+import com.excilys.arnaud.persistance.DAOUtils;
+import com.excilys.arnaud.persistance.DataBaseConnection;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

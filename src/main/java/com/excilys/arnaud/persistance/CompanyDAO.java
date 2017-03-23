@@ -1,7 +1,8 @@
 package com.excilys.arnaud.persistance;
 
-import com.excilys.arnaud.model.Company;
-import com.excilys.arnaud.model.CompanyList;
+import com.excilys.arnaud.model.metier.Company;
+import com.excilys.arnaud.model.metier.CompanyList;
+
 import java.util.Optional;
 
 public interface CompanyDAO extends DAO{
