@@ -1,7 +1,7 @@
 package com.excilys.arnaud.service;
 
-import com.excilys.arnaud.model.Company;
-import com.excilys.arnaud.model.CompanyList;
+import com.excilys.arnaud.model.metier.Company;
+import com.excilys.arnaud.model.metier.CompanyList;
 import com.excilys.arnaud.persistance.CompanyDAO;
 import com.excilys.arnaud.persistance.DAOFactory;
 import java.util.Optional;

@@ -8,7 +8,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import com.excilys.arnaud.model.Computer;
+
+import com.excilys.arnaud.model.metier.Computer;
 import com.excilys.arnaud.service.ComputerService;
 import com.excilys.arnaud.service.Page;
 

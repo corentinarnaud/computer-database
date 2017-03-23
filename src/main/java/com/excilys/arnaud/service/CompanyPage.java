@@ -2,7 +2,7 @@ package com.excilys.arnaud.service;
 
 import java.util.List;
 
-import com.excilys.arnaud.model.Company;
+import com.excilys.arnaud.model.metier.Company;
 import com.excilys.arnaud.persistance.DAOFactory;
 
 public class CompanyPage extends Page<Company> {

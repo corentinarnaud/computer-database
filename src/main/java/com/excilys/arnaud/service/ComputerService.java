@@ -1,6 +1,6 @@
 package com.excilys.arnaud.service;
 
-import com.excilys.arnaud.model.Computer;
+import com.excilys.arnaud.model.metier.Computer;
 import com.excilys.arnaud.persistance.ComputerDAO;
 import com.excilys.arnaud.persistance.DAOFactory;
 import java.util.Optional;

@@ -13,9 +13,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.excilys.arnaud.model.Company;
-import com.excilys.arnaud.model.CompanyList;
-import com.excilys.arnaud.model.Computer;
+import com.excilys.arnaud.model.metier.Company;
+import com.excilys.arnaud.model.metier.CompanyList;
+import com.excilys.arnaud.model.metier.Computer;
 import com.excilys.arnaud.service.CompanyService;
 import com.excilys.arnaud.service.ComputerService;
 import com.excilys.arnaud.service.ServiceException;

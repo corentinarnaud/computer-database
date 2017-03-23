@@ -1,7 +1,7 @@
 package com.excilys.arnaud.vue;
 
-import com.excilys.arnaud.model.Company;
-import com.excilys.arnaud.model.Computer;
+import com.excilys.arnaud.model.metier.Company;
+import com.excilys.arnaud.model.metier.Computer;
 import com.excilys.arnaud.persistance.DAOException;
 import com.excilys.arnaud.service.CompanyService;
 import com.excilys.arnaud.service.ComputerService;

@@ -1,7 +1,8 @@
 package com.excilys.arnaud.service;
 
 import java.util.List;
-import com.excilys.arnaud.model.Computer;
+
+import com.excilys.arnaud.model.metier.Computer;
 import com.excilys.arnaud.persistance.DAOFactory;
 
 public class ComputerPage extends Page<Computer> {

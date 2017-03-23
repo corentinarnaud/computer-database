@@ -12,7 +12,7 @@ public class Computer {
   private LocalDateTime introduced;
   private LocalDateTime discontinued;
 
-  public Computer(int id, String name, Company company, 
+  public Computer(long id, String name, Company company, 
       LocalDateTime introduced, LocalDateTime discontinued) {
     this.id = id;
     this.name = name;
