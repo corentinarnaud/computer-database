@@ -1,4 +1,4 @@
-package com.excilys.arnaud.model;
+package com.excilys.arnaud.model.metier;
 
 public class Company {
   private long   id;

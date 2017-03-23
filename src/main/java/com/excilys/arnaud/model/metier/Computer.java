@@ -1,4 +1,4 @@
-package com.excilys.arnaud.model;
+package com.excilys.arnaud.model.metier;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
