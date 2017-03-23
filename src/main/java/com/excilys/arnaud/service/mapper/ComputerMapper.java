@@ -17,6 +17,10 @@ public enum ComputerMapper {
   private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
   
+  /** Map computer dto to computer metier.
+   * @param computerDto A computer dto
+   * @return The computer metier that correspond to computerDto
+   */
   public Computer mapDtoToMetier(ComputerDto computerDto) {
     LocalDateTime introduced;
     LocalDateTime discontinued;
@@ -61,7 +65,11 @@ public enum ComputerMapper {
     }
   }
   
-  public ComputerDto mapMetierToDto(Computer computer){
+  /** Map computer metier to computer dto.
+   * @param computer The computer metier to map
+   * @return the computer dto mapped
+   */
+  public ComputerDto mapMetierToDto(Computer computer) {
     String introduced;
     String discontinued;
     CompanyDto company;
@@ -85,7 +93,7 @@ public enum ComputerMapper {
       company = null;
     }
     
-    return new ComputerDto(String.valueOf(computer.getId()),
+    return new ComputerDto(String.valueOf(computer.getId()), computer.getName(),
                                           company, introduced, discontinued);
   }
 

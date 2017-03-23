@@ -66,5 +66,6 @@ public class ComputerDto {
   public CompanyDto getCompany() {
     return company;
   }
+  
 
 }

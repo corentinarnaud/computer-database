@@ -15,4 +15,5 @@ public class CompanyDtoTest {
     assertTrue(company.getId() == id);
     assertTrue(company.getName() == id);
   }
+
 }
