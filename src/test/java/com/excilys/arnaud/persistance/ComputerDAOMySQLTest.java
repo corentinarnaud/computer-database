@@ -8,9 +8,10 @@ import java.util.Optional;
 
 import org.junit.Test;
 
-import com.excilys.arnaud.model.Company;
-import com.excilys.arnaud.model.Computer;
-import com.excilys.arnaud.model.ComputerList;
+import com.excilys.arnaud.model.metier.Company;
+import com.excilys.arnaud.model.metier.Computer;
+import com.excilys.arnaud.model.metier.ComputerList;
+import com.excilys.arnaud.persistance.mysql.ComputerDAOMySQL;
 
 public class ComputerDAOMySQLTest {
   private ComputerDAOMySQL computerDAOMySQL = ComputerDAOMySQL.COMPUTERDAO;

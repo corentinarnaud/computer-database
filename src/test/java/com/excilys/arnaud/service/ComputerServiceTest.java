@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 import org.junit.Test;
 
-import com.excilys.arnaud.model.Computer;
+import com.excilys.arnaud.model.metier.Computer;
 
 public class ComputerServiceTest {
 

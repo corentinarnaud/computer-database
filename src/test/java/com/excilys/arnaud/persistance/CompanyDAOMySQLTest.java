@@ -2,8 +2,10 @@ package com.excilys.arnaud.persistance;
 
 import static org.junit.Assert.*;
 
-import com.excilys.arnaud.model.Company;
-import com.excilys.arnaud.model.CompanyList;
+import com.excilys.arnaud.model.metier.Company;
+import com.excilys.arnaud.model.metier.CompanyList;
+import com.excilys.arnaud.persistance.mysql.CompanyDAOMySQL;
+
 import java.util.Optional;
 import org.junit.Test;
 import org.junit.runner.RunWith;

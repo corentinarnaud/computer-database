@@ -2,7 +2,6 @@ package com.excilys.arnaud.service;
 
 import static org.junit.Assert.*;
 
-import com.excilys.arnaud.model.Computer;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Before;
@@ -12,6 +11,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import com.excilys.arnaud.model.metier.Computer;
 
 
 

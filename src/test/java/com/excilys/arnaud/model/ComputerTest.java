@@ -6,6 +6,9 @@ import java.time.LocalDate;
 
 import org.junit.Test;
 
+import com.excilys.arnaud.model.metier.Company;
+import com.excilys.arnaud.model.metier.Computer;
+
 public class ComputerTest {
 	
 	
