@@ -5,6 +5,9 @@ import com.excilys.arnaud.persistance.mysql.ComputerDAOMySQL;
 
 public enum DAOFactory {
   DAOFACTORY;
+  
+  private DAOFactory(){
+  }
 
   public CompanyDAO getCompanyDAO() {
     return CompanyDAOMySQL.CONPANYDAO;

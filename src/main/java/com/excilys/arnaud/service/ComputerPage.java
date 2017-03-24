@@ -34,6 +34,7 @@ public class ComputerPage extends Page<ComputerDto> {
     this.list = ComputerMapper.COMPUTERMAPPER.computerListToComputerDtoList(
         DAOFactory.DAOFACTORY.getComputerDAO().getNComputers(pattern, begin, ELMEMENT_BY_PAGE));
     this.nbElement = DAOFactory.DAOFACTORY.getComputerDAO().getNumberOfComputer(pattern);
+    nbPage = (int) Math.ceil((float) nbElement / ELMEMENT_BY_PAGE);
     return list;
   }
   

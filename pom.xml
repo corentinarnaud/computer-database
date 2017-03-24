@@ -12,11 +12,12 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<version.junit>4.10</version.junit>
+		<version.mockito>1.9.5</version.mockito>
+		<version.powermock>1.5.6</version.powermock>
+		<version.dbunit>2.4.9</version.dbunit>
 		<version.gson>2.8.0</version.gson>
 		<version.slf4j>1.7.24</version.slf4j>
 		<version.logback>1.2.2</version.logback>
-		<version.mockito>1.9.5</version.mockito>
-		<version.powermock>1.7.0RC4</version.powermock>
 		<version.mysql>5.1.6</version.mysql>
 		<version.commonsconfiguration2>2.0</version.commonsconfiguration2>
 		<version.commonsbeanutils>1.9.3</version.commonsbeanutils>
@@ -31,6 +32,30 @@
 			<version>${version.junit}</version>
 			<scope>test</scope>
 		</dependency>
+			<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>${version.mockito}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-api-mockito</artifactId>
+			<version>${version.powermock}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+    		<groupId>org.powermock</groupId>
+    		<artifactId>powermock-module-junit4</artifactId>
+    		<version>${version.powermock}</version>
+    		<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.dbunit</groupId>
+			<artifactId>dbunit</artifactId>
+			<version>${version.dbunit}</version>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
@@ -41,18 +66,6 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>${version.slf4j}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>${version.mockito}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.powermock</groupId>
-			<artifactId>powermock-api-mockito</artifactId>
-			<version>${version.powermock}</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>mysql</groupId>
