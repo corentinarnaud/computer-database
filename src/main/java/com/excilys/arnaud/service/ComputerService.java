@@ -1,21 +1,35 @@
 package com.excilys.arnaud.service;
 
+import com.excilys.arnaud.model.dto.ComputerDto;
 import com.excilys.arnaud.model.metier.Computer;
 import com.excilys.arnaud.persistance.ComputerDAO;
 import com.excilys.arnaud.persistance.DAOFactory;
+import com.excilys.arnaud.service.mapper.ComputerMapper;
+
 import java.util.Optional;
 
 public enum ComputerService {
   COMPUTERSERVICE;
   private ComputerDAO computerDAO = DAOFactory.DAOFACTORY.getComputerDAO();
-  private ComputerPage computerPage = null;
 
-  public long add(Computer computer) throws ServiceException {
+  /** Ask to DAO to add computerDto.
+   * @param computerDto a computerDto to add
+   * @return The id generated for the computer
+   * @throws ServiceException if a DAO error occurred
+   */
+  public long add(ComputerDto computerDto) throws ServiceException {
+    Computer computer = ComputerMapper.COMPUTERMAPPER.computerDtoToComputer(computerDto);
     checkDate(computer);
     return computerDAO.add(computer);
   }
 
-  public boolean update(Computer computer) throws ServiceException {
+  /** Ask to DAO to update computerDto.
+   * @param computerDto a computerDto to add
+   * @return true if computer is updated
+   * @throws ServiceException if a DAO error occurred
+   */
+  public boolean update(ComputerDto computerDto) throws ServiceException {
+    Computer computer = ComputerMapper.COMPUTERMAPPER.computerDtoToComputer(computerDto);
     checkDate(computer);
     return computerDAO.update(computer);
   }
@@ -24,43 +38,48 @@ public enum ComputerService {
     return computerDAO.del(id);
   }
 
-  public Optional<Computer> findById(long id) {
-    return computerDAO.findById(id);
-  }
-
-  public Optional<Computer> findByName(String name) {
-    return computerDAO.findByName(name);
-  }
-
-  public Page<Computer> getComputers() {
-    if(computerPage==null){
-      computerPage = new ComputerPage();
+  /** Look for the computer with id equals to the input.
+   * @param id of the computer to find
+   * @return an optional of the computer
+   */
+  public Optional<ComputerDto> findById(long id) {
+    Optional<Computer> computer = computerDAO.findById(id);
+    if (computer.isPresent()) {
+      return Optional.of(
+          ComputerMapper.COMPUTERMAPPER.computerToComputerDto(computer.get()));
     }
-    return computerPage;
+    return Optional.empty();
+  }
+
+  /** Look for a computer with name equals to the input.
+   * @param name of the computer to find
+   * @return an optional of the computer
+   */
+  public Optional<ComputerDto> findByName(String name) {
+    Optional<Computer> computer = computerDAO.findByName(name);
+    if (computer.isPresent()) {
+      return Optional.of(
+          ComputerMapper.COMPUTERMAPPER.computerToComputerDto(computer.get()));
+    }
+    return Optional.empty();
+  }
+
+  public ComputerPage getComputers() {
+    return new ComputerPage();
   }
   
-  public Page<Computer> getComputers(String pattern){
-    if(pattern==null){
-      return getComputers();
-    } else {
-      if(computerPage==null){
-        if(!pattern.isEmpty()){
-          computerPage = new ComputerPage(pattern);
-        } else {
-          computerPage = new ComputerPage();
-        }
-        
-      } else if(!pattern.equals(computerPage.getPattern())) {
-        computerPage.setPattern(pattern);
-      }
-      return computerPage;
-    }
+  public ComputerPage getComputers(String pattern) {
+    return new ComputerPage(pattern);
   }
 
-  public static boolean checkDate(Computer computer) throws ServiceException {
+  /** Check if introduced Date is before discontinued Date.
+   * @param computer The computer to test
+   * @throws ServiceException if introduced date is after discontinued date
+   */
+  public static void checkDate(Computer computer) throws ServiceException {
     if (computer.getIntroduced() == null || computer.getDiscontinued() == null
         || computer.getIntroduced().isBefore(computer.getDiscontinued())) {
-      return true;
+      return;
     }
     throw new ServiceException("Date of discontinuation "
         + computer.getDiscontinued() + " must be after date of introduction "

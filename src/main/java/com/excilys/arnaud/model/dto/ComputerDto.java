@@ -66,6 +66,22 @@ public class ComputerDto {
   public CompanyDto getCompany() {
     return company;
   }
-  
 
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public void setCompany(CompanyDto company) {
+    this.company = company;
+  }
+
+  public void setIntroduced(String introduced) {
+    this.introduced = introduced;
+  }
+
+  public void setDiscontinued(String discontinued) {
+    this.discontinued = discontinued;
+  }
+  
+  
 }

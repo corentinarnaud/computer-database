@@ -1,12 +1,16 @@
 package com.excilys.arnaud.vue;
 
-import com.excilys.arnaud.model.metier.Company;
-import com.excilys.arnaud.model.metier.Computer;
+import com.excilys.arnaud.model.dto.CompanyDto;
+import com.excilys.arnaud.model.dto.ComputerDto;
 import com.excilys.arnaud.persistance.DAOException;
+import com.excilys.arnaud.service.CompanyPage;
 import com.excilys.arnaud.service.CompanyService;
+import com.excilys.arnaud.service.ComputerPage;
 import com.excilys.arnaud.service.ComputerService;
 import com.excilys.arnaud.service.Page;
 import com.excilys.arnaud.service.ServiceException;
+import com.excilys.arnaud.service.mapper.MapperException;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -63,14 +67,13 @@ public class CLI {
   private static void addComputer(Scanner sc) {
     String name;
     String tmp;
-    LocalDateTime introduced = null;
-    LocalDateTime discontinued = null;
-    int numComp;
+    String introduced = "";
+    String discontinued = "";
+    long numComp;
     long resultId;
-    Company company = null;
+    CompanyDto company = null;
     CompanyService companyDAO = CompanyService.COMPANYSERVICE;
     ComputerService computerService = ComputerService.COMPUTERSERVICE;
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     try {
       System.out.print("\nName : ");
@@ -83,35 +86,28 @@ public class CLI {
         if (numComp < 0) {
           throw new NumberFormatException();
         }
-        Optional<Company> opt = companyDAO.findById(numComp);
+        Optional<CompanyDto> opt = companyDAO.findById(numComp);
         company = opt.isPresent() ? opt.get() : null;
       }
 
       System.out.print("Date of introducing at format dd/mm/yyyy : ");
-      tmp = sc.nextLine();
+      introduced = sc.nextLine();
       if (tmp.compareTo("") != 0) {
-        introduced = LocalDateTime
-            .from(LocalDate.parse(tmp, formatter).atStartOfDay());
-
         System.out.print("Date of discontinuing at format dd/mm/yyyy :");
-        tmp = sc.nextLine();
-        if (tmp.compareTo("") != 0) {
-          discontinued = LocalDateTime
-              .from(LocalDate.parse(tmp, formatter).atStartOfDay());
-        }
-
+        discontinued = sc.nextLine();
       }
 
+
       resultId = computerService
-          .add(new Computer(name, company, introduced, discontinued));
+          .add(new ComputerDto(name, company, introduced, discontinued));
       System.out.println("New computer save, id : " + resultId);
     } catch (ServiceException e) {
       System.out.println(e.getMessage());
     } catch (DAOException e) {
       System.out.println("Error when accessing to the base");
       e.printStackTrace();
-    } catch (DateTimeParseException e) {
-      System.out.println("Wrong Date Format " + e);
+    } catch (MapperException e) {
+      System.out.println(e.getMessage());
     } catch (NumberFormatException e) {
       System.out.println("Wrong Company id Format");
     }
@@ -121,7 +117,7 @@ public class CLI {
   private static void showComputer(Scanner sc) {
     int num;
     ComputerService compService = ComputerService.COMPUTERSERVICE;
-    Optional<Computer> comp;
+    Optional<ComputerDto> comp;
 
     System.out.print("\nID of the computer : ");
 
@@ -165,7 +161,7 @@ public class CLI {
     CompanyService companyService = CompanyService.COMPANYSERVICE;
 
     try {
-      Page<Company> companyPage = companyService.getCompanies();
+      CompanyPage companyPage = companyService.getCompanies();
       System.out.println("List of companies :");
       showPage(sc, companyPage);
     } catch (DAOException e) {
@@ -178,7 +174,7 @@ public class CLI {
   private static void showComputers(Scanner sc) {
     try {
       ComputerService computerService = ComputerService.COMPUTERSERVICE;
-      Page<Computer> computerPage = computerService.getComputers();
+      ComputerPage computerPage = computerService.getComputers();
       System.out.println("List of computers :");
       showPage(sc, computerPage);
     } catch (DAOException e) {
@@ -217,13 +213,13 @@ public class CLI {
           System.out.println("\t\t\t\tPage " + page.getCurrentPage());
           break;
         case "l":
-          System.out.println(page.getPageN(page.getNbPage()-1));
+          System.out.println(page.getPageN(page.getNbPage() - 1));
           System.out.println("\t\t\t\tPage " + page.getCurrentPage());
           break;
         default:
           try {
             int pageNumber = Integer.parseInt(query);
-            System.out.println(page.getPageN(pageNumber-1));
+            System.out.println(page.getPageN(pageNumber - 1));
             System.out.println("\t\t\t\tPage " + page.getCurrentPage());
           } catch (NumberFormatException e) {
             System.out.println("Wrong page number");
@@ -240,7 +236,7 @@ public class CLI {
     boolean update = false;
     ComputerService computerService = ComputerService.COMPUTERSERVICE;
     CompanyService companyDAO = CompanyService.COMPANYSERVICE;
-    Optional<Computer> computer;
+    Optional<ComputerDto> computer;
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     System.out.print("\nID of computer : ");
@@ -279,7 +275,7 @@ public class CLI {
             try {
               System.out.print("New company (id): ");
               companyId = Integer.parseInt(sc.nextLine());
-              Optional<Company> company = companyDAO.findById(companyId);
+              Optional<CompanyDto> company = companyDAO.findById(companyId);
               if (company.isPresent()) {
                 computer.get().setCompany(company.get());
                 update = true;
@@ -291,25 +287,14 @@ public class CLI {
   
             break;
           case "3":
-            try {
-              System.out.print("Date of introducing (dd/mm/yyyy) :");
-              computer.get().setIntroduced(LocalDateTime.from(
-                  LocalDate.parse(sc.nextLine(), formatter).atStartOfDay()));
-              update = true;
-            } catch (DateTimeParseException e) {
-              System.out.println("Wrong format");
-            }
+            System.out.print("Date of introducing (dd/mm/yyyy) :");
+            computer.get().setIntroduced(sc.nextLine());
+            update = true;
             break;
           case "4":
-            try {
-              System.out.print("Date of discontinuing (dd/mm/yyyy) :");
-              LocalDateTime discontinued = LocalDateTime
-                  .from(LocalDate.parse(sc.nextLine(), formatter).atStartOfDay());
-              computer.get().setDiscontinued(discontinued);
-              update = true;
-            } catch (DateTimeParseException e) {
-              System.out.println("Wrong format");
-            }
+            System.out.print("Date of discontinuing (dd/mm/yyyy) :");
+            computer.get().setDiscontinued(sc.nextLine());
+            update = true;
             break;
           case "z":
             loop = false;

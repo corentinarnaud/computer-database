@@ -1,85 +1,96 @@
 package com.excilys.arnaud.service;
 
-import java.util.List;
-
-import com.excilys.arnaud.model.metier.Computer;
+import com.excilys.arnaud.model.dto.ComputerDto;
+import com.excilys.arnaud.model.dto.ComputerDtoList;
 import com.excilys.arnaud.persistance.DAOFactory;
+import com.excilys.arnaud.service.mapper.ComputerMapper;
 
-public class ComputerPage extends Page<Computer> {
-  private String pattern = null;
 
+public class ComputerPage extends Page<ComputerDto> {
+  private String pattern;
+  private ComputerDtoList list;
+  
+  /** Constructor.
+   * 
+   */
   public ComputerPage() {
-    this.list = DAOFactory.DAOFACTORY.getComputerDAO().getNComputers(pattern, 0, ELMEMENT_BY_PAGE);
-    this.nbElement = DAOFactory.DAOFACTORY.getComputerDAO().getNumberOfComputer();
-    nbPage=(int)Math.ceil((float)nbElement/ELMEMENT_BY_PAGE);
+    this("");
   }
   
-  public ComputerPage(String pattern){
-    this.pattern=pattern;
-    this.list = DAOFactory.DAOFACTORY.getComputerDAO().getNComputers(pattern, 0, ELMEMENT_BY_PAGE);
+  /** Constructor.
+   * @param pattern the pattern of the page, not null
+   */
+  public ComputerPage(String pattern) {
+    this.pattern = pattern;
+    this.list = ComputerMapper.COMPUTERMAPPER.computerListToComputerDtoList(
+        DAOFactory.DAOFACTORY.getComputerDAO().getNComputers(pattern, 0, ELMEMENT_BY_PAGE));
     this.nbElement = DAOFactory.DAOFACTORY.getComputerDAO().getNumberOfComputer(pattern);
-    nbPage=(int)Math.ceil((float)nbElement/ELMEMENT_BY_PAGE);
+    nbPage = (int) Math.ceil((float) nbElement / ELMEMENT_BY_PAGE);
   }
  
   @Override
-  public List<Computer> getPage() {
-    int begin = ELMEMENT_BY_PAGE*currentPage;
-    this.list = DAOFactory.DAOFACTORY.getComputerDAO().getNComputers(pattern, begin, ELMEMENT_BY_PAGE);
+  public ComputerDtoList getPage() {
+    int begin = ELMEMENT_BY_PAGE * currentPage;
+    this.list = ComputerMapper.COMPUTERMAPPER.computerListToComputerDtoList(
+        DAOFactory.DAOFACTORY.getComputerDAO().getNComputers(pattern, begin, ELMEMENT_BY_PAGE));
     this.nbElement = DAOFactory.DAOFACTORY.getComputerDAO().getNumberOfComputer(pattern);
     return list;
   }
   
   @Override
-  public List<Computer> getNextPage() {
-    if(currentPage<nbPage-1) {
+  public ComputerDtoList getNextPage() {
+    if (currentPage < nbPage - 1) {
       currentPage++;
     }
     return getPage();
   }
 
   @Override
-  public List<Computer> getPrevPage() {
-    if(currentPage>0) {
+  public ComputerDtoList getPrevPage() {
+    if (currentPage > 0) {
       currentPage--;
     }
     return getPage();
   }
 
   @Override
-  public List<Computer> getPageN(int n) {
-    if(n>=0 && n<nbPage){
-      currentPage=n;
+  public ComputerDtoList getPageN(int n) {
+    if (n >= 0 && n < nbPage) {
+      currentPage = n;
     }
     return getPage();
   }
   
   
-  public void setPattern(String pattern){
-    if(pattern != null){
-      if(!pattern.isEmpty()){
-        this.pattern=pattern;
+  /** set the pattern of the page.
+   * @param pattern String  
+   */
+  public void setPattern(String pattern) {
+    if (pattern != null) {
+      if (!pattern.isEmpty()) {
+        this.pattern = pattern;
       } else {
-        this.pattern=null;
+        this.pattern = null;
       }
-      this.list = DAOFactory.DAOFACTORY.getComputerDAO().getNComputers(this.pattern, 0, ELMEMENT_BY_PAGE);
       this.nbElement = DAOFactory.DAOFACTORY.getComputerDAO().getNumberOfComputer(this.pattern);
-      nbPage=(int)Math.ceil((float)nbElement/ELMEMENT_BY_PAGE);
-      currentPage=0;
+      nbPage = (int) Math.ceil((float) nbElement / ELMEMENT_BY_PAGE);
+      currentPage = 0;
     }
   }
   
+
+
   @Override
-  public void setElementByPage(int numberOfElement){
-    if(this.ELMEMENT_BY_PAGE != numberOfElement){
-      this.ELMEMENT_BY_PAGE=numberOfElement;
-      this.list = DAOFactory.DAOFACTORY.getComputerDAO().getNComputers(this.pattern, 0, ELMEMENT_BY_PAGE);
+  public void setElementByPage(int numberOfElement) {
+    if (this.ELMEMENT_BY_PAGE != numberOfElement) {
+      this.ELMEMENT_BY_PAGE = numberOfElement;
       this.nbElement = DAOFactory.DAOFACTORY.getComputerDAO().getNumberOfComputer(this.pattern);
-      this.nbPage=(int)Math.ceil((float)nbElement/this.ELMEMENT_BY_PAGE);
-      currentPage=0;
+      this.nbPage = (int) Math.ceil((float) nbElement / this.ELMEMENT_BY_PAGE);
+      currentPage = 0;
     }
   }
   
-  public String getPattern(){
+  public String getPattern() {
     return this.pattern;
   }
 

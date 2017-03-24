@@ -1,14 +1,16 @@
 package com.excilys.arnaud.service.mapper;
 
 import com.excilys.arnaud.model.dto.CompanyDto;
+import com.excilys.arnaud.model.dto.CompanyDtoList;
 import com.excilys.arnaud.model.metier.Company;
+import com.excilys.arnaud.model.metier.CompanyList;
 
 public enum CompanyMapper {
   COMPANYMAPPER;
 
   /** Map a company to a companyDto.
    * 
-   * @param company A company
+   * @param company A company, not null
    * @return A companyDto who correspond to company
    */
   public CompanyDto companyToDto(Company company) {
@@ -17,7 +19,7 @@ public enum CompanyMapper {
   
   /** Map a companyDto to a company.
    * 
-   * @param companyDto a CompanyDto
+   * @param companyDto a CompanyDto, not null
    * @return A company who correspond to companyDto
    */
   public Company dtoToCompany(CompanyDto companyDto) {
@@ -26,5 +28,18 @@ public enum CompanyMapper {
     } catch (NumberFormatException e) {
       throw new MapperException(companyDto.getId() + " must be a long");
     }
+  }
+  
+  /** Map a companyList to a companyDtoList.
+   * 
+   * @param companyList a list of company, not null
+   * @return A company who correspond to companyDto
+   */
+  public CompanyDtoList companyListToCompanyDtoList(CompanyList companyList) {
+    CompanyDtoList companyDtoList = new CompanyDtoList();
+    for (int i = 0;i < companyList.size(); i++) {
+      companyDtoList.add(i, companyToDto(companyList.get(i)));
+    }
+    return companyDtoList;
   }
 }

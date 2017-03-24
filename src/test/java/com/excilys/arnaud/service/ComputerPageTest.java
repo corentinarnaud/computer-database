@@ -1,9 +1,8 @@
 package com.excilys.arnaud.service;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.excilys.arnaud.model.dto.ComputerDtoList;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,14 +11,14 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.excilys.arnaud.model.metier.Computer;
+
 
 
 
 @RunWith(MockitoJUnitRunner.class)
 public class ComputerPageTest {
   @InjectMocks private static ComputerPage page;
-  @Mock ArrayList<Computer> init;
+  @Mock ComputerDtoList init;
 
   @Before
   public void UpBefore() {
@@ -28,14 +27,14 @@ public class ComputerPageTest {
 
   @Test
   public void testGetPage() {
-    List<Computer> res = page.getPage();
+    ComputerDtoList res = page.getPage();
     assertTrue(res.size() == page.getElementByPage());
 
   }
 
   @Test
   public void testGetNextPage() {
-    List<Computer> res = page.getNextPage();
+    ComputerDtoList res = page.getNextPage();
     assertTrue(res.size() == 3);
     assertTrue(res.get(0).equals(new Integer(10)));
 
@@ -47,7 +46,7 @@ public class ComputerPageTest {
 
   @Test
   public void testGetPrevPage() {
-    List<Computer> res = page.getPrevPage();
+    ComputerDtoList res = page.getPrevPage();
     assertTrue(res.size() == page.getElementByPage());
     assertTrue(res.get(0).equals(new Integer(0)));
 
@@ -60,7 +59,7 @@ public class ComputerPageTest {
 
   @Test
   public void testGetPageN() {
-    List<Computer> res = page.getPageN(1);
+    ComputerDtoList res = page.getPageN(1);
     assertTrue(res.size() == page.getElementByPage());
     assertTrue(res.get(0).equals(new Integer(0)));
 

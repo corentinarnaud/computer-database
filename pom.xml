@@ -117,8 +117,8 @@
 					</reportSet>
 				</reportSets>
 				<configuration>
-					<configLocation>checkstyle.xml</configLocation>
-					<suppressionsLocation>suppressions.xml</suppressionsLocation>
+					<configLocation>config/checkstyle/checkstyle.xml</configLocation>
+					<suppressionsLocation>config/checkstyle/suppressions.xml</suppressionsLocation>
 					<suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
 				</configuration>
 			</plugin>

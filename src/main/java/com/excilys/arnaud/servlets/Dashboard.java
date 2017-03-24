@@ -1,18 +1,14 @@
 package com.excilys.arnaud.servlets;
 
+import com.excilys.arnaud.service.ComputerPage;
+import com.excilys.arnaud.service.ComputerService;
 import java.io.IOException;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import com.excilys.arnaud.model.metier.Computer;
-import com.excilys.arnaud.service.ComputerService;
-import com.excilys.arnaud.service.Page;
-
 
 
 @WebServlet("/dashboard")
@@ -35,34 +31,34 @@ public class Dashboard extends HttpServlet {
     
     if (paramSearch != null) {
       session.setAttribute("search", paramSearch);
-    } else if (session.getAttribute("search")!=null) {
+    } else if (session.getAttribute("search") != null) {
       paramSearch = (String) session.getAttribute("search");
     }
     
-    Page<Computer> computerPage = ComputerService.COMPUTERSERVICE.getComputers(paramSearch);
+    ComputerPage computerPage = ComputerService.COMPUTERSERVICE.getComputers(paramSearch);
     
-    if (paramPage!=null) {
+    if (paramPage != null) {
       switch (paramPage) {
-      case "n" :
-        request.setAttribute("listComputer", computerPage.getNextPage());
-        break;
-      case "p" :
-        request.setAttribute("listComputer", computerPage.getPrevPage());
-        break;
-      default :
-        try {
-          int pageNumber = Integer.parseInt(paramPage);
-          request.setAttribute("listComputer", computerPage.getPageN(pageNumber-1));
-        } catch (NumberFormatException e) {
-          this.getServletContext().getRequestDispatcher("/views/404.jsp")
-          .forward(request, response);
-          return;
-        }
+        case "n" :
+          request.setAttribute("listComputer", computerPage.getNextPage());
+          break;
+        case "p" :
+          request.setAttribute("listComputer", computerPage.getPrevPage());
+          break;
+        default :
+          try {
+            int pageNumber = Integer.parseInt(paramPage);
+            request.setAttribute("listComputer", computerPage.getPageN(pageNumber - 1));
+          } catch (NumberFormatException e) {
+            this.getServletContext().getRequestDispatcher("/views/404.jsp")
+            .forward(request, response);
+            return;
+          }
       }
 
     } else {
       paramPage = request.getParameter("elements");
-      if(paramPage!=null){
+      if (paramPage != null) {
         try {
           int nbElements = Integer.parseInt(paramPage);
           computerPage.setElementByPage(nbElements);
@@ -74,7 +70,7 @@ public class Dashboard extends HttpServlet {
     }
     
     request.setAttribute("nbComputer", computerPage.getNbElement());
-    request.setAttribute("currentPage", computerPage.getCurrentPage()+1);
+    request.setAttribute("currentPage", computerPage.getCurrentPage() + 1);
     request.setAttribute("maxPage", computerPage.getNbPage());
 
     
@@ -89,13 +85,13 @@ public class Dashboard extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     String[] tabId = request.getParameter("selection").split(",");
-    if(tabId!=null && tabId.length!=0 && !tabId[0].isEmpty()){
-      if(tabId.length==1){
+    if (tabId != null && tabId.length != 0 && !tabId[0].isEmpty()) {
+      if (tabId.length == 1) {
         ComputerService.COMPUTERSERVICE.del(Long.parseLong(tabId[0]));
       } else {
         long[] longIds = new long[tabId.length];
-        for(int i = 0;i < tabId.length;i++){
-          longIds[i]=Long.parseLong(tabId[i]);
+        for (int i = 0;i < tabId.length;i++) {
+          longIds[i] = Long.parseLong(tabId[i]);
         }
         
         ComputerService.COMPUTERSERVICE.dels(longIds);

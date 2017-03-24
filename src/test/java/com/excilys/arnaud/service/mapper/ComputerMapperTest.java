@@ -25,13 +25,13 @@ public class ComputerMapperTest {
         afterDate, formatter).atStartOfDay());
     ComputerDto computerDto = new ComputerDto("15656", "dsghsrhges", null, beforeDate, afterDate);
     Computer resultat = new Computer(15656, "dsghsrhges", null, introduced, discontinued);
-    Computer computer = ComputerMapper.COMPUTERMAPPER.mapDtoToMetier(computerDto);
+    Computer computer = ComputerMapper.COMPUTERMAPPER.computerDtoToComputer(computerDto);
     
     assertTrue(computer.equals(resultat));
     
     computerDto = new ComputerDto("15656", "dsghsrhges", null, "sdgqsgg", null);
     try {
-      computer = ComputerMapper.COMPUTERMAPPER.mapDtoToMetier(computerDto);
+      computer = ComputerMapper.COMPUTERMAPPER.computerDtoToComputer(computerDto);
       fail("Eception Was Not Thrown");
     } catch (MapperException e) {
       assertTrue(e.getMessage().contains(" must be at format dd/MM/yyyy"));
@@ -39,7 +39,7 @@ public class ComputerMapperTest {
     
     computerDto = new ComputerDto("15656", "dsghsrhges", null, "10/12/1235", "sdgqsgg");
     try {
-      computer = ComputerMapper.COMPUTERMAPPER.mapDtoToMetier(computerDto);
+      computer = ComputerMapper.COMPUTERMAPPER.computerDtoToComputer(computerDto);
       fail("Eception Was Not Thrown");
     } catch (MapperException e) {
       assertTrue(e.getMessage().contains(" must be at format dd/MM/yyyy"));
@@ -47,7 +47,7 @@ public class ComputerMapperTest {
     
     computerDto = new ComputerDto("vsgswr", "dsghsrhges", null, null, null);
     try {
-      computer = ComputerMapper.COMPUTERMAPPER.mapDtoToMetier(computerDto);
+      computer = ComputerMapper.COMPUTERMAPPER.computerDtoToComputer(computerDto);
       fail("Eception Was Not Thrown");
     } catch (MapperException e) {
       assertTrue(e.getMessage().contains(" can't be parse to long"));
@@ -65,7 +65,7 @@ public class ComputerMapperTest {
     LocalDateTime discontinued = LocalDateTime.from(LocalDate.parse(
         afterDate, formatter).atStartOfDay());
     Computer computer = new Computer(15656, "dsghsrhges", null, introduced, discontinued);
-    ComputerDto computerDto = ComputerMapper.COMPUTERMAPPER.mapMetierToDto(computer);
+    ComputerDto computerDto = ComputerMapper.COMPUTERMAPPER.computerToComputerDto(computer);
 
     assertTrue(computerDto.getId().equals("15656"));
     assertTrue(computerDto.getName().equals("dsghsrhges"));

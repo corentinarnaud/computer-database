@@ -17,19 +17,39 @@ public class ComputerServiceTest {
     Computer computer = new Computer("toto", null, 
         LocalDateTime.from(LocalDate.parse("1993-12-10").atStartOfDay()),
         LocalDateTime.from(LocalDate.parse("1994-12-10").atStartOfDay()));
-    assertTrue(ComputerService.checkDate(computer) == true);
-
+    try {
+      ComputerService.checkDate(computer);
+      assertTrue(true);
+    } catch (ServiceException e) {
+      fail("Eception Was Thrown" + e.getMessage());
+    }
     computer = new Computer("toto", null, 
         LocalDateTime.from(LocalDate.parse("1993-12-10").atStartOfDay()), null);
-    assertTrue(ComputerService.checkDate(computer) == true);
-
+    try {
+      ComputerService.checkDate(computer);
+      assertTrue(true);
+    } catch (ServiceException e) {
+      fail("Eception Was Thrown" + e.getMessage());
+    }
+    
     computer = new Computer("toto", null, null, 
         LocalDateTime.from(LocalDate.parse("1993-12-10").atStartOfDay()));
-    assertTrue(ComputerService.checkDate(computer) == true);
+    try {
+      ComputerService.checkDate(computer);
+      assertTrue(true);
+    } catch (ServiceException e) {
+      fail("Eception Was Thrown" + e.getMessage());
+    }
 
     computer = new Computer("toto", null, null, null);
-    assertTrue(ComputerService.checkDate(computer) == true);
-
+    try {
+      ComputerService.checkDate(computer);
+      assertTrue(true);
+    } catch (ServiceException e) {
+      fail("Eception Was Thrown" + e.getMessage());
+    }
+    
+    
     try {
       computer = new Computer("toto", null, 
           LocalDateTime.from(LocalDate.parse("1993-12-10").atStartOfDay()),
@@ -37,7 +57,7 @@ public class ComputerServiceTest {
       ComputerService.checkDate(computer);
       fail("Eception Was Not Thrown");
     } catch (ServiceException e) {
-      assert (e.getMessage().contains("must be after date of introduction"));
+      assertTrue(e.getMessage().contains("must be after date of introduction"));
     }
 
   }

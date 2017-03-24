@@ -24,21 +24,32 @@ import org.slf4j.LoggerFactory;
 public enum ComputerDAOMySQL implements ComputerDAO {
   COMPUTERDAO;
   private static final Logger logger = LoggerFactory.getLogger(ComputerDAOMySQL.class);
-  private static final String SQL_INSERT = "INSERT INTO computer(name,introduced,discontinued,company_id) VALUES (? ,? ,? ,? )";
-  private static final String SQL_UPDATE = "UPDATE computer SET name=?,introduced=?, discontinued=?, company_id=? WHERE id=?";
-  private static final String SQL_DEL = "DELETE FROM computer WHERE id=?";
-  private static final String SQL_FIND_ID = "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
+  private static final String SQL_INSERT = 
+      "INSERT INTO computer(name,introduced,discontinued,company_id) VALUES (? ,? ,? ,? )";
+  private static final String SQL_UPDATE = 
+      "UPDATE computer SET name=?,introduced=?, discontinued=?, company_id=? WHERE id=?";
+  private static final String SQL_DEL = 
+      "DELETE FROM computer WHERE id=?";
+  private static final String SQL_FIND_ID = 
+      "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
       + "FROM computer LEFT JOIN company ON company_id=company.id WHERE computer.id=?";
-  private static final String SQL_FIND_NAME = "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
+  private static final String SQL_FIND_NAME = 
+      "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
       + "FROM computer LEFT JOIN company ON company_id=company.id WHERE computer.name=?";
-  private static final String SQL_COMPUTERS = "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
+  private static final String SQL_COMPUTERS = 
+      "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
       + "FROM computer LEFT JOIN company ON company_id=company.id";
-  private static final String SQL_N_COMPUTERS = "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
+  private static final String SQL_N_COMPUTERS = 
+      "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
       + "FROM computer LEFT JOIN company ON company_id=company.id LIMIT ?, ?";
-  private static final String SQL_N_COMPUTERS_PATTERN = "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
-      + "FROM computer LEFT JOIN company ON company_id=company.id " + "WHERE computer.name LIKE ? LIMIT ?, ?";
-  private static final String SQL_NUMBER_OF_COMPUTERS = "SELECT COUNT(*) FROM computer";
-  private static final String SQL_NUMBER_OF_COMPUTERS_PATTERN = "SELECT COUNT(*) FROM computer WHERE name LIKE ?";
+  private static final String SQL_N_COMPUTERS_PATTERN = 
+      "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
+      + "FROM computer LEFT JOIN company ON company_id=company.id " 
+      + "WHERE computer.name LIKE ? LIMIT ?, ?";
+  private static final String SQL_NUMBER_OF_COMPUTERS = 
+      "SELECT COUNT(*) FROM computer";
+  private static final String SQL_NUMBER_OF_COMPUTERS_PATTERN = 
+      "SELECT COUNT(*) FROM computer WHERE name LIKE ?";
 
   private ComputerDAOMySQL() {
 
@@ -76,7 +87,8 @@ public enum ComputerDAOMySQL implements ComputerDAO {
 
         int statut = addStatement.executeUpdate();
         if (statut == 0) {
-          throw new DAOException("Échec de la création de l'ordinateur, " + "aucune ligne ajoutée dans la table.");
+          throw new DAOException(
+              "Échec de la création de l'ordinateur, " + "aucune ligne ajoutée dans la table.");
         }
         /* Récupération de l'id auto-généré par la requête d'insertion */
         valeursAutoGenerees = addStatement.getGeneratedKeys();
@@ -84,8 +96,10 @@ public enum ComputerDAOMySQL implements ComputerDAO {
           id = valeursAutoGenerees.getLong(1);
           computer.setId(id);
         } else {
-          logger.debug("Échec de la création de l'ordinateur en base, " + "aucun ID auto-généré retourné.");
-          throw new DAOException("Échec de la création de l'ordinateur en base, " + "aucun ID auto-généré retourné.");
+          logger.debug("Échec de la création de l'ordinateur en base, " 
+                       + "aucun ID auto-généré retourné.");
+          throw new DAOException("Échec de la création de l'ordinateur en base, " 
+                                 + "aucun ID auto-généré retourné.");
         }
         logger.info("Création de l'ordinateur {} en base", id);
         return id;
@@ -250,7 +264,8 @@ public enum ComputerDAOMySQL implements ComputerDAO {
             }
           }
 
-          return Optional.ofNullable(new Computer(Integer.parseInt(resultat.getString("computer.id")),
+          return Optional.ofNullable(
+              new Computer(Integer.parseInt(resultat.getString("computer.id")),
               resultat.getString("computer.name"), comp, introduced, discontinued));
         }
 
@@ -293,7 +308,8 @@ public enum ComputerDAOMySQL implements ComputerDAO {
           }
         }
 
-        list.add(new Computer(Integer.parseInt(resultat.getString("computer.id")), resultat.getString("computer.name"),
+        list.add(new Computer(Integer.parseInt(
+            resultat.getString("computer.id")), resultat.getString("computer.name"),
             comp, introduced, discontinued));
       }
       return list;
@@ -313,10 +329,10 @@ public enum ComputerDAOMySQL implements ComputerDAO {
     PreparedStatement statement = null;
     ResultSet resultat = null;
     Connection connection = null;
+    ComputerList list = new ComputerList();
 
     if (begin >= 0 && nbComputer > 0) {
       try {
-        ComputerList list = new ComputerList();
         connection = DataBaseConnection.CONNECTION.getConnection();
         statement = connection.prepareStatement(SQL_N_COMPUTERS);
         statement.setInt(1, begin);
@@ -352,7 +368,7 @@ public enum ComputerDAOMySQL implements ComputerDAO {
         DAOUtils.closeConnection(connection);
       }
     }
-    return null;
+    return list;
   }
 
   @Override
@@ -363,10 +379,10 @@ public enum ComputerDAOMySQL implements ComputerDAO {
     PreparedStatement statement = null;
     ResultSet resultat = null;
     Connection connection = null;
+    ComputerList list = new ComputerList();
 
     if (begin > 0 && nbComputer > 0) {
       try {
-        ComputerList list = new ComputerList();
         connection = DataBaseConnection.CONNECTION.getConnection();
         statement = connection.prepareStatement(SQL_N_COMPUTERS_PATTERN);
         statement.setString(1, "%" + pattern + "%");
@@ -392,7 +408,7 @@ public enum ComputerDAOMySQL implements ComputerDAO {
           list.add(new Computer(Integer.parseInt(resultat.getString("computer.id")),
               resultat.getString("computer.name"), comp, introduced, discontinued));
         }
-        return list;
+
 
       } catch (SQLException e) {
         logger.debug(e.getMessage());
@@ -403,7 +419,7 @@ public enum ComputerDAOMySQL implements ComputerDAO {
         DAOUtils.closeConnection(connection);
       }
     }
-    return null;
+    return list;
   }
 
   @Override
@@ -497,7 +513,7 @@ public enum ComputerDAOMySQL implements ComputerDAO {
         DAOUtils.closeConnection(connection);
       }
     }
-    return null;
+    return new boolean[0];
   }
 
 }

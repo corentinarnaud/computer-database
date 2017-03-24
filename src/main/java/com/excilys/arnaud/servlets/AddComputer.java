@@ -1,31 +1,33 @@
 package com.excilys.arnaud.servlets;
 
+import com.excilys.arnaud.model.dto.CompanyDto;
+import com.excilys.arnaud.model.dto.CompanyDtoList;
+import com.excilys.arnaud.model.dto.ComputerDto;
+import com.excilys.arnaud.service.CompanyService;
+import com.excilys.arnaud.service.ComputerService;
+import com.excilys.arnaud.service.ServiceException;
+import com.excilys.arnaud.service.mapper.MapperException;
+
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Optional;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.excilys.arnaud.model.metier.Company;
-import com.excilys.arnaud.model.metier.CompanyList;
-import com.excilys.arnaud.model.metier.Computer;
-import com.excilys.arnaud.service.CompanyService;
-import com.excilys.arnaud.service.ComputerService;
-import com.excilys.arnaud.service.ServiceException;
+
 
 
 
 @WebServlet("/addComputer")
 public class AddComputer extends HttpServlet  {
 
-  /**
+  /** serialVersionUID.
    * 
    */
   private static final long serialVersionUID = 8749145544902853202L;
@@ -34,7 +36,7 @@ public class AddComputer extends HttpServlet  {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) 
       throws ServletException, IOException {
-    CompanyList companyList = CompanyService.COMPANYSERVICE.getCompanyList();
+    CompanyDtoList companyList = CompanyService.COMPANYSERVICE.getCompanyList();
     String name = request.getParameter("computerName");
     String introducedString = request.getParameter("introduced");
     String discontinuedString = request.getParameter("discontinued");
@@ -42,34 +44,28 @@ public class AddComputer extends HttpServlet  {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     LocalDateTime introduced = null;
     LocalDateTime discontinued = null;
-    Company company = null;
+    CompanyDto company = null;
     
     
     
-    if (name!=null && !name.equals("")) {
+    if (name != null && !name.equals("")) {
       
       
 
       try {
-      if (introducedString!=null && !introducedString.isEmpty()) {
-        introduced = LocalDateTime
-            .from(LocalDate.parse(introducedString, formatter).atStartOfDay());
-        if (discontinuedString!=null && !discontinuedString.isEmpty()) {
-          discontinued = LocalDateTime
-              .from(LocalDate.parse(discontinuedString, formatter).atStartOfDay());
+       
+        if (companyIDString != null && !companyIDString.isEmpty() && !companyIDString.equals("0")) {
+          Optional<CompanyDto> opt = 
+              CompanyService.COMPANYSERVICE.findById(Long.parseLong(companyIDString));
+          company = opt.isPresent() ? opt.get() : null;
         }
-      }
       
-      if (companyIDString!=null && !companyIDString.isEmpty() && !companyIDString.equals("0")) {
-        Optional<Company> opt = CompanyService.COMPANYSERVICE.findById(Long.parseLong(companyIDString));
-        company = opt.isPresent() ? opt.get() : null;
-      }
-      
-        ComputerService.COMPUTERSERVICE.add(new Computer(name, company, introduced, discontinued));
+        ComputerService.COMPUTERSERVICE.add(
+            new ComputerDto(name, company, introducedString, discontinuedString));
       } catch (ServiceException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
-      } catch( DateTimeParseException e ){
+      } catch( MapperException e ){
         
       }
     }
@@ -84,7 +80,7 @@ public class AddComputer extends HttpServlet  {
   public void doGet(HttpServletRequest request, HttpServletResponse response) 
       throws ServletException, IOException {
     
-    CompanyList companyList = CompanyService.COMPANYSERVICE.getCompanyList();
+    CompanyDtoList companyList = CompanyService.COMPANYSERVICE.getCompanyList();
     request.setAttribute("listCompany", companyList);
     
     this.getServletContext().getRequestDispatcher("/views/addComputer.jsp")
@@ -92,5 +88,5 @@ public class AddComputer extends HttpServlet  {
   }
   
   
- }
+}
 
