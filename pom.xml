@@ -4,7 +4,7 @@
 	<groupId>com.excilys.burleon</groupId>
 	<artifactId>ComputerDatabase</artifactId>
 	<packaging>war</packaging>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.0.2-REALEASE</version>
 	<name>ComputerDatabase Maven Webapp</name>
 	<url>http://maven.apache.org</url>
 	<properties>
@@ -24,8 +24,14 @@
 		<version.jsp>2.1</version.jsp>
 		<version.jstl>1.2</version.jstl>
 		<version.servlet>3.1.0</version.servlet>
+		<version.hikari>2.6.1</version.hikari>
 	</properties>
 	<dependencies>
+		<dependency>
+    		<groupId>com.zaxxer</groupId>
+    		<artifactId>HikariCP</artifactId>
+    		<version>${version.hikari}</version>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -106,6 +112,7 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>${version.logback}</version>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
