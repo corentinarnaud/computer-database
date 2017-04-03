@@ -48,10 +48,6 @@ public abstract class Page<E> {
     return list;
   }
 
-  public abstract List<E> getNextPage();
-
-  public abstract List<E> getPrevPage();
-
   public abstract List<E> getPageN(int n);
 
   public String toString() {

@@ -22,10 +22,9 @@ public class ComputerPage extends Page<ComputerDto> {
    */
   public ComputerPage(String pattern) {
     this.pattern = pattern;
-    this.list = ComputerMapper.COMPUTERMAPPER.computerListToComputerDtoList(
-        DAOFactory.DAOFACTORY.getComputerDAO().getNComputers(pattern, 0, ELMEMENT_BY_PAGE));
-    this.nbElement = DAOFactory.DAOFACTORY.getComputerDAO().getNumberOfComputer(pattern);
+    this.nbElement = DAOFactory.DAOFACTORY.getComputerDAO().getNumberOfComputer(this.pattern);
     nbPage = (int) Math.ceil((float) nbElement / ELMEMENT_BY_PAGE);
+    currentPage = 0;
   }
  
   @Override
@@ -38,21 +37,6 @@ public class ComputerPage extends Page<ComputerDto> {
     return list;
   }
   
-  @Override
-  public ComputerDtoList getNextPage() {
-    if (currentPage < nbPage - 1) {
-      currentPage++;
-    }
-    return getPage();
-  }
-
-  @Override
-  public ComputerDtoList getPrevPage() {
-    if (currentPage > 0) {
-      currentPage--;
-    }
-    return getPage();
-  }
 
   @Override
   public ComputerDtoList getPageN(int n) {

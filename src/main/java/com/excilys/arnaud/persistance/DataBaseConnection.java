@@ -10,10 +10,13 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
 public enum DataBaseConnection {
   CONNECTION;
-
   private static final String PROPERTY_FILE      = "resources/config.properties";
+
   private static final String PROPERTY_BASE      = "base";
   private static final String PROPERTY_URL       = "url";
   private static final String PROPERTY_ARGUMENTS = "arguments";
@@ -29,9 +32,36 @@ public enum DataBaseConnection {
   private String password;
   private String base;
   private String arguments;
+  private HikariDataSource ds;
 
   private DataBaseConnection() {
     getProperties();
+    initialistation();
+    
+  }
+  
+  private void initialistation() {
+    try {
+      Class.forName(driver);
+      HikariConfig cfg = new HikariConfig();
+      cfg.setJdbcUrl(base + url + arguments);
+      cfg.setUsername(user);
+      cfg.setPassword(password);
+      cfg.setMaximumPoolSize(20);
+      ds = new HikariDataSource(cfg);
+      
+      // To close the datasource when the server is closing
+      Runtime.getRuntime().addShutdownHook(new Thread() {
+          @Override
+          public void run() {
+              DataBaseConnection.this.ds.close();
+          }
+      });
+      
+    } catch (ClassNotFoundException e) {
+      LOGGER.debug("Driver not found");
+      throw new DAOConfigurationException("Driver not found", e);
+    }
   }
 
   private void getProperties() throws DAOConfigurationException {
@@ -62,23 +92,18 @@ public enum DataBaseConnection {
 
   }
 
-  public Connection getConnection()
-      throws DAOConfigurationException, DAOException {
 
+  
+  public Connection getConnection(){
+
+   
+      
     try {
-
-      Class.forName(driver);
-      Connection connection = DriverManager
-          .getConnection(base + url + arguments, user, password);
-      return connection;
-    } catch (ClassNotFoundException e) {
-      LOGGER.debug("Driver not found");
-      throw new DAOConfigurationException("Driver not found", e);
+      return ds.getConnection();
     } catch (SQLException e) {
       LOGGER.debug("Fail to connect to the base");
       throw new DAOException("Fail to connect to the base", e);
     }
-
   }
 
 }

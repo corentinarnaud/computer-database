@@ -19,7 +19,9 @@ public enum ComputerService {
    */
   public long add(ComputerDto computerDto) throws ServiceException {
     Computer computer = ComputerMapper.COMPUTERMAPPER.computerDtoToComputer(computerDto);
-    checkDate(computer);
+    System.out.println(computer);
+    ServiceUtils.checkDate(computer);
+    ServiceUtils.checkName(computer.getName());
     return computerDAO.add(computer);
   }
 
@@ -30,7 +32,8 @@ public enum ComputerService {
    */
   public boolean update(ComputerDto computerDto) throws ServiceException {
     Computer computer = ComputerMapper.COMPUTERMAPPER.computerDtoToComputer(computerDto);
-    checkDate(computer);
+    ServiceUtils.checkDate(computer);
+    ServiceUtils.checkName(computer.getName());
     return computerDAO.update(computer);
   }
 
@@ -72,23 +75,11 @@ public enum ComputerService {
     return new ComputerPage(pattern);
   }
 
-  /** Check if introduced Date is before discontinued Date.
-   * @param computer The computer to test
-   * @throws ServiceException if introduced date is after discontinued date
-   */
-  public static void checkDate(Computer computer) throws ServiceException {
-    if (computer.getIntroduced() == null || computer.getDiscontinued() == null
-        || computer.getIntroduced().isBefore(computer.getDiscontinued())) {
-      return;
-    }
-    throw new ServiceException("Date of discontinuation "
-        + computer.getDiscontinued() + " must be after date of introduction "
-        + computer.getIntroduced());
-  }
 
   public boolean[] dels(long[] longIds) {
     return computerDAO.dels(longIds);
     
   }
+  
 
 }

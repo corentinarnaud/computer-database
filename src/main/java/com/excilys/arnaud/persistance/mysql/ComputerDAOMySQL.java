@@ -45,7 +45,7 @@ public enum ComputerDAOMySQL implements ComputerDAO {
   private static final String SQL_N_COMPUTERS_PATTERN = 
       "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
       + "FROM computer LEFT JOIN company ON company_id=company.id " 
-      + "WHERE computer.name LIKE ? LIMIT ?, ?";
+      + "WHERE computer.name LIKE ? OR company.name LIKE ? LIMIT ?, ?";
   private static final String SQL_NUMBER_OF_COMPUTERS = 
       "SELECT COUNT(*) FROM computer";
   private static final String SQL_NUMBER_OF_COMPUTERS_PATTERN = 
@@ -61,6 +61,8 @@ public enum ComputerDAOMySQL implements ComputerDAO {
     ResultSet valeursAutoGenerees = null;
     PreparedStatement addStatement = null;
     Connection connection = null;
+    
+    System.out.println("plop");
     if (computer != null) {
       try {
         connection = DataBaseConnection.CONNECTION.getConnection();
@@ -373,7 +375,7 @@ public enum ComputerDAOMySQL implements ComputerDAO {
 
   @Override
   public ComputerList getNComputers(String pattern, int begin, int nbComputer) throws DAOException {
-    if (pattern == null) {
+    if (pattern == null || pattern.isEmpty()) {
       return getNComputers(begin, nbComputer);
     }
     PreparedStatement statement = null;
@@ -381,15 +383,18 @@ public enum ComputerDAOMySQL implements ComputerDAO {
     Connection connection = null;
     ComputerList list = new ComputerList();
 
-    if (begin > 0 && nbComputer > 0) {
+    if (begin >= 0 && nbComputer > 0) {
       try {
         connection = DataBaseConnection.CONNECTION.getConnection();
         statement = connection.prepareStatement(SQL_N_COMPUTERS_PATTERN);
         statement.setString(1, "%" + pattern + "%");
-        statement.setInt(2, begin);
-        statement.setInt(3, nbComputer);
+        statement.setString(2, "%" + pattern + "%");
+        statement.setInt(3, begin);
+        statement.setInt(4, nbComputer);
         resultat = statement.executeQuery();
+
         while (resultat.next()) {
+
           LocalDateTime introduced = null;
           LocalDateTime discontinued = null;
           Company comp = null;

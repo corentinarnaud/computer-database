@@ -41,15 +41,10 @@ public class AddComputer extends HttpServlet  {
     String introducedString = request.getParameter("introduced");
     String discontinuedString = request.getParameter("discontinued");
     String companyIDString = request.getParameter("companyId");
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    LocalDateTime introduced = null;
-    LocalDateTime discontinued = null;
     CompanyDto company = null;
     
     
-    
     if (name != null && !name.equals("")) {
-      
       
 
       try {
@@ -66,7 +61,7 @@ public class AddComputer extends HttpServlet  {
         // TODO Auto-generated catch block
         e.printStackTrace();
       } catch( MapperException e ){
-        
+        e.printStackTrace();
       }
     }
 

@@ -201,11 +201,11 @@ public class CLI {
           loop = false;
           break;
         case "p":
-          System.out.println(page.getPrevPage());
+          System.out.println(page.getPageN(page.getCurrentPage() - 1));
           System.out.println("\t\t\t\tPage " + page.getCurrentPage());
           break;
         case "n":
-          System.out.println(page.getNextPage());
+          System.out.println(page.getPageN(page.getCurrentPage() + 1));
           System.out.println("\t\t\t\tPage " + page.getCurrentPage());
           break;
         case "f":

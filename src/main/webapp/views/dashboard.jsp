@@ -1,5 +1,6 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="h" uri="/WEB-INF/tags.tld"%>
 <%@ page isELIgnored="false"%>
 <html>
 <head>
@@ -29,8 +30,8 @@
 					<form id="searchForm" action="#" method="GET" class="form-inline">
 
 						<input type="search" id="searchbox" name="search"
-							class="form-control" placeholder="Search name" /> <input
-							type="submit" id="searchsubmit" value="Filter by name"
+							class="form-control" placeholder="Search name" /> 
+						<input type="submit" id="searchsubmit" value="Filter by name"
 							class="btn btn-primary" />
 					</form>
 				</div>
@@ -76,9 +77,9 @@
 						<tr>
 							<td class="editMode"><input type="checkbox" name="cb"
 								class="cb" value="${ computer.getId() }"></td>
-							<td><a href="editComputer" onclick="">${ computer.getName() }</a></td>
-							<td>${ computer.getIntroducedFormated() }</td>
-							<td>${ computer.getDiscontinuedFormated() }</td>
+							<td><a href="editComputer?id=${ computer.getId() }" onclick="">${ computer.getName() }</a></td>
+							<td>${ computer.getIntroduced() }</td>
+							<td>${ computer.getDiscontinued() }</td>
 							<td>${ computer.getCompany().getName() }</td>
 
 						</tr>
@@ -95,11 +96,11 @@
 			<div class="container text-center">
 				<ul class="pagination">
 					<c:if test="${ currentPage >1 }">
-						<li><a href="/ComputerDatabase/dashboard?page=${ 1 }"
+						<li><a href=<h:link page="${ 1 }" nbElements="${ elements }" search="${ search }"/>
 							aria-label="Begin"> <span aria-hidden="true">&laquo;</span>
 						</a></li>
 						<li><a
-							href="/ComputerDatabase/dashboard?page=${ currentPage - 1}"
+							href=<h:link page="${ currentPage - 1}" nbElements="${ elements }" search="${ search }"/>
 							aria-label="Previous"> <span aria-hidden="true">&lt;</span>
 						</a></li>
 					</c:if>
@@ -111,7 +112,7 @@
 										<li><a style="color: #FF0000">${ i }</a></li>
 									</c:when>
 									<c:otherwise>
-										<li><a href="/ComputerDatabase/dashboard?page=${ i }">${ i }</a></li>
+										<li><a href=<h:link page="${ i }" nbElements="${ elements }" search="${ search }"/>>${ i }</a></li>
 									</c:otherwise>
 								</c:choose>
 							</c:forEach>
@@ -123,7 +124,7 @@
 										<li><a style="color: #FF0000">${ i }</a></li>
 									</c:when>
 									<c:otherwise>
-										<li><a href="/ComputerDatabase/dashboard?page=${ i }">${ i }</a></li>
+										<li><a href=<h:link page="${ i }" nbElements="${ elements }" search="${ search }"/>>${ i }</a></li>
 									</c:otherwise>
 								</c:choose>
 							</c:forEach>
@@ -136,7 +137,7 @@
 										<li><a style="color: #FF0000">${ i }</a></li>
 									</c:when>
 									<c:otherwise>
-										<li><a href="/ComputerDatabase/dashboard?page=${ i }">${ i }</a></li>
+										<li><a href=<h:link page="${ i }" nbElements="${ elements }" search="${ search }"/>>${ i }</a></li>
 									</c:otherwise>
 								</c:choose>
 							</c:forEach>
@@ -144,19 +145,19 @@
 					</c:choose>
 					<c:if test="${ currentPage < maxPage }">
 						<li><a
-							href="/ComputerDatabase/dashboard?page=${ currentPage + 1}"
+							href=<h:link page="${ currentPage + 1}" nbElements="${ elements }" search="${ search }"/>
 							aria-label="Next"> <span aria-hidden="true">&gt;</span>
 						</a></li>
-						<li><a href="/ComputerDatabase/dashboard?page=${ maxPage }"
+						<li><a href=<h:link page="${ maxPage }" nbElements="${ elements }" search="${ search }"/>
 							aria-label="End"> <span aria-hidden="true">&raquo;</span>
 						</a></li>
 					</c:if>
 				</ul>
 				<div class="pull-right">
 					<ul class="pagination">
-						<li><a href="/ComputerDatabase/dashboard?elements=10">10</a></li>
-						<li><a href="/ComputerDatabase/dashboard?elements=25">25</a></li>
-						<li><a href="/ComputerDatabase/dashboard?elements=50">50</a></li>
+						<li><a href=<h:link page="${ currentPage }" nbElements="10" search="${ search }"/>>10</a></li>
+						<li><a href=<h:link page="${ currentPage }" nbElements="25" search="${ search }"/>>25</a></li>
+						<li><a href=<h:link page="${ currentPage }" nbElements="50" search="${ search }"/>>50</a></li>
 					</ul>
 				</div>
 			</div>

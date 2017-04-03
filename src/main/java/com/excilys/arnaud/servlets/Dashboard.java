@@ -25,50 +25,40 @@ public class Dashboard extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) 
       throws ServletException, IOException {
     
-    HttpSession session = request.getSession();
+
     String paramPage = request.getParameter("page");
     String paramSearch = request.getParameter("search");
+    String paramElements = request.getParameter("elements");
+    int pageNumber;
     
-    if (paramSearch != null) {
-      session.setAttribute("search", paramSearch);
-    } else if (session.getAttribute("search") != null) {
-      paramSearch = (String) session.getAttribute("search");
+    if (paramSearch == null) {
+      paramSearch = "";
+    } else {
+      request.setAttribute("search", paramSearch);
     }
+
     
     ComputerPage computerPage = ComputerService.COMPUTERSERVICE.getComputers(paramSearch);
     
+    if (paramElements != null) {
+      computerPage.setElementByPage(Integer.parseInt(paramElements));
+      request.setAttribute("elements", paramElements);
+    }
+    
     if (paramPage != null) {
-      switch (paramPage) {
-        case "n" :
-          request.setAttribute("listComputer", computerPage.getNextPage());
-          break;
-        case "p" :
-          request.setAttribute("listComputer", computerPage.getPrevPage());
-          break;
-        default :
-          try {
-            int pageNumber = Integer.parseInt(paramPage);
-            request.setAttribute("listComputer", computerPage.getPageN(pageNumber - 1));
-          } catch (NumberFormatException e) {
-            this.getServletContext().getRequestDispatcher("/views/404.jsp")
-            .forward(request, response);
-            return;
-          }
+      try {
+        pageNumber = Integer.parseInt(paramPage);
+      } catch (NumberFormatException e) {
+        this.getServletContext().getRequestDispatcher("/views/404.jsp")
+        .forward(request, response);
+        return;
       }
 
     } else {
-      paramPage = request.getParameter("elements");
-      if (paramPage != null) {
-        try {
-          int nbElements = Integer.parseInt(paramPage);
-          computerPage.setElementByPage(nbElements);
-        } catch (NumberFormatException e) {
-          
-        }
-      }
-      request.setAttribute("listComputer", computerPage.getPage());
+      pageNumber = 1;
     }
-    
+
+    request.setAttribute("listComputer", computerPage.getPageN(pageNumber - 1));
     request.setAttribute("nbComputer", computerPage.getNbElement());
     request.setAttribute("currentPage", computerPage.getCurrentPage() + 1);
     request.setAttribute("maxPage", computerPage.getNbPage());
@@ -84,21 +74,23 @@ public class Dashboard extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
-    String[] tabId = request.getParameter("selection").split(",");
-    if (tabId != null && tabId.length != 0 && !tabId[0].isEmpty()) {
-      if (tabId.length == 1) {
-        ComputerService.COMPUTERSERVICE.del(Long.parseLong(tabId[0]));
-      } else {
-        long[] longIds = new long[tabId.length];
-        for (int i = 0;i < tabId.length;i++) {
-          longIds[i] = Long.parseLong(tabId[i]);
+    String ids = request.getParameter("selection");
+    if (ids != null) {
+      String[] tabId = ids.split(",");
+      if (tabId != null && tabId.length != 0 && !tabId[0].isEmpty()) {
+        if (tabId.length == 1) {
+          ComputerService.COMPUTERSERVICE.del(Long.parseLong(tabId[0]));
+        } else {
+          long[] longIds = new long[tabId.length];
+          for (int i = 0;i < tabId.length;i++) {
+            longIds[i] = Long.parseLong(tabId[i]);
+          }
+          
+          ComputerService.COMPUTERSERVICE.dels(longIds);
         }
-        
-        ComputerService.COMPUTERSERVICE.dels(longIds);
+           
       }
-         
     }
-    
     doGet(request,response);
   }
 

@@ -14,21 +14,6 @@ public class CompanyPage extends Page<CompanyDto> {
     nbPage = (int) Math.ceil((float) nbElement / ELMEMENT_BY_PAGE);
   }
 
-  @Override
-  public List<CompanyDto> getNextPage() {
-    if (currentPage < nbPage - 1) {
-      currentPage++;
-    }
-    return getPage();
-  }
-
-  @Override
-  public List<CompanyDto> getPrevPage() {
-    if (currentPage > 0) {
-      currentPage--;
-    }
-    return getPage();
-  }
 
   @Override
   public List<CompanyDto> getPageN(int n) {

@@ -17,7 +17,7 @@ import java.time.format.DateTimeParseException;
 public enum ComputerMapper {
   COMPUTERMAPPER;
   
-  private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+  private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
   
   /** Map computer dto to computer metier.
@@ -27,10 +27,15 @@ public enum ComputerMapper {
   public Computer computerDtoToComputer(ComputerDto computerDto) {
     LocalDateTime introduced;
     LocalDateTime discontinued;
+    long id = 0;
     Company company;
     
     try {
-      if (computerDto.getIntroduced() != null) {
+      if (computerDto.getId() != null && computerDto.getId() != "" ) {
+        id = Long.parseLong(computerDto.getId());
+      }
+      
+      if (computerDto.getIntroduced() != null && !computerDto.getIntroduced().equals("")) {
         try {
           introduced = LocalDateTime.from(LocalDate.parse(
               computerDto.getIntroduced(), formatter).atStartOfDay());
@@ -38,7 +43,7 @@ public enum ComputerMapper {
           throw new MapperException(computerDto.getIntroduced() + " must be at format dd/MM/yyyy");
         }
       
-        if (computerDto.getDiscontinued() != null) {
+        if (computerDto.getDiscontinued() != null && !computerDto.getDiscontinued().equals("")) {
           try {
             discontinued = LocalDateTime.from(LocalDate.parse(
               computerDto.getDiscontinued(), formatter).atStartOfDay());
@@ -60,7 +65,7 @@ public enum ComputerMapper {
         company = null;
       }
       
-      return new Computer(Long.parseLong(computerDto.getId()),computerDto.getName(),
+      return new Computer(id,computerDto.getName(),
                                        company,
                                        introduced, discontinued);
     } catch (NumberFormatException e) {
