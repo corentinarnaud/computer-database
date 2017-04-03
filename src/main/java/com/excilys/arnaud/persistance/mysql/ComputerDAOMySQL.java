@@ -41,11 +41,11 @@ public enum ComputerDAOMySQL implements ComputerDAO {
       + "FROM computer LEFT JOIN company ON company_id=company.id";
   private static final String SQL_N_COMPUTERS = 
       "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
-      + "FROM computer LEFT JOIN company ON company_id=company.id LIMIT ?, ?";
+      + "FROM computer LEFT JOIN company ON company_id=company.id ORDER BY orderby LIMIT ?, ?";
   private static final String SQL_N_COMPUTERS_PATTERN = 
       "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
       + "FROM computer LEFT JOIN company ON company_id=company.id " 
-      + "WHERE computer.name LIKE ? OR company.name LIKE ? LIMIT ?, ?";
+      + "WHERE computer.name LIKE ? OR company.name LIKE ? ORDER BY orderby LIMIT ?, ?";
   private static final String SQL_NUMBER_OF_COMPUTERS = 
       "SELECT COUNT(*) FROM computer";
   private static final String SQL_NUMBER_OF_COMPUTERS_PATTERN = 
@@ -327,16 +327,25 @@ public enum ComputerDAOMySQL implements ComputerDAO {
   }
 
   @Override
-  public ComputerList getNComputers(int begin, int nbComputer) throws DAOException {
+  public ComputerList getNComputers(int begin, int nbComputer, int orderBy) throws DAOException {
     PreparedStatement statement = null;
     ResultSet resultat = null;
     Connection connection = null;
     ComputerList list = new ComputerList();
+    ComputerAtrribute[] attributes = ComputerAtrribute.values();
 
     if (begin >= 0 && nbComputer > 0) {
       try {
         connection = DataBaseConnection.CONNECTION.getConnection();
-        statement = connection.prepareStatement(SQL_N_COMPUTERS);
+
+        
+        if (orderBy >= 0 && orderBy < attributes.length) {
+          statement = connection.prepareStatement(
+              SQL_N_COMPUTERS.replaceAll("orderby", attributes[orderBy].getName()));
+        } else {
+          statement = connection.prepareStatement(
+              SQL_N_COMPUTERS.replaceAll("orderby", attributes[0].getName()));
+        }
         statement.setInt(1, begin);
         statement.setInt(2, nbComputer);
         resultat = statement.executeQuery();
@@ -374,19 +383,29 @@ public enum ComputerDAOMySQL implements ComputerDAO {
   }
 
   @Override
-  public ComputerList getNComputers(String pattern, int begin, int nbComputer) throws DAOException {
+  public ComputerList getNComputers(String pattern, int begin, int nbComputer, int orderBy) 
+      throws DAOException {
     if (pattern == null || pattern.isEmpty()) {
-      return getNComputers(begin, nbComputer);
+      return getNComputers(begin, nbComputer, orderBy);
     }
     PreparedStatement statement = null;
     ResultSet resultat = null;
     Connection connection = null;
     ComputerList list = new ComputerList();
+    ComputerAtrribute[] attributes = ComputerAtrribute.values();
 
     if (begin >= 0 && nbComputer > 0) {
       try {
         connection = DataBaseConnection.CONNECTION.getConnection();
-        statement = connection.prepareStatement(SQL_N_COMPUTERS_PATTERN);
+
+
+        if (orderBy >= 0 && orderBy < attributes.length) {
+          statement = connection.prepareStatement(
+              SQL_N_COMPUTERS_PATTERN.replaceAll("orderby", attributes[orderBy].getName()));
+        } else {
+          statement = connection.prepareStatement(
+              SQL_N_COMPUTERS_PATTERN.replaceAll("orderby", attributes[0].getName()));
+        }
         statement.setString(1, "%" + pattern + "%");
         statement.setString(2, "%" + pattern + "%");
         statement.setInt(3, begin);

@@ -62,12 +62,16 @@
 									class="fa fa-trash-o fa-lg"></i>
 							</a>
 						</span></th>
-						<th>Computer name</th>
-						<th>Introduced date</th>
+						<th><a href="<h:link page="${ 1 }" nbElements="${ elements }" 
+								search="${ search }" orderBy="1"/>">Computer name</a></th>
+						<th><a href="<h:link page="${ 1 }" nbElements="${ elements }" 
+								search="${ search }" orderBy="2"/>">Introduced date</a></th>
 						<!-- Table header for Discontinued Date -->
-						<th>Discontinued date</th>
+						<th><a href="<h:link page="${ 1 }" nbElements="${ elements }" 
+								search="${ search }" orderBy="3"/>">Discontinued date</a></th>
 						<!-- Table header for Company -->
-						<th>Company</th>
+						<th><a href="<h:link page="${ 1 }" nbElements="${ elements }" 
+								search="${ search }" orderBy="4"/>">Company</a></th>
 
 					</tr>
 				</thead>

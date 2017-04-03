@@ -1,5 +1,7 @@
 package com.excilys.arnaud.persistance.mysql;
 
+
+
 public enum ComputerAtrribute {
   ID("computer.id"),
   NAME("computer.name"),
@@ -13,6 +15,7 @@ public enum ComputerAtrribute {
     this.name = name;
   }
   
+
   public String getName() {
     return name;
   }

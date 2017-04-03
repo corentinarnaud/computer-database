@@ -26,6 +26,12 @@
 			<rtexprvalue>true</rtexprvalue>
 			<type>Integer</type>
 		</attribute>
+		<attribute>
+			<name>orderBy</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>Integer</type>
+		</attribute>
 	</tag>
 	<tag>
 		<name>formatDate</name>

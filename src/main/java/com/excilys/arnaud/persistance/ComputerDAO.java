@@ -62,14 +62,16 @@ public interface ComputerDAO extends DAO{
    * @return List of computers
    * @throws DAOException : if the connection fail
    */
-  public ComputerList getNComputers(int begin, int nbComputer) throws DAOException;
+  public ComputerList getNComputers(int begin, int nbComputer, int orderBy) 
+      throws DAOException;
   
   
   /** .
    * @return List of computers that contain patern in name
    * @throws DAOException : if the connection fail
    */
-  public ComputerList getNComputers(String pattern, int begin, int nbComputer) throws DAOException;
+  public ComputerList getNComputers(String pattern, int begin, int nbComputer, int orderBy) 
+      throws DAOException;
   
   
   public int getNumberOfComputer() throws DAOException;

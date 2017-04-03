@@ -10,6 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 @WebServlet("/dashboard")
 public class Dashboard extends HttpServlet {
@@ -18,6 +21,7 @@ public class Dashboard extends HttpServlet {
    * 
    */
   private static final long serialVersionUID = -8598220867287616063L;
+  private static final Logger logger = LoggerFactory.getLogger(Dashboard.class);
   
   
   
@@ -29,6 +33,7 @@ public class Dashboard extends HttpServlet {
     String paramPage = request.getParameter("page");
     String paramSearch = request.getParameter("search");
     String paramElements = request.getParameter("elements");
+    String paramOrderBy = request.getParameter("order");
     int pageNumber;
     
     if (paramSearch == null) {
@@ -41,14 +46,28 @@ public class Dashboard extends HttpServlet {
     ComputerPage computerPage = ComputerService.COMPUTERSERVICE.getComputers(paramSearch);
     
     if (paramElements != null) {
-      computerPage.setElementByPage(Integer.parseInt(paramElements));
-      request.setAttribute("elements", paramElements);
+      try {
+        computerPage.setElementByPage(Integer.parseInt(paramElements));
+        request.setAttribute("elements", paramElements);
+      } catch (NumberFormatException e) {
+        logger.debug(e.getMessage());
+      }
+    }
+    
+    if (paramOrderBy != null) {
+      try {
+        computerPage.setOrderBy(Integer.parseInt(paramOrderBy));
+        request.setAttribute("order", paramOrderBy);
+      } catch (NumberFormatException e) {
+        logger.debug(e.getMessage());
+      }
     }
     
     if (paramPage != null) {
       try {
         pageNumber = Integer.parseInt(paramPage);
       } catch (NumberFormatException e) {
+        logger.debug(e.getMessage());
         this.getServletContext().getRequestDispatcher("/views/404.jsp")
         .forward(request, response);
         return;

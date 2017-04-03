@@ -8,6 +8,7 @@ public class Link extends SimpleTagSupport {
   private int page = 1;
   private int nbElements = 10;
   private String search = "";
+  private int orderBy = 0;
   
   public Link() {
     
@@ -25,6 +26,10 @@ public class Link extends SimpleTagSupport {
     this.search = search;
   }
   
+  public void setOrderBy(int orderBy) {
+    this.orderBy = orderBy;
+  }
+  
   @Override
   public void doTag() throws IOException {
     String link = "/ComputerDatabase/dashboard?page=" + page;
@@ -33,6 +38,9 @@ public class Link extends SimpleTagSupport {
     }
     if (search.compareTo("") != 0) {
       link += "&search=" + search;
+    }
+    if (orderBy > 0) {
+      link += "&order=" + orderBy;
     }
     
     getJspContext().getOut().write(link);

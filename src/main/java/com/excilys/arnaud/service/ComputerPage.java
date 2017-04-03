@@ -9,6 +9,7 @@ import com.excilys.arnaud.service.mapper.ComputerMapper;
 public class ComputerPage extends Page<ComputerDto> {
   private String pattern;
   private ComputerDtoList list;
+  private int orderBy;
   
   /** Constructor.
    * 
@@ -25,13 +26,14 @@ public class ComputerPage extends Page<ComputerDto> {
     this.nbElement = DAOFactory.DAOFACTORY.getComputerDAO().getNumberOfComputer(this.pattern);
     nbPage = (int) Math.ceil((float) nbElement / ELMEMENT_BY_PAGE);
     currentPage = 0;
+    orderBy = 0;
   }
  
   @Override
   public ComputerDtoList getPage() {
     int begin = ELMEMENT_BY_PAGE * currentPage;
     this.list = ComputerMapper.COMPUTERMAPPER.computerListToComputerDtoList(
-        DAOFactory.DAOFACTORY.getComputerDAO().getNComputers(pattern, begin, ELMEMENT_BY_PAGE));
+        DAOFactory.DAOFACTORY.getComputerDAO().getNComputers(pattern, begin, ELMEMENT_BY_PAGE, orderBy));
     this.nbElement = DAOFactory.DAOFACTORY.getComputerDAO().getNumberOfComputer(pattern);
     nbPage = (int) Math.ceil((float) nbElement / ELMEMENT_BY_PAGE);
     return list;
@@ -61,6 +63,10 @@ public class ComputerPage extends Page<ComputerDto> {
       nbPage = (int) Math.ceil((float) nbElement / ELMEMENT_BY_PAGE);
       currentPage = 0;
     }
+  }
+  
+  public void setOrderBy(int orderBy) {
+    this.orderBy = orderBy;
   }
   
 
