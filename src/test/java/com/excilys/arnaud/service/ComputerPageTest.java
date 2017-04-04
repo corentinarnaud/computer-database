@@ -34,6 +34,7 @@ public class ComputerPageTest {
     String pattern = "";
     int begin = 0;
     int nbComputer = 10;
+    int orderBy = 0;
     
     ComputerDAOMySQL mockDAO = PowerMockito.mock(ComputerDAOMySQL.class);
     Whitebox.setInternalState(ComputerDAOMySQL.class, ComputerDAOMySQL.COMPUTERDAO, mockDAO);
@@ -43,7 +44,7 @@ public class ComputerPageTest {
     ComputerList computerList = new ComputerList();
     ComputerDtoList computerDtoList = new ComputerDtoList();
     
-    Mockito.when(mockDAO.getNComputers(pattern, begin, nbComputer)).thenReturn(computerList);
+    Mockito.when(mockDAO.getNComputers(pattern, begin, nbComputer, orderBy)).thenReturn(computerList);
     Mockito.when(mockDAO.getNumberOfComputer(pattern)).thenReturn(10);
     Mockito.when(mockMapper.computerListToComputerDtoList(computerList))
       .thenReturn(computerDtoList);
@@ -61,6 +62,7 @@ public class ComputerPageTest {
     String pattern = "";
     int begin = 0;
     int nbComputer = 10;
+    int orderBy = 0;
     
     ComputerDAOMySQL mockDAO = PowerMockito.mock(ComputerDAOMySQL.class);
     Whitebox.setInternalState(ComputerDAOMySQL.class, ComputerDAOMySQL.COMPUTERDAO, mockDAO);
@@ -71,7 +73,7 @@ public class ComputerPageTest {
     ComputerList computerList = new ComputerList();
     ComputerDtoList computerDtoList = new ComputerDtoList();
     
-    Mockito.when(mockDAO.getNComputers(pattern, begin, nbComputer)).thenReturn(computerList);
+    Mockito.when(mockDAO.getNComputers(pattern, begin, nbComputer, orderBy)).thenReturn(computerList);
     Mockito.when(mockDAO.getNumberOfComputer(pattern)).thenReturn(10);
     Mockito.when(mockMapper.computerListToComputerDtoList(computerList))
       .thenReturn(computerDtoList);
