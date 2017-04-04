@@ -16,5 +16,7 @@ public interface CompanyDAO extends DAO{
   public CompanyList getNCompanies(int begin, int nbCompanies) throws DAOException;
   
   public int getNumberOfCompany();
+  
+  public boolean delCompany(long id);
 
 }

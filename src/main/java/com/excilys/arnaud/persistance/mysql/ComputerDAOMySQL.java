@@ -41,15 +41,16 @@ public enum ComputerDAOMySQL implements ComputerDAO {
       + "FROM computer LEFT JOIN company ON company_id=company.id";
   private static final String SQL_N_COMPUTERS = 
       "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
-      + "FROM computer LEFT JOIN company ON company_id=company.id ORDER BY orderby LIMIT ?, ?";
+      + "FROM computer LEFT JOIN company ON company_id=company.id ORDER BY ISNULL(orderby), orderby ASC LIMIT ?, ?";
   private static final String SQL_N_COMPUTERS_PATTERN = 
       "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
       + "FROM computer LEFT JOIN company ON company_id=company.id " 
-      + "WHERE computer.name LIKE ? OR company.name LIKE ? ORDER BY orderby LIMIT ?, ?";
+      + "WHERE computer.name LIKE ? OR company.name LIKE ? ORDER BY ISNULL(orderby), orderby ASC LIMIT ?, ?";
   private static final String SQL_NUMBER_OF_COMPUTERS = 
       "SELECT COUNT(*) FROM computer";
   private static final String SQL_NUMBER_OF_COMPUTERS_PATTERN = 
       "SELECT COUNT(*) FROM computer WHERE name LIKE ?";
+  private static final String SQL_DELETE_FROM_COMPANY = "DELETE FROM computer WHERE company_id=?";
 
   private ComputerDAOMySQL() {
 
@@ -538,6 +539,33 @@ public enum ComputerDAOMySQL implements ComputerDAO {
       }
     }
     return new boolean[0];
+  }
+
+  @Override
+  public boolean delsFromCompany(long id) throws DAOException {
+    PreparedStatement statement = null;
+    Connection connection = null;
+
+    try {
+      connection = DataBaseConnection.CONNECTION.getConnection();
+      statement = connection.prepareStatement(SQL_DELETE_FROM_COMPANY);
+      statement.setString(1, String.valueOf(id));
+      int resultat = statement.executeUpdate();
+      if (resultat == 1) {
+        logger.info("Computers of company {} deleted", id);
+        return true;
+      } else {
+        logger.info("Computers of company {} not deleted", id);
+        return false;
+      }
+    } catch (SQLException e) {
+      logger.debug(e.getMessage());
+      throw new DAOException(e);
+    } finally {
+      DAOUtils.closePreparedStatement(statement);
+      DAOUtils.closeConnection(connection);
+    }
+
   }
 
 }

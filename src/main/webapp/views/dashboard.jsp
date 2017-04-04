@@ -100,11 +100,11 @@
 			<div class="container text-center">
 				<ul class="pagination">
 					<c:if test="${ currentPage >1 }">
-						<li><a href=<h:link page="${ 1 }" nbElements="${ elements }" search="${ search }"/>
+						<li><a href=<h:link page="${ 1 }" nbElements="${ elements }" search="${ search }" orderBy="${ order }"/>
 							aria-label="Begin"> <span aria-hidden="true">&laquo;</span>
 						</a></li>
 						<li><a
-							href=<h:link page="${ currentPage - 1}" nbElements="${ elements }" search="${ search }"/>
+							href=<h:link page="${ currentPage - 1}" nbElements="${ elements }" search="${ search }" orderBy="${ order }"/>
 							aria-label="Previous"> <span aria-hidden="true">&lt;</span>
 						</a></li>
 					</c:if>
@@ -116,7 +116,7 @@
 										<li><a style="color: #FF0000">${ i }</a></li>
 									</c:when>
 									<c:otherwise>
-										<li><a href=<h:link page="${ i }" nbElements="${ elements }" search="${ search }"/>>${ i }</a></li>
+										<li><a href=<h:link page="${ i }" nbElements="${ elements }" search="${ search }" orderBy="${ order }"/>>${ i }</a></li>
 									</c:otherwise>
 								</c:choose>
 							</c:forEach>
@@ -128,7 +128,7 @@
 										<li><a style="color: #FF0000">${ i }</a></li>
 									</c:when>
 									<c:otherwise>
-										<li><a href=<h:link page="${ i }" nbElements="${ elements }" search="${ search }"/>>${ i }</a></li>
+										<li><a href=<h:link page="${ i }" nbElements="${ elements }" search="${ search }" orderBy="${ order }"/>>${ i }</a></li>
 									</c:otherwise>
 								</c:choose>
 							</c:forEach>
@@ -141,7 +141,7 @@
 										<li><a style="color: #FF0000">${ i }</a></li>
 									</c:when>
 									<c:otherwise>
-										<li><a href=<h:link page="${ i }" nbElements="${ elements }" search="${ search }"/>>${ i }</a></li>
+										<li><a href=<h:link page="${ i }" nbElements="${ elements }" search="${ search }" orderBy="${ order }"/>>${ i }</a></li>
 									</c:otherwise>
 								</c:choose>
 							</c:forEach>
@@ -149,10 +149,10 @@
 					</c:choose>
 					<c:if test="${ currentPage < maxPage }">
 						<li><a
-							href=<h:link page="${ currentPage + 1}" nbElements="${ elements }" search="${ search }"/>
+							href=<h:link page="${ currentPage + 1}" nbElements="${ elements }" search="${ search }" orderBy="${ order }"/>
 							aria-label="Next"> <span aria-hidden="true">&gt;</span>
 						</a></li>
-						<li><a href=<h:link page="${ maxPage }" nbElements="${ elements }" search="${ search }"/>
+						<li><a href=<h:link page="${ maxPage }" nbElements="${ elements }" search="${ search }" orderBy="${ order }"/>
 							aria-label="End"> <span aria-hidden="true">&raquo;</span>
 						</a></li>
 					</c:if>

@@ -25,6 +25,7 @@ public enum CompanyDAOMySQL implements CompanyDAO {
   private static final String SQL_COMPANIES = "SELECT id, name  FROM company";
   private static final String SQL_N_COMPANIES = "SELECT id, name  FROM company LIMIT ?, ?";
   private static final String SQL_COUNT     = "SELECT COUNT(*) FROM company";
+  private static final String SQL_DEL = "DELETE FROM computer WHERE id=?";
   private static final Logger logger = LoggerFactory.getLogger(CompanyDAOMySQL.class);
 
   @Override
@@ -158,6 +159,32 @@ public enum CompanyDAOMySQL implements CompanyDAO {
     } finally {
       DAOUtils.closeStatement(statement);
       DAOUtils.closeResultatSet(resultat);
+      DAOUtils.closeConnection(connection);
+    }
+  }
+
+  @Override
+  public boolean delCompany(long id) {
+    PreparedStatement statement = null;
+    Connection connection = null;
+
+    try {
+      connection = DataBaseConnection.CONNECTION.getConnection();
+      statement = connection.prepareStatement(SQL_DEL);
+      statement.setString(1, String.valueOf(id));
+      int resultat = statement.executeUpdate();
+      if (resultat == 1) {
+        logger.info("Company {} deleted", id);
+        return CompanyDAOMySQL.CONPANYDAO.delCompany(id);
+      } else {
+        logger.info("Company {} not deleted", id);
+        return false;
+      }
+    } catch (SQLException e) {
+      logger.debug(e.getMessage());
+      throw new DAOException(e);
+    } finally {
+      DAOUtils.closePreparedStatement(statement);
       DAOUtils.closeConnection(connection);
     }
   }

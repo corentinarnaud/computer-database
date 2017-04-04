@@ -36,6 +36,13 @@ public interface ComputerDAO extends DAO{
    * @throws DAOException : if the connection fail
    */
   public boolean[] dels(long[] ids) throws DAOException;
+  
+  /** Delete all computer of a company.
+   * @param id : ID of a company
+   * @return true if deletion works, false otherwise
+   * @throws DAOException : if the connection fail
+   */
+  public boolean delsFromCompany(long id) throws DAOException;
 
 
   /** .
