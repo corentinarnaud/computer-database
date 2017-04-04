@@ -4,7 +4,7 @@
 	<groupId>com.excilys.burleon</groupId>
 	<artifactId>ComputerDatabase</artifactId>
 	<packaging>war</packaging>
-	<version>1.0.2-REALEASE</version>
+	<version>1.0.2-SNAPSHOT</version>
 	<name>ComputerDatabase Maven Webapp</name>
 	<url>http://maven.apache.org</url>
 	<properties>
@@ -25,12 +25,20 @@
 		<version.jstl>1.2</version.jstl>
 		<version.servlet>3.1.0</version.servlet>
 		<version.hikari>2.6.1</version.hikari>
+		<version.selenium>3.3.1</version.selenium>
 	</properties>
 	<dependencies>
+		<!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
 		<dependency>
-    		<groupId>com.zaxxer</groupId>
-    		<artifactId>HikariCP</artifactId>
-    		<version>${version.hikari}</version>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>${version.selenium}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.zaxxer</groupId>
+			<artifactId>HikariCP</artifactId>
+			<version>${version.hikari}</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -38,7 +46,7 @@
 			<version>${version.junit}</version>
 			<scope>test</scope>
 		</dependency>
-			<dependency>
+		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
 			<version>${version.mockito}</version>
@@ -51,10 +59,10 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-    		<groupId>org.powermock</groupId>
-    		<artifactId>powermock-module-junit4</artifactId>
-    		<version>${version.powermock}</version>
-    		<scope>test</scope>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-junit4</artifactId>
+			<version>${version.powermock}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.dbunit</groupId>
