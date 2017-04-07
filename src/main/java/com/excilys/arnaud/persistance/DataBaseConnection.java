@@ -1,22 +1,19 @@
 package com.excilys.arnaud.persistance;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 
 public enum DataBaseConnection {
   CONNECTION;
   private static final String PROPERTY_FILE      = "resources/config.properties";
-
   private static final String PROPERTY_BASE      = "base";
   private static final String PROPERTY_URL       = "url";
   private static final String PROPERTY_ARGUMENTS = "arguments";
@@ -24,6 +21,7 @@ public enum DataBaseConnection {
   private static final String PROPERTY_USER      = "user";
   private static final String PROPERTY_PASSWORD  = "password";
   private static final Logger LOGGER = LoggerFactory.getLogger(DataBaseConnection.class);
+  private static final ThreadLocal<Connection>  threadLocal = new ThreadLocal<>(); 
   
   
   private String url;
@@ -47,7 +45,7 @@ public enum DataBaseConnection {
       cfg.setJdbcUrl(base + url + arguments);
       cfg.setUsername(user);
       cfg.setPassword(password);
-      cfg.setMaximumPoolSize(20);
+      cfg.setMaximumPoolSize(100);
       ds = new HikariDataSource(cfg);
       
       // To close the datasource when the server is closing
@@ -94,16 +92,20 @@ public enum DataBaseConnection {
 
 
   
-  public Connection getConnection(){
+  /** .
+   * @return a connection
+   */
+  public Connection getConnection() {
 
-   
-      
-    try {
-      return ds.getConnection();
+    try { 
+      if (threadLocal.get() == null || threadLocal.get().isClosed()) {
+        threadLocal.set(ds.getConnection());
+      }
     } catch (SQLException e) {
       LOGGER.debug("Fail to connect to the base");
       throw new DAOException("Fail to connect to the base", e);
     }
+    return threadLocal.get();
   }
 
 }

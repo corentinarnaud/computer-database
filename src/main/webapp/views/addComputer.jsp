@@ -30,9 +30,6 @@
                                 <label for="computerName">Computer name</label>
                                 <input name="computerName" type="text" class="form-control" 
                                 id="computerName" placeholder="Computer name" 
-                                onKeypress="
-                                if (event.keyCode==60 || event.keyCode==62) event.returnValue = false;
-     							if (event.which==60 || event.which==62) return false;"
      							maxlength="550" required>
                             </div>
                             <div class="form-group">

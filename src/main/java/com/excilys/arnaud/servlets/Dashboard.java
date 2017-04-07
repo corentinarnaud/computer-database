@@ -50,7 +50,7 @@ public class Dashboard extends HttpServlet {
         computerPage.setElementByPage(Integer.parseInt(paramElements));
         request.setAttribute("elements", paramElements);
       } catch (NumberFormatException e) {
-        logger.debug(e.getMessage());
+        logger.debug("Exception on parsing elements by page " + e.getMessage());
       }
     }
     
@@ -59,7 +59,7 @@ public class Dashboard extends HttpServlet {
         computerPage.setOrderBy(Integer.parseInt(paramOrderBy));
         request.setAttribute("order", paramOrderBy);
       } catch (NumberFormatException e) {
-        logger.debug(e.getMessage());
+        logger.debug("Exceptione on parsing order param " +e.getMessage());
       }
     }
     
@@ -67,7 +67,7 @@ public class Dashboard extends HttpServlet {
       try {
         pageNumber = Integer.parseInt(paramPage);
       } catch (NumberFormatException e) {
-        logger.debug(e.getMessage());
+        logger.debug("Exception on parsing number of page " + e.getMessage());
         this.getServletContext().getRequestDispatcher("/views/404.jsp")
         .forward(request, response);
         return;

@@ -69,5 +69,6 @@
             </div>
         </div>
     </section>
+    <script src="/ComputerDatabase/js/validation.js"></script>
 </body>
 </html>

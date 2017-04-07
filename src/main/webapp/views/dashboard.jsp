@@ -24,7 +24,7 @@
 	</header>
 	<section id="main">
 		<div class="container">
-			<h1 id="homeTitle">${ nbComputer } Computersfound</h1>
+			<h1 id="homeTitle">${ nbComputer } Computers found</h1>
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">
 					<form id="searchForm" action="#" method="GET" class="form-inline">
@@ -100,10 +100,10 @@
 			<div class="container text-center">
 				<ul class="pagination">
 					<c:if test="${ currentPage >1 }">
-						<li><a href=<h:link page="${ 1 }" nbElements="${ elements }" search="${ search }" orderBy="${ order }"/>
+						<li><a id="firstpage" href=<h:link page="${ 1 }" nbElements="${ elements }" search="${ search }" orderBy="${ order }"/>
 							aria-label="Begin"> <span aria-hidden="true">&laquo;</span>
 						</a></li>
-						<li><a
+						<li><a id="prev"
 							href=<h:link page="${ currentPage - 1}" nbElements="${ elements }" search="${ search }" orderBy="${ order }"/>
 							aria-label="Previous"> <span aria-hidden="true">&lt;</span>
 						</a></li>
@@ -148,20 +148,20 @@
 						</c:otherwise>
 					</c:choose>
 					<c:if test="${ currentPage < maxPage }">
-						<li><a
+						<li><a id="next"
 							href=<h:link page="${ currentPage + 1}" nbElements="${ elements }" search="${ search }" orderBy="${ order }"/>
 							aria-label="Next"> <span aria-hidden="true">&gt;</span>
 						</a></li>
-						<li><a href=<h:link page="${ maxPage }" nbElements="${ elements }" search="${ search }" orderBy="${ order }"/>
+						<li><a id="lastpage" href=<h:link page="${ maxPage }" nbElements="${ elements }" search="${ search }" orderBy="${ order }"/>
 							aria-label="End"> <span aria-hidden="true">&raquo;</span>
 						</a></li>
 					</c:if>
 				</ul>
 				<div class="pull-right">
 					<ul class="pagination">
-						<li><a href=<h:link page="${ currentPage }" nbElements="10" search="${ search }"/>>10</a></li>
-						<li><a href=<h:link page="${ currentPage }" nbElements="25" search="${ search }"/>>25</a></li>
-						<li><a href=<h:link page="${ currentPage }" nbElements="50" search="${ search }"/>>50</a></li>
+						<li><a id="a1" href=<h:link page="${ currentPage }" nbElements="10" search="${ search }"/>>10</a></li>
+						<li><a id="a2" href=<h:link page="${ currentPage }" nbElements="50" search="${ search }"/>>50</a></li>
+						<li><a id="a3" href=<h:link page="${ currentPage }" nbElements="100" search="${ search }"/>>100</a></li>
 					</ul>
 				</div>
 			</div>
