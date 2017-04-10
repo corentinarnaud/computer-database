@@ -11,6 +11,11 @@ import java.util.Optional;
 public enum ComputerService {
   COMPUTERSERVICE;
   private ComputerDAO computerDAO = DAOFactory.DAOFACTORY.getComputerDAO();
+  private int numberComputer;
+  
+  private ComputerService() {
+    numberComputer = DAOFactory.DAOFACTORY.getComputerDAO().getNumberOfComputer();
+  }
 
   /** Ask to DAO to add computerDto.
    * @param computerDto a computerDto to add
@@ -22,7 +27,13 @@ public enum ComputerService {
     System.out.println(computer);
     ServiceUtils.checkDate(computer);
     ServiceUtils.checkName(computer.getName());
-    return computerDAO.add(computer);
+    long newId = computerDAO.add(computer);
+    if (newId > 0) {
+      synchronized (this) {
+        numberComputer++;
+      }
+    }
+    return newId;
   }
 
   /** Ask to DAO to update computerDto.
@@ -38,7 +49,13 @@ public enum ComputerService {
   }
 
   public boolean del(long id) {
-    return computerDAO.del(id);
+    if (computerDAO.del(id)) {
+      synchronized (this) {
+        numberComputer--;
+      }
+      return true;
+    }
+    return false;
   }
 
   /** Look for the computer with id equals to the input.
@@ -77,8 +94,22 @@ public enum ComputerService {
 
 
   public boolean[] dels(long[] longIds) {
-    return computerDAO.dels(longIds);
+    boolean[] dels = computerDAO.dels(longIds);
+    int nbDels = 0;
+    for (boolean id : dels) {
+      if (id == true) {
+        nbDels++;
+      }
+    }
+    synchronized (this) {
+      numberComputer -= nbDels;
+    }
+    return dels;
     
+  }
+  
+  public int getNumberComputer() {
+    return numberComputer;
   }
   
 

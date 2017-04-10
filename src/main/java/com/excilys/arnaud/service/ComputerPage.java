@@ -23,27 +23,31 @@ public class ComputerPage extends Page<ComputerDto> {
    */
   public ComputerPage(String pattern) {
     this.pattern = pattern;
-    this.nbElement = DAOFactory.DAOFACTORY.getComputerDAO().getNumberOfComputer(this.pattern);
-    nbPage = (int) Math.ceil((float) nbElement / ELMEMENT_BY_PAGE);
     currentPage = 0;
     orderBy = 0;
   }
  
   @Override
   public ComputerDtoList getPage() {
+    System.out.println(currentPage);
     int begin = ELMEMENT_BY_PAGE * currentPage;
+    if (pattern.equals("")) {
+      this.nbElement = ComputerService.COMPUTERSERVICE.getNumberComputer();
+    } else {
+      this.nbElement = DAOFactory.DAOFACTORY.getComputerDAO().getNumberOfComputer(pattern);
+    }
+    this.nbPage = (int) Math.ceil((float) nbElement / ELMEMENT_BY_PAGE);
     this.list = ComputerMapper.COMPUTERMAPPER.computerListToComputerDtoList(
         DAOFactory.DAOFACTORY.getComputerDAO().getNComputers(pattern, begin, ELMEMENT_BY_PAGE, orderBy));
-    this.nbElement = DAOFactory.DAOFACTORY.getComputerDAO().getNumberOfComputer(pattern);
-    nbPage = (int) Math.ceil((float) nbElement / ELMEMENT_BY_PAGE);
     return list;
   }
   
 
   @Override
   public ComputerDtoList getPageN(int n) {
-    if (n >= 0 && n < nbPage) {
-      currentPage = n;
+    if (n >= 0) {
+      this.currentPage = n;
+      System.out.println(currentPage);
     }
     return getPage();
   }
@@ -59,8 +63,6 @@ public class ComputerPage extends Page<ComputerDto> {
       } else {
         this.pattern = null;
       }
-      this.nbElement = DAOFactory.DAOFACTORY.getComputerDAO().getNumberOfComputer(this.pattern);
-      nbPage = (int) Math.ceil((float) nbElement / ELMEMENT_BY_PAGE);
       currentPage = 0;
     }
   }
@@ -75,8 +77,6 @@ public class ComputerPage extends Page<ComputerDto> {
   public void setElementByPage(int numberOfElement) {
     if (this.ELMEMENT_BY_PAGE != numberOfElement) {
       this.ELMEMENT_BY_PAGE = numberOfElement;
-      this.nbElement = DAOFactory.DAOFACTORY.getComputerDAO().getNumberOfComputer(this.pattern);
-      this.nbPage = (int) Math.ceil((float) nbElement / this.ELMEMENT_BY_PAGE);
       currentPage = 0;
     }
   }

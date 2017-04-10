@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 public enum DataBaseConnection {
   CONNECTION;
-  private static final String PROPERTY_FILE      = "resources/config.properties";
+  private static final String PROPERTY_FILE      = "config.properties";
   private static final String PROPERTY_BASE      = "base";
   private static final String PROPERTY_URL       = "url";
   private static final String PROPERTY_ARGUMENTS = "arguments";
@@ -45,7 +45,7 @@ public enum DataBaseConnection {
       cfg.setJdbcUrl(base + url + arguments);
       cfg.setUsername(user);
       cfg.setPassword(password);
-      cfg.setMaximumPoolSize(100);
+      cfg.setMaximumPoolSize(200);
       ds = new HikariDataSource(cfg);
       
       // To close the datasource when the server is closing

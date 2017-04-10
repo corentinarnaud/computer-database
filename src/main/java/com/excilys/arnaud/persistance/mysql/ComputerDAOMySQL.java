@@ -41,15 +41,15 @@ public enum ComputerDAOMySQL implements ComputerDAO {
       + "FROM computer LEFT JOIN company ON company_id=company.id";
   private static final String SQL_N_COMPUTERS = 
       "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
-      + "FROM computer LEFT JOIN company ON company_id=company.id ORDER BY ISNULL(orderby), orderby ASC LIMIT ?, ?";
+      + "FROM computer LEFT JOIN company ON company_id=company.id ORDER BY orderby ASC LIMIT ?, ?";
   private static final String SQL_N_COMPUTERS_PATTERN = 
       "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
       + "FROM computer LEFT JOIN company ON company_id=company.id " 
-      + "WHERE computer.name LIKE ? OR company.name LIKE ? ORDER BY ISNULL(orderby), orderby ASC LIMIT ?, ?";
+      + "WHERE computer.name LIKE ? OR company.name LIKE ? ORDER BY orderby ASC LIMIT ?, ?";
   private static final String SQL_NUMBER_OF_COMPUTERS = 
-      "SELECT COUNT(*) FROM computer";
+      "SELECT COUNT(id) FROM computer USE INDEX (PRIMARY);";
   private static final String SQL_NUMBER_OF_COMPUTERS_PATTERN = 
-      "SELECT COUNT(*) FROM computer WHERE name LIKE ?";
+      "SELECT COUNT(id) FROM computer USE INDEX (PRIMARY) WHERE name LIKE ?";
   private static final String SQL_DELETE_FROM_COMPANY = "DELETE FROM computer WHERE company_id=?";
 
   private ComputerDAOMySQL() {
@@ -63,10 +63,10 @@ public enum ComputerDAOMySQL implements ComputerDAO {
     PreparedStatement addStatement = null;
     Connection connection = null;
     
-    System.out.println("plop");
     if (computer != null) {
       try {
         connection = DataBaseConnection.CONNECTION.getConnection();
+        connection.setReadOnly(false);
         addStatement = connection.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS);
         addStatement.setString(1, computer.getName());
 
@@ -127,6 +127,7 @@ public enum ComputerDAOMySQL implements ComputerDAO {
     if (computer != null) {
       try {
         connection = DataBaseConnection.CONNECTION.getConnection();
+        connection.setReadOnly(false);
         updateStatement = connection.prepareStatement(SQL_UPDATE);
         updateStatement.setString(1, computer.getName());
 
@@ -177,6 +178,7 @@ public enum ComputerDAOMySQL implements ComputerDAO {
 
     try {
       connection = DataBaseConnection.CONNECTION.getConnection();
+      connection.setReadOnly(false);
       statement = connection.prepareStatement(SQL_DEL);
       statement.setString(1, String.valueOf(id));
       int resultat = statement.executeUpdate();
@@ -205,6 +207,7 @@ public enum ComputerDAOMySQL implements ComputerDAO {
 
     try {
       connection = DataBaseConnection.CONNECTION.getConnection();
+      connection.setReadOnly(true);
       statement = connection.prepareStatement(SQL_FIND_ID);
       statement.setString(1, String.valueOf(id));
       resultat = statement.executeQuery();
@@ -249,6 +252,7 @@ public enum ComputerDAOMySQL implements ComputerDAO {
       try {
         connection = DataBaseConnection.CONNECTION.getConnection();
         statement = connection.prepareStatement(SQL_FIND_NAME);
+        connection.setReadOnly(true);
         statement.setString(1, name);
         resultat = statement.executeQuery();
         if (resultat.next()) {
@@ -293,6 +297,7 @@ public enum ComputerDAOMySQL implements ComputerDAO {
     try {
       ComputerList list = new ComputerList();
       connection = DataBaseConnection.CONNECTION.getConnection();
+      connection.setReadOnly(true);
       statement = connection.createStatement();
       resultat = statement.executeQuery(SQL_COMPUTERS);
       while (resultat.next()) {
@@ -338,6 +343,7 @@ public enum ComputerDAOMySQL implements ComputerDAO {
     if (begin >= 0 && nbComputer > 0) {
       try {
         connection = DataBaseConnection.CONNECTION.getConnection();
+        connection.setReadOnly(true);
 
         
         if (orderBy >= 0 && orderBy < attributes.length) {
@@ -398,6 +404,7 @@ public enum ComputerDAOMySQL implements ComputerDAO {
     if (begin >= 0 && nbComputer > 0) {
       try {
         connection = DataBaseConnection.CONNECTION.getConnection();
+        connection.setReadOnly(true);
 
 
         if (orderBy >= 0 && orderBy < attributes.length) {
@@ -407,8 +414,8 @@ public enum ComputerDAOMySQL implements ComputerDAO {
           statement = connection.prepareStatement(
               SQL_N_COMPUTERS_PATTERN.replaceAll("orderby", attributes[0].getName()));
         }
-        statement.setString(1, "%" + pattern + "%");
-        statement.setString(2, "%" + pattern + "%");
+        statement.setString(1, pattern + "%");
+        statement.setString(2, pattern + "%");
         statement.setInt(3, begin);
         statement.setInt(4, nbComputer);
         resultat = statement.executeQuery();
@@ -449,14 +456,15 @@ public enum ComputerDAOMySQL implements ComputerDAO {
 
   @Override
   public int getNumberOfComputer() throws DAOException {
-    Statement statement = null;
+    PreparedStatement statement = null;
     ResultSet resultat = null;
     Connection connection = null;
 
     try {
       connection = DataBaseConnection.CONNECTION.getConnection();
-      statement = connection.createStatement();
-      resultat = statement.executeQuery(SQL_NUMBER_OF_COMPUTERS);
+      connection.setReadOnly(true);
+      statement = connection.prepareStatement(SQL_NUMBER_OF_COMPUTERS);
+      resultat = statement.executeQuery();
       resultat.next();
       return resultat.getInt(1);
 
@@ -482,6 +490,7 @@ public enum ComputerDAOMySQL implements ComputerDAO {
 
     try {
       connection = DataBaseConnection.CONNECTION.getConnection();
+      connection.setReadOnly(true);
       statement = connection.prepareStatement(SQL_NUMBER_OF_COMPUTERS_PATTERN);
       statement.setString(1, "%" + pattern + "%");
       resultat = statement.executeQuery();
