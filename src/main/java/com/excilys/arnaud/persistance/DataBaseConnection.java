@@ -42,6 +42,7 @@ public enum DataBaseConnection {
     try {
       Class.forName(driver);
       HikariConfig cfg = new HikariConfig();
+      cfg.setDriverClassName(driver);
       cfg.setJdbcUrl(base + url + arguments);
       cfg.setUsername(user);
       cfg.setPassword(password);

@@ -46,6 +46,14 @@ public enum ComputerDAOMySQL implements ComputerDAO {
       "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
       + "FROM computer LEFT JOIN company ON company_id=company.id " 
       + "WHERE computer.name LIKE ? OR company.name LIKE ? ORDER BY orderby ASC LIMIT ?, ?";
+  private static final String SQL_N_COMPUTERS_ORDER_COMPANY = 
+      "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
+      + "FROM company STRAIGHT_JOIN computer ON company_id=company.id ORDER BY company.name ASC "
+      + "LIMIT ?, ?";
+  private static final String SQL_N_COMPUTERS_PATTERN_COMPANY = 
+      "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
+      + "FROM company STRAIGHT_JOIN computer ON company_id=company.id " 
+      + "WHERE computer.name LIKE ? OR company.name LIKE ? ORDER BY company.name ASC LIMIT ?, ?";
   private static final String SQL_NUMBER_OF_COMPUTERS = 
       "SELECT COUNT(id) FROM computer USE INDEX (PRIMARY);";
   private static final String SQL_NUMBER_OF_COMPUTERS_PATTERN = 
@@ -345,8 +353,9 @@ public enum ComputerDAOMySQL implements ComputerDAO {
         connection = DataBaseConnection.CONNECTION.getConnection();
         connection.setReadOnly(true);
 
-        
-        if (orderBy >= 0 && orderBy < attributes.length) {
+        if (orderBy == 4) {
+          statement = connection.prepareStatement(SQL_N_COMPUTERS_ORDER_COMPANY);
+        } else if (orderBy >= 0 && orderBy < attributes.length) {
           statement = connection.prepareStatement(
               SQL_N_COMPUTERS.replaceAll("orderby", attributes[orderBy].getName()));
         } else {
@@ -407,7 +416,9 @@ public enum ComputerDAOMySQL implements ComputerDAO {
         connection.setReadOnly(true);
 
 
-        if (orderBy >= 0 && orderBy < attributes.length) {
+        if (orderBy == 4) {
+          statement = connection.prepareStatement(SQL_N_COMPUTERS_PATTERN_COMPANY);
+        } else if (orderBy >= 0 && orderBy < attributes.length) {
           statement = connection.prepareStatement(
               SQL_N_COMPUTERS_PATTERN.replaceAll("orderby", attributes[orderBy].getName()));
         } else {
