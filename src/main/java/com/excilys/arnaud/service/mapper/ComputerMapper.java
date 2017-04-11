@@ -40,7 +40,7 @@ public enum ComputerMapper {
           introduced = LocalDateTime.from(LocalDate.parse(
               computerDto.getIntroduced(), formatter).atStartOfDay());
         } catch (DateTimeParseException e) {
-          throw new MapperException(computerDto.getIntroduced() + " must be at format dd/MM/yyyy");
+          throw new MapperException(computerDto.getIntroduced() + " must be at format yyyy-MM-dd");
         }
       
         if (computerDto.getDiscontinued() != null && !computerDto.getDiscontinued().equals("")) {
@@ -49,7 +49,7 @@ public enum ComputerMapper {
               computerDto.getDiscontinued(), formatter).atStartOfDay());
           } catch (DateTimeParseException e) {
             throw new MapperException(computerDto.getDiscontinued() 
-                + " must be at format dd/MM/yyyy");
+                + " must be at format yyyy-MM-dd");
           }
         } else {
           discontinued = null;

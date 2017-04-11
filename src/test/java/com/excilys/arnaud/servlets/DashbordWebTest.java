@@ -59,10 +59,10 @@ public class DashbordWebTest {
     Assert.assertTrue(driver.getCurrentUrl().contains("page=2"));
     
     this.driver.findElement(By.id("lastpage")).click();
-    Assert.assertTrue(driver.getCurrentUrl().contains("page=58"));
+    Assert.assertTrue(driver.getCurrentUrl().contains("page=100001"));
     
     this.driver.findElement(By.id("prev")).click();
-    Assert.assertTrue(driver.getCurrentUrl().contains("page=57"));
+    Assert.assertTrue(driver.getCurrentUrl().contains("page=10000"));
     
     this.driver.findElement(By.id("firstpage")).click();
     Assert.assertTrue(driver.getCurrentUrl().contains("page=1"));

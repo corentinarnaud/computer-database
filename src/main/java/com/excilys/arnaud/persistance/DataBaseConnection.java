@@ -46,7 +46,7 @@ public enum DataBaseConnection {
       cfg.setJdbcUrl(base + url + arguments);
       cfg.setUsername(user);
       cfg.setPassword(password);
-      cfg.setMaximumPoolSize(200);
+      cfg.setMaximumPoolSize(50);
       ds = new HikariDataSource(cfg);
       
       // To close the datasource when the server is closing

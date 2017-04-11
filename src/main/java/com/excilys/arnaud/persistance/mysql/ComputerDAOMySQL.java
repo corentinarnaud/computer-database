@@ -316,10 +316,9 @@ public enum ComputerDAOMySQL implements ComputerDAO {
           comp = new Company(resultat.getLong("company_id"), resultat.getString("company.name"));
         }
 
-        if (resultat.getString("introduced") != null) {
-          ;
+        if (resultat.getTimestamp("introduced") != null) {
           introduced = resultat.getTimestamp("introduced").toLocalDateTime();
-          if (resultat.getString("discontinued") != null) {
+          if (resultat.getTimestamp("discontinued") != null) {
             discontinued = resultat.getTimestamp("discontinued").toLocalDateTime();
           }
         }
@@ -374,7 +373,6 @@ public enum ComputerDAOMySQL implements ComputerDAO {
           }
 
           if (resultat.getString("introduced") != null) {
-            ;
             introduced = resultat.getTimestamp("introduced").toLocalDateTime();
             if (resultat.getString("discontinued") != null) {
               discontinued = resultat.getTimestamp("discontinued").toLocalDateTime();

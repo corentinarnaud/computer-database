@@ -13,7 +13,7 @@ public class CompanyDtoTest {
     CompanyDto company = new CompanyDto(id, name);
     
     assertTrue(company.getId() == id);
-    assertTrue(company.getName() == id);
+    assertTrue(company.getName() == name);
   }
 
 }

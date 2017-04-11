@@ -21,10 +21,9 @@ import org.powermock.reflect.Whitebox;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ComputerDAOMySQL.class,
-                 ComputerList.class, ComputerMapper.class})
+                 ComputerList.class, ComputerMapper.class, ComputerService.class})
 public class ComputerPageTest {
-  private ComputerDAOMySQL mockDAO;
-  private ComputerMapper mockMapper;
+
   
   
 
@@ -50,9 +49,9 @@ public class ComputerPageTest {
       .thenReturn(computerDtoList);
     
     ComputerPage page = new ComputerPage();
-    assertTrue(page.getNbElement() == 10);
+    assertTrue(page.getNbElement() == 0);
     assertTrue(page.getCurrentPage() == 0);
-    assertTrue(page.getNbPage() == 1);
+    assertTrue(page.getNbPage() == 0);
 
   }
   
@@ -64,6 +63,8 @@ public class ComputerPageTest {
     int nbComputer = 10;
     int orderBy = 0;
     
+    ComputerService mockService = PowerMockito.mock(ComputerService.class);
+    Whitebox.setInternalState(ComputerService.class, ComputerService.COMPUTERSERVICE, mockService);
     ComputerDAOMySQL mockDAO = PowerMockito.mock(ComputerDAOMySQL.class);
     Whitebox.setInternalState(ComputerDAOMySQL.class, ComputerDAOMySQL.COMPUTERDAO, mockDAO);
     ComputerMapper mockMapper = PowerMockito.mock(ComputerMapper.class);
@@ -74,7 +75,7 @@ public class ComputerPageTest {
     ComputerDtoList computerDtoList = new ComputerDtoList();
     
     Mockito.when(mockDAO.getNComputers(pattern, begin, nbComputer, orderBy)).thenReturn(computerList);
-    Mockito.when(mockDAO.getNumberOfComputer(pattern)).thenReturn(10);
+    Mockito.when(mockService.getNumberComputer()).thenReturn(10);
     Mockito.when(mockMapper.computerListToComputerDtoList(computerList))
       .thenReturn(computerDtoList);
     

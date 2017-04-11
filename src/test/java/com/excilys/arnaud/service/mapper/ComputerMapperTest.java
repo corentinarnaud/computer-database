@@ -16,9 +16,9 @@ public class ComputerMapperTest {
   
   @Test
   public void mapDtoToMetierTest() {
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    String beforeDate = "12/08/1254";
-    String afterDate = "12/08/2135";
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    String beforeDate = "1254-08-12";
+    String afterDate = "2135-08-12";
     LocalDateTime introduced = LocalDateTime.from(LocalDate.parse(
         beforeDate, formatter).atStartOfDay());
     LocalDateTime discontinued = LocalDateTime.from(LocalDate.parse(
@@ -34,15 +34,15 @@ public class ComputerMapperTest {
       computer = ComputerMapper.COMPUTERMAPPER.computerDtoToComputer(computerDto);
       fail("Eception Was Not Thrown");
     } catch (MapperException e) {
-      assertTrue(e.getMessage().contains(" must be at format dd/MM/yyyy"));
+      assertTrue(e.getMessage().contains(" must be at format yyyy-MM-dd"));
     }
     
-    computerDto = new ComputerDto("15656", "dsghsrhges", null, "10/12/1235", "sdgqsgg");
+    computerDto = new ComputerDto("15656", "dsghsrhges", null, "1235-12-10", "sdgqsgg");
     try {
       computer = ComputerMapper.COMPUTERMAPPER.computerDtoToComputer(computerDto);
       fail("Eception Was Not Thrown");
     } catch (MapperException e) {
-      assertTrue(e.getMessage().contains(" must be at format dd/MM/yyyy"));
+      assertTrue(e.getMessage().contains(" must be at format yyyy-MM-dd"));
     }
     
     computerDto = new ComputerDto("vsgswr", "dsghsrhges", null, null, null);
@@ -57,9 +57,9 @@ public class ComputerMapperTest {
   
   @Test
   public void mapMetierToDtoTest() {
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    String beforeDate = "12/08/1254";
-    String afterDate = "12/08/2135";
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    String beforeDate = "1254-08-12";
+    String afterDate = "2135-08-12";
     LocalDateTime introduced = LocalDateTime.from(LocalDate.parse(
         beforeDate, formatter).atStartOfDay());
     LocalDateTime discontinued = LocalDateTime.from(LocalDate.parse(

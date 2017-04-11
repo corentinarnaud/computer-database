@@ -79,7 +79,7 @@ public class ComputerDAOMySQLTest {
 
   @Test
   public void getComputersTest() {
-    ComputerList companyList = computerDAOMySQL.getComputers();
+    ComputerList companyList = ComputerDAOMySQL.COMPUTERDAO.getComputers();
     assertFalse(companyList == null);
     assertTrue(companyList.size() == 574);
     assertTrue(companyList.get(5).getId() == 5 + 1);
@@ -93,10 +93,10 @@ public class ComputerDAOMySQLTest {
     assertTrue(companyList.get(5).getId() == 5 + 1);
     
     companyList = computerDAOMySQL.getNComputers(-5, 10, 0);
-    assertTrue(companyList == null);
+    assertTrue(companyList.isEmpty());
     
     companyList = computerDAOMySQL.getNComputers(0, -10, 0);
-    assertTrue(companyList == null);
+    assertTrue(companyList.isEmpty());
 
   }
   
@@ -104,8 +104,8 @@ public class ComputerDAOMySQLTest {
   public void getNComputersPatternTest() {
     ComputerList companyList = computerDAOMySQL.getNComputers("apple", 10, 10, 0);
     assertFalse(companyList == null);
-    assertTrue(companyList.size() == 3);
-    assertTrue(companyList.get(1).getId() == 298);
+    assertTrue(companyList.size() == 10);
+    assertTrue(companyList.get(1).getId() == 21);
     
     companyList = computerDAOMySQL.getNComputers(null, 0, 10, 0);
     assertFalse(companyList == null);

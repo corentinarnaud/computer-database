@@ -29,7 +29,6 @@ public class ComputerPage extends Page<ComputerDto> {
  
   @Override
   public ComputerDtoList getPage() {
-    System.out.println(currentPage);
     int begin = ELMEMENT_BY_PAGE * currentPage;
     if (pattern.equals("")) {
       this.nbElement = ComputerService.COMPUTERSERVICE.getNumberComputer();
