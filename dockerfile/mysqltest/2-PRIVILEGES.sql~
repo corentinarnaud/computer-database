@@ -1,8 +1,0 @@
-  #-----------------------------------
-  #USER RIGHTS MANAGEMENT
-  #-----------------------------------
-
-  GRANT ALL PRIVILEGES ON `computer-database-db-test`.* TO 'admin'@'%' WITH GRANT OPTION;
-
-
-  FLUSH PRIVILEGES;
