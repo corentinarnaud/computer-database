@@ -1,7 +1,7 @@
 FROM jenkins:latest
 MAINTAINER corentin
 
-RUN install-plugins.sh git-client git blueocean
+RUN install-plugins.sh git-client git blueocean scm-api greenballs
 
 USER root
 RUN mkdir /var/log/jenkins
