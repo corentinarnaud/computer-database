@@ -11,7 +11,7 @@ import org.junit.Test;
 import com.excilys.arnaud.model.metier.Company;
 import com.excilys.arnaud.model.metier.Computer;
 import com.excilys.arnaud.model.metier.ComputerList;
-import com.excilys.arnaud.persistance.mysql.ComputerDAOMySQL;
+import com.excilys.arnaud.persistance.inplem.ComputerDAOMySQL;
 
 public class ComputerDAOMySQLTest {
   private ComputerDAOMySQL computerDAOMySQL = ComputerDAOMySQL.COMPUTERDAO;

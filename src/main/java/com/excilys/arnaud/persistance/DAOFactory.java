@@ -1,7 +1,7 @@
 package com.excilys.arnaud.persistance;
 
-import com.excilys.arnaud.persistance.mysql.CompanyDAOMySQL;
-import com.excilys.arnaud.persistance.mysql.ComputerDAOMySQL;
+import com.excilys.arnaud.persistance.inplem.CompanyDAOMySQL;
+import com.excilys.arnaud.persistance.inplem.ComputerDAOMySQL;
 
 public enum DAOFactory {
   DAOFACTORY;

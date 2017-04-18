@@ -2,10 +2,11 @@ package com.excilys.arnaud.service;
 
 import static org.junit.Assert.assertTrue;
 
+import com.excilys.arnaud.mapper.ComputerMapper;
 import com.excilys.arnaud.model.dto.ComputerDtoList;
 import com.excilys.arnaud.model.metier.ComputerList;
-import com.excilys.arnaud.persistance.mysql.ComputerDAOMySQL;
-import com.excilys.arnaud.service.mapper.ComputerMapper;
+import com.excilys.arnaud.persistance.inplem.ComputerDAOMySQL;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -37,15 +38,14 @@ public class ComputerPageTest {
     
     ComputerDAOMySQL mockDAO = PowerMockito.mock(ComputerDAOMySQL.class);
     Whitebox.setInternalState(ComputerDAOMySQL.class, ComputerDAOMySQL.COMPUTERDAO, mockDAO);
-    ComputerMapper mockMapper = PowerMockito.mock(ComputerMapper.class);
-    Whitebox.setInternalState(ComputerMapper.class, ComputerMapper.COMPUTERMAPPER, mockMapper);
+    PowerMockito.mockStatic(ComputerMapper.class);
     
     ComputerList computerList = new ComputerList();
     ComputerDtoList computerDtoList = new ComputerDtoList();
     
     Mockito.when(mockDAO.getNComputers(pattern, begin, nbComputer, orderBy)).thenReturn(computerList);
     Mockito.when(mockDAO.getNumberOfComputer(pattern)).thenReturn(10);
-    Mockito.when(mockMapper.computerListToComputerDtoList(computerList))
+    Mockito.when(ComputerMapper.computerListToComputerDtoList(computerList))
       .thenReturn(computerDtoList);
     
     ComputerPage page = new ComputerPage();
@@ -67,8 +67,7 @@ public class ComputerPageTest {
     Whitebox.setInternalState(ComputerService.class, ComputerService.COMPUTERSERVICE, mockService);
     ComputerDAOMySQL mockDAO = PowerMockito.mock(ComputerDAOMySQL.class);
     Whitebox.setInternalState(ComputerDAOMySQL.class, ComputerDAOMySQL.COMPUTERDAO, mockDAO);
-    ComputerMapper mockMapper = PowerMockito.mock(ComputerMapper.class);
-    Whitebox.setInternalState(ComputerMapper.class, ComputerMapper.COMPUTERMAPPER, mockMapper);
+    PowerMockito.mockStatic(ComputerMapper.class);
     
     
     ComputerList computerList = new ComputerList();
@@ -76,7 +75,7 @@ public class ComputerPageTest {
     
     Mockito.when(mockDAO.getNComputers(pattern, begin, nbComputer, orderBy)).thenReturn(computerList);
     Mockito.when(mockService.getNumberComputer()).thenReturn(10);
-    Mockito.when(mockMapper.computerListToComputerDtoList(computerList))
+    Mockito.when(ComputerMapper.computerListToComputerDtoList(computerList))
       .thenReturn(computerDtoList);
     
     ComputerPage page = new ComputerPage();

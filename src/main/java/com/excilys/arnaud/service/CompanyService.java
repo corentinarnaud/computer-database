@@ -1,12 +1,12 @@
 package com.excilys.arnaud.service;
 
+import com.excilys.arnaud.mapper.CompanyMapper;
 import com.excilys.arnaud.model.dto.CompanyDto;
 import com.excilys.arnaud.model.dto.CompanyDtoList;
 import com.excilys.arnaud.model.metier.Company;
 import com.excilys.arnaud.model.metier.CompanyList;
 import com.excilys.arnaud.persistance.CompanyDAO;
 import com.excilys.arnaud.persistance.DAOFactory;
-import com.excilys.arnaud.service.mapper.CompanyMapper;
 
 import java.util.Optional;
 
@@ -23,7 +23,7 @@ public enum CompanyService {
   public Optional<CompanyDto> findById(long id) {
     Optional<Company> optional = companyDAO.findById(id);
     if (optional.isPresent()) {
-      return Optional.of(CompanyMapper.COMPANYMAPPER.companyToDto(optional.get()));
+      return Optional.of(CompanyMapper.companyToDto(optional.get()));
     }
     return Optional.empty();
   }
@@ -35,7 +35,7 @@ public enum CompanyService {
   public Optional<CompanyDto> findByName(String name) {
     Optional<Company> optional = companyDAO.findByName(name);
     if (optional.isPresent()) {
-      return Optional.of(CompanyMapper.COMPANYMAPPER.companyToDto(optional.get()));
+      return Optional.of(CompanyMapper.companyToDto(optional.get()));
     }
     return Optional.empty();
   }
@@ -52,7 +52,7 @@ public enum CompanyService {
    */
   public CompanyDtoList getCompanyList() {
     if (companyDtoList == null) {
-      companyDtoList = CompanyMapper.COMPANYMAPPER.companyListToCompanyDtoList(
+      companyDtoList = CompanyMapper.companyListToCompanyDtoList(
           companyDAO.getCompanies());
     }
     return companyDtoList;

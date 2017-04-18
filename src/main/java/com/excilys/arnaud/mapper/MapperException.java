@@ -1,4 +1,4 @@
-package com.excilys.arnaud.service.mapper;
+package com.excilys.arnaud.mapper;
 
 public class MapperException extends RuntimeException {
 

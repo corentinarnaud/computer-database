@@ -1,9 +1,9 @@
 package com.excilys.arnaud.service;
 
+import com.excilys.arnaud.mapper.ComputerMapper;
 import com.excilys.arnaud.model.dto.ComputerDto;
 import com.excilys.arnaud.model.dto.ComputerDtoList;
 import com.excilys.arnaud.persistance.DAOFactory;
-import com.excilys.arnaud.service.mapper.ComputerMapper;
 
 
 public class ComputerPage extends Page<ComputerDto> {
@@ -36,7 +36,7 @@ public class ComputerPage extends Page<ComputerDto> {
       this.nbElement = DAOFactory.DAOFACTORY.getComputerDAO().getNumberOfComputer(pattern);
     }
     this.nbPage = (int) Math.ceil((float) nbElement / ELMEMENT_BY_PAGE);
-    this.list = ComputerMapper.COMPUTERMAPPER.computerListToComputerDtoList(
+    this.list = ComputerMapper.computerListToComputerDtoList(
         DAOFactory.DAOFACTORY.getComputerDAO().getNComputers(pattern, begin, ELMEMENT_BY_PAGE, orderBy));
     return list;
   }

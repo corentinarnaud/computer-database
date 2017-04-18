@@ -1,8 +1,9 @@
 package com.excilys.arnaud.service;
 
+import com.excilys.arnaud.mapper.CompanyMapper;
 import com.excilys.arnaud.model.dto.CompanyDto;
 import com.excilys.arnaud.persistance.DAOFactory;
-import com.excilys.arnaud.service.mapper.CompanyMapper;
+
 import java.util.List;
 
 
@@ -26,7 +27,7 @@ public class CompanyPage extends Page<CompanyDto> {
   @Override
   public List<CompanyDto> getPage() {
     int begin = ELMEMENT_BY_PAGE * currentPage;
-    return CompanyMapper.COMPANYMAPPER.companyListToCompanyDtoList(
+    return CompanyMapper.companyListToCompanyDtoList(
         DAOFactory.DAOFACTORY.getCompanyDAO().getNCompanies(begin, ELMEMENT_BY_PAGE));
   }
 

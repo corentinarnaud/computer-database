@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import com.excilys.arnaud.model.metier.Computer;
 
-public class ServiceUtils {
-  private static Logger logger = LoggerFactory.getLogger(ServiceUtils.class);
+public class Validator {
+  private static Logger logger = LoggerFactory.getLogger(Validator.class);
   
   /** Check if name contains forbidden character.
    * @param name a String

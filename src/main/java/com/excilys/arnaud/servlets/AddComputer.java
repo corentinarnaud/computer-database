@@ -1,12 +1,12 @@
 package com.excilys.arnaud.servlets;
 
+import com.excilys.arnaud.mapper.MapperException;
 import com.excilys.arnaud.model.dto.CompanyDto;
 import com.excilys.arnaud.model.dto.CompanyDtoList;
 import com.excilys.arnaud.model.dto.ComputerDto;
 import com.excilys.arnaud.service.CompanyService;
 import com.excilys.arnaud.service.ComputerService;
 import com.excilys.arnaud.service.ServiceException;
-import com.excilys.arnaud.service.mapper.MapperException;
 
 import java.io.IOException;
 import java.time.LocalDate;

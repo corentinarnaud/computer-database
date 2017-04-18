@@ -1,5 +1,7 @@
 package com.excilys.arnaud.persistance;
 
+import com.excilys.arnaud.persistance.exception.DAOConfigurationException;
+import com.excilys.arnaud.persistance.exception.DAOException;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import java.io.IOException;
@@ -20,6 +22,7 @@ public enum DataBaseConnection {
   private static final String PROPERTY_DRIVER    = "driver";
   private static final String PROPERTY_USER      = "user";
   private static final String PROPERTY_PASSWORD  = "password";
+  private static final String PROPERTY_NB_POOL   = "pool";
   private static final Logger LOGGER = LoggerFactory.getLogger(DataBaseConnection.class);
   private static final ThreadLocal<Connection>  threadLocal = new ThreadLocal<>(); 
   
@@ -30,15 +33,16 @@ public enum DataBaseConnection {
   private String password;
   private String base;
   private String arguments;
+  private int nbPool;
   private HikariDataSource ds;
 
   private DataBaseConnection() {
     getProperties();
-    initialistation();
+    initialisation();
     
   }
   
-  private void initialistation() {
+  private void initialisation() {
     try {
       Class.forName(driver);
       HikariConfig cfg = new HikariConfig();
@@ -46,7 +50,7 @@ public enum DataBaseConnection {
       cfg.setJdbcUrl(base + url + arguments);
       cfg.setUsername(user);
       cfg.setPassword(password);
-      cfg.setMaximumPoolSize(50);
+      cfg.setMaximumPoolSize(nbPool);
       ds = new HikariDataSource(cfg);
       
       // To close the datasource when the server is closing
@@ -83,10 +87,15 @@ public enum DataBaseConnection {
       arguments = properties.getProperty(PROPERTY_ARGUMENTS);
       user = properties.getProperty(PROPERTY_USER);
       password = properties.getProperty(PROPERTY_PASSWORD);
+      nbPool = Integer.parseInt(properties.getProperty(PROPERTY_NB_POOL));
     } catch (IOException e) {
       LOGGER.debug("Fail to load property file " + PROPERTY_FILE);
       throw new DAOConfigurationException(
           "Fail to load property file " + PROPERTY_FILE, e);
+    } catch (NumberFormatException e) {
+      LOGGER.debug("Fail to convert the capacity of the pool " + e.getMessage());
+      throw new DAOConfigurationException(
+          "Fail to convert the capacity of the pool", e);
     }
 
   }

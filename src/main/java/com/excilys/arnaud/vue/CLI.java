@@ -1,20 +1,15 @@
 package com.excilys.arnaud.vue;
 
+import com.excilys.arnaud.mapper.MapperException;
 import com.excilys.arnaud.model.dto.CompanyDto;
 import com.excilys.arnaud.model.dto.ComputerDto;
-import com.excilys.arnaud.persistance.DAOException;
+import com.excilys.arnaud.persistance.exception.DAOException;
 import com.excilys.arnaud.service.CompanyPage;
 import com.excilys.arnaud.service.CompanyService;
 import com.excilys.arnaud.service.ComputerPage;
 import com.excilys.arnaud.service.ComputerService;
 import com.excilys.arnaud.service.Page;
 import com.excilys.arnaud.service.ServiceException;
-import com.excilys.arnaud.service.mapper.MapperException;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -146,7 +141,7 @@ public class CLI {
 
     try {
       id = Integer.parseInt(sc.nextLine());
-      compService.del(id);
+      compService.delComputer(id);
       System.out.println("Computer " + id + " corectly deleted");
     } catch (DAOException e) {
       System.out.println("Error when accessing to the base");
@@ -237,7 +232,6 @@ public class CLI {
     ComputerService computerService = ComputerService.COMPUTERSERVICE;
     CompanyService companyDAO = CompanyService.COMPANYSERVICE;
     Optional<ComputerDto> computer;
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     System.out.print("\nID of computer : ");
     try {

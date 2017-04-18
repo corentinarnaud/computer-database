@@ -194,11 +194,6 @@
 					<suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>selenium-maven-plugin</artifactId>
-				<version>1.0.1</version>
-			</plugin>
 		</plugins>
 	</reporting>
 </project>

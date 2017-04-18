@@ -1,11 +1,11 @@
-package com.excilys.arnaud.persistance.mysql;
+package com.excilys.arnaud.persistance.inplem;
 
 import com.excilys.arnaud.model.metier.Company;
 import com.excilys.arnaud.model.metier.CompanyList;
 import com.excilys.arnaud.persistance.CompanyDAO;
-import com.excilys.arnaud.persistance.DAOException;
 import com.excilys.arnaud.persistance.DAOUtils;
 import com.excilys.arnaud.persistance.DataBaseConnection;
+import com.excilys.arnaud.persistance.exception.DAOException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

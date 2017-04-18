@@ -1,10 +1,10 @@
 package com.excilys.arnaud.service;
 
+import com.excilys.arnaud.mapper.ComputerMapper;
 import com.excilys.arnaud.model.dto.ComputerDto;
 import com.excilys.arnaud.model.metier.Computer;
 import com.excilys.arnaud.persistance.ComputerDAO;
 import com.excilys.arnaud.persistance.DAOFactory;
-import com.excilys.arnaud.service.mapper.ComputerMapper;
 
 import java.util.Optional;
 
@@ -23,10 +23,9 @@ public enum ComputerService {
    * @throws ServiceException if a DAO error occurred
    */
   public long add(ComputerDto computerDto) throws ServiceException {
-    Computer computer = ComputerMapper.COMPUTERMAPPER.computerDtoToComputer(computerDto);
-    System.out.println(computer);
-    ServiceUtils.checkDate(computer);
-    ServiceUtils.checkName(computer.getName());
+    Computer computer = ComputerMapper.computerDtoToComputer(computerDto);
+    Validator.checkDate(computer);
+    Validator.checkName(computer.getName());
     long newId = computerDAO.add(computer);
     if (newId > 0) {
       synchronized (this) {
@@ -42,13 +41,13 @@ public enum ComputerService {
    * @throws ServiceException if a DAO error occurred
    */
   public boolean update(ComputerDto computerDto) throws ServiceException {
-    Computer computer = ComputerMapper.COMPUTERMAPPER.computerDtoToComputer(computerDto);
-    ServiceUtils.checkDate(computer);
-    ServiceUtils.checkName(computer.getName());
+    Computer computer = ComputerMapper.computerDtoToComputer(computerDto);
+    Validator.checkDate(computer);
+    Validator.checkName(computer.getName());
     return computerDAO.update(computer);
   }
 
-  public boolean del(long id) {
+  public boolean delComputer(long id) {
     if (computerDAO.del(id)) {
       synchronized (this) {
         numberComputer--;
@@ -66,7 +65,7 @@ public enum ComputerService {
     Optional<Computer> computer = computerDAO.findById(id);
     if (computer.isPresent()) {
       return Optional.of(
-          ComputerMapper.COMPUTERMAPPER.computerToComputerDto(computer.get()));
+          ComputerMapper.computerToComputerDto(computer.get()));
     }
     return Optional.empty();
   }
@@ -79,7 +78,7 @@ public enum ComputerService {
     Optional<Computer> computer = computerDAO.findByName(name);
     if (computer.isPresent()) {
       return Optional.of(
-          ComputerMapper.COMPUTERMAPPER.computerToComputerDto(computer.get()));
+          ComputerMapper.computerToComputerDto(computer.get()));
     }
     return Optional.empty();
   }
@@ -93,7 +92,10 @@ public enum ComputerService {
   }
 
 
-  public boolean[] dels(long[] longIds) {
+  public boolean[] delComputers(long[] longIds) {
+    if(longIds.length==1){
+      return new boolean[]{ delComputer(longIds[0])};
+    }
     boolean[] dels = computerDAO.dels(longIds);
     int nbDels = 0;
     for (boolean id : dels) {

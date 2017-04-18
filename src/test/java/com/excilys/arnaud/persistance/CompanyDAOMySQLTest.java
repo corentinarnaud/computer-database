@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import com.excilys.arnaud.model.metier.Company;
 import com.excilys.arnaud.model.metier.CompanyList;
-import com.excilys.arnaud.persistance.mysql.CompanyDAOMySQL;
+import com.excilys.arnaud.persistance.inplem.CompanyDAOMySQL;
 
 import java.util.Optional;
 import org.junit.Test;

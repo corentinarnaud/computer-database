@@ -1,4 +1,4 @@
-package com.excilys.arnaud.service.mapper;
+package com.excilys.arnaud.mapper;
 
 import com.excilys.arnaud.model.dto.CompanyDto;
 import com.excilys.arnaud.model.dto.ComputerDto;
@@ -14,17 +14,16 @@ import java.time.format.DateTimeParseException;
 
 
 
-public enum ComputerMapper {
-  COMPUTERMAPPER;
+public class ComputerMapper {
   
-  private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+  private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
   
   /** Map computer dto to computer metier.
    * @param computerDto A computer dto
    * @return The computer metier that correspond to computerDto
    */
-  public Computer computerDtoToComputer(ComputerDto computerDto) {
+  public static Computer computerDtoToComputer(ComputerDto computerDto) {
     LocalDateTime introduced;
     LocalDateTime discontinued;
     long id = 0;
@@ -60,7 +59,7 @@ public enum ComputerMapper {
       }
       
       if (computerDto.getCompany() != null) {
-        company = CompanyMapper.COMPANYMAPPER.dtoToCompany(computerDto.getCompany());
+        company = CompanyMapper.dtoToCompany(computerDto.getCompany());
       } else {
         company = null;
       }
@@ -77,7 +76,7 @@ public enum ComputerMapper {
    * @param computer The computer metier to map
    * @return the computer dto mapped
    */
-  public ComputerDto computerToComputerDto(Computer computer) {
+  public static ComputerDto computerToComputerDto(Computer computer) {
     String introduced;
     String discontinued;
     CompanyDto company;
@@ -110,7 +109,7 @@ public enum ComputerMapper {
    * @param computerList a list of computer, not null
    * @return A computer list who correspond to computerDto list in input
    */
-  public ComputerDtoList computerListToComputerDtoList(ComputerList computerList) {
+  public static ComputerDtoList computerListToComputerDtoList(ComputerList computerList) {
     ComputerDtoList computerDtoList = new ComputerDtoList();
     for (int i = 0;i < computerList.size(); i++) {
       computerDtoList.add(i, computerToComputerDto(computerList.get(i)));
