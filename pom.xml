@@ -4,7 +4,7 @@
 	<groupId>com.excilys.arnaud</groupId>
 	<artifactId>ComputerDatabase</artifactId>
 	<packaging>war</packaging>
-	<version>1.0.2-SNAPSHOT</version>
+	<version>1.0.3-RELEASE</version>
 	<name>ComputerDatabase Maven Webapp</name>
 	<url>http://maven.apache.org</url>
 	<properties>

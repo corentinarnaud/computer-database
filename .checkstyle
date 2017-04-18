@@ -2,7 +2,10 @@
 
 <fileset-config file-format-version="1.2.0" simple-config="true" sync-formatter="false">
   <local-check-config name="check" location="internal_config_1490286716395.xml" type="internal" description=""/>
-  <fileset name="all" enabled="true" check-config-name="Google Checks" local="false">
+  <local-check-config name="computercheck" location="config/checkstyle/checkstyle.xml" type="project" description="">
+    <additional-data name="protect-config-file" value="false"/>
+  </local-check-config>
+  <fileset name="all" enabled="true" check-config-name="computercheck" local="true">
     <file-match-pattern match-pattern="." include-pattern="true"/>
   </fileset>
 </fileset-config>
