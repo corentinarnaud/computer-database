@@ -1,27 +1,22 @@
-package com.excilys.arnaud.service;
+package com.excilys.arnaud.model.dto;
 
 import java.util.List;
 
-public abstract class Page<E> {
+public class Page<E> {
   protected int ELMEMENT_BY_PAGE = 10;
   protected List<E> list;
   protected int currentPage = 0;
   protected int nbPage;
   protected int nbElement;
 
-  public Page() {
 
-  }
-
-  protected Page(List<E> list, int nbElement) {
+  public Page(List<E> list, int nbElement, int currentPage) {
     this.list = list;
     this.nbElement = nbElement;
     nbPage = (int) Math.ceil((float) nbElement / ELMEMENT_BY_PAGE);
+    this.currentPage = currentPage;
   }
 
-  public Page(int nbPage) {
-    this.nbPage = nbPage;
-  }
 
   public int getElementByPage() {
     return ELMEMENT_BY_PAGE;
@@ -48,10 +43,7 @@ public abstract class Page<E> {
     return list;
   }
 
-  public abstract List<E> getPageN(int n);
-
   public String toString() {
     return "Page " + currentPage + "/" + nbPage;
   }
-
 }

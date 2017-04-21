@@ -1,11 +1,11 @@
-package com.excilys.arnaud.persistance.inplem;
+package com.excilys.arnaud.persistance.implem;
 
 import com.excilys.arnaud.model.metier.Company;
 import com.excilys.arnaud.model.metier.Computer;
 import com.excilys.arnaud.model.metier.ComputerList;
 import com.excilys.arnaud.persistance.ComputerDAO;
 import com.excilys.arnaud.persistance.DAOUtils;
-import com.excilys.arnaud.persistance.DataBaseConnection;
+import com.excilys.arnaud.persistance.DataBaseManager;
 import com.excilys.arnaud.persistance.exception.DAOException;
 
 import java.sql.Connection;
@@ -20,9 +20,11 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
-public enum ComputerDAOMySQL implements ComputerDAO {
-  COMPUTERDAO;
+@Repository
+public class ComputerDAOMySQL implements ComputerDAO {
   private static final Logger logger = LoggerFactory.getLogger(ComputerDAOMySQL.class);
   private static final String SQL_INSERT = 
       "INSERT INTO computer(name,introduced,discontinued,company_id) VALUES (? ,? ,? ,? )";
@@ -59,11 +61,14 @@ public enum ComputerDAOMySQL implements ComputerDAO {
   private static final String SQL_NUMBER_OF_COMPUTERS_PATTERN = 
       "SELECT COUNT(id) FROM computer USE INDEX (PRIMARY) WHERE name LIKE ?";
   private static final String SQL_DELETE_FROM_COMPANY = "DELETE FROM computer WHERE company_id=?";
-
-  private ComputerDAOMySQL() {
-
+  
+  @Autowired
+  private DataBaseManager database;
+  
+  public ComputerDAOMySQL(){
+    
   }
-
+  
   @Override
   public long add(Computer computer) throws DAOException {
     long id;
@@ -73,7 +78,7 @@ public enum ComputerDAOMySQL implements ComputerDAO {
     
     if (computer != null) {
       try {
-        connection = DataBaseConnection.CONNECTION.getConnection();
+        connection = database.getConnection();
         connection.setReadOnly(false);
         addStatement = connection.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS);
         addStatement.setString(1, computer.getName());
@@ -134,7 +139,7 @@ public enum ComputerDAOMySQL implements ComputerDAO {
 
     if (computer != null) {
       try {
-        connection = DataBaseConnection.CONNECTION.getConnection();
+        connection = database.getConnection();
         connection.setReadOnly(false);
         updateStatement = connection.prepareStatement(SQL_UPDATE);
         updateStatement.setString(1, computer.getName());
@@ -185,7 +190,7 @@ public enum ComputerDAOMySQL implements ComputerDAO {
     Connection connection = null;
 
     try {
-      connection = DataBaseConnection.CONNECTION.getConnection();
+      connection = database.getConnection();
       connection.setReadOnly(false);
       statement = connection.prepareStatement(SQL_DEL);
       statement.setString(1, String.valueOf(id));
@@ -214,7 +219,7 @@ public enum ComputerDAOMySQL implements ComputerDAO {
     Connection connection = null;
 
     try {
-      connection = DataBaseConnection.CONNECTION.getConnection();
+      connection = database.getConnection();
       connection.setReadOnly(true);
       statement = connection.prepareStatement(SQL_FIND_ID);
       statement.setString(1, String.valueOf(id));
@@ -258,7 +263,7 @@ public enum ComputerDAOMySQL implements ComputerDAO {
 
     if (name != null) {
       try {
-        connection = DataBaseConnection.CONNECTION.getConnection();
+        connection = database.getConnection();
         statement = connection.prepareStatement(SQL_FIND_NAME);
         connection.setReadOnly(true);
         statement.setString(1, name);
@@ -304,7 +309,7 @@ public enum ComputerDAOMySQL implements ComputerDAO {
 
     try {
       ComputerList list = new ComputerList();
-      connection = DataBaseConnection.CONNECTION.getConnection();
+      connection = database.getConnection();
       connection.setReadOnly(true);
       statement = connection.createStatement();
       resultat = statement.executeQuery(SQL_COMPUTERS);
@@ -349,7 +354,7 @@ public enum ComputerDAOMySQL implements ComputerDAO {
 
     if (begin >= 0 && nbComputer > 0) {
       try {
-        connection = DataBaseConnection.CONNECTION.getConnection();
+        connection = database.getConnection();
         connection.setReadOnly(true);
 
         if (orderBy == 4) {
@@ -410,7 +415,7 @@ public enum ComputerDAOMySQL implements ComputerDAO {
 
     if (begin >= 0 && nbComputer > 0) {
       try {
-        connection = DataBaseConnection.CONNECTION.getConnection();
+        connection = database.getConnection();
         connection.setReadOnly(true);
 
 
@@ -470,7 +475,7 @@ public enum ComputerDAOMySQL implements ComputerDAO {
     Connection connection = null;
 
     try {
-      connection = DataBaseConnection.CONNECTION.getConnection();
+      connection = database.getConnection();
       connection.setReadOnly(true);
       statement = connection.prepareStatement(SQL_NUMBER_OF_COMPUTERS);
       resultat = statement.executeQuery();
@@ -498,7 +503,7 @@ public enum ComputerDAOMySQL implements ComputerDAO {
     }
 
     try {
-      connection = DataBaseConnection.CONNECTION.getConnection();
+      connection = database.getConnection();
       connection.setReadOnly(true);
       statement = connection.prepareStatement(SQL_NUMBER_OF_COMPUTERS_PATTERN);
       statement.setString(1, "%" + pattern + "%");
@@ -523,7 +528,7 @@ public enum ComputerDAOMySQL implements ComputerDAO {
 
     if (ids != null && ids.length != 0) {
       try {
-        connection = DataBaseConnection.CONNECTION.getConnection();
+        connection = database.getConnection();
         statement = connection.prepareStatement(SQL_DEL);
 
         statement.setString(1, String.valueOf(ids[0]));
@@ -565,7 +570,7 @@ public enum ComputerDAOMySQL implements ComputerDAO {
     Connection connection = null;
 
     try {
-      connection = DataBaseConnection.CONNECTION.getConnection();
+      connection = database.getConnection();
       statement = connection.prepareStatement(SQL_DELETE_FROM_COMPANY);
       statement.setString(1, String.valueOf(id));
       int resultat = statement.executeUpdate();

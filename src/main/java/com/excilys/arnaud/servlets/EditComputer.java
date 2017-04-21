@@ -12,11 +12,15 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Optional;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 @WebServlet("/editComputer")
 public class EditComputer extends HttpServlet {
@@ -26,6 +30,16 @@ public class EditComputer extends HttpServlet {
    * 
    */
   private static final long serialVersionUID = -6942829491462214116L;
+  @Autowired
+  private CompanyService companyService;
+  @Autowired
+  private ComputerService computerService;
+  
+  public void init(ServletConfig config) throws ServletException {
+    super.init(config);
+    SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this,
+      config.getServletContext());
+  }
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -43,10 +57,10 @@ public class EditComputer extends HttpServlet {
       return;
     }
 
-    CompanyDtoList companyList = CompanyService.COMPANYSERVICE.getCompanyList();
+    CompanyDtoList companyList = companyService.getCompanyList();
     request.setAttribute("listCompany", companyList);
 
-    Optional<ComputerDto> computerDto = ComputerService.COMPUTERSERVICE.findById(id);
+    Optional<ComputerDto> computerDto = computerService.findById(id);
     if (!computerDto.isPresent()) {
       this.getServletContext().getRequestDispatcher("/views/404.jsp").forward(request, response);
       return;
@@ -74,11 +88,11 @@ public class EditComputer extends HttpServlet {
         
         if (companyIDString != null && !companyIDString.isEmpty() && !companyIDString.equals("0")) {
           Optional<CompanyDto> opt = 
-              CompanyService.COMPANYSERVICE.findById(Long.parseLong(companyIDString));
+              companyService.findById(Long.parseLong(companyIDString));
           company = opt.isPresent() ? opt.get() : null;
         }
       
-        ComputerService.COMPUTERSERVICE.update(
+        computerService.update(
             new ComputerDto(idString, name, company, introducedString, discontinuedString));
       } catch (ServiceException e) {
         // TODO Auto-generated catch block

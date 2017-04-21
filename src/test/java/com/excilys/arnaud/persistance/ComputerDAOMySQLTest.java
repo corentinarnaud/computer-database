@@ -7,14 +7,24 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.excilys.arnaud.model.metier.Company;
 import com.excilys.arnaud.model.metier.Computer;
 import com.excilys.arnaud.model.metier.ComputerList;
-import com.excilys.arnaud.persistance.inplem.ComputerDAOMySQL;
+import com.excilys.arnaud.persistance.implem.ComputerDAOMySQL;
+import com.excilys.arnaud.springConfig.MainConfig;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@WebAppConfiguration
+@ContextConfiguration(classes = MainConfig.class)
 public class ComputerDAOMySQLTest {
-  private ComputerDAOMySQL computerDAOMySQL = ComputerDAOMySQL.COMPUTERDAO;
+  @Autowired
+  private ComputerDAOMySQL computerDAOMySQL;
 
   @Test
   public void findByIdTest() {
@@ -79,7 +89,7 @@ public class ComputerDAOMySQLTest {
 
   @Test
   public void getComputersTest() {
-    ComputerList companyList = ComputerDAOMySQL.COMPUTERDAO.getComputers();
+    ComputerList companyList = computerDAOMySQL.getComputers();
     assertFalse(companyList == null);
     assertTrue(companyList.size() == 574);
     assertTrue(companyList.get(5).getId() == 5 + 1);

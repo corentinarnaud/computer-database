@@ -1,10 +1,10 @@
-package com.excilys.arnaud.persistance.inplem;
+package com.excilys.arnaud.persistance.implem;
 
 import com.excilys.arnaud.model.metier.Company;
 import com.excilys.arnaud.model.metier.CompanyList;
 import com.excilys.arnaud.persistance.CompanyDAO;
 import com.excilys.arnaud.persistance.DAOUtils;
-import com.excilys.arnaud.persistance.DataBaseConnection;
+import com.excilys.arnaud.persistance.DataBaseManager;
 import com.excilys.arnaud.persistance.exception.DAOException;
 
 import java.sql.Connection;
@@ -15,18 +15,39 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import javax.sql.DataSource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
-public enum CompanyDAOMySQL implements CompanyDAO {
-  CONPANYDAO();
+@Repository
+public class CompanyDAOMySQL implements CompanyDAO {
+
   private static final String SQL_FIND_ID   = "SELECT name  FROM company WHERE id=?";
   private static final String SQL_FIND_NAME = "SELECT id  FROM company WHERE name=?";
   private static final String SQL_COMPANIES = "SELECT id, name  FROM company";
   private static final String SQL_N_COMPANIES = "SELECT id, name  FROM company LIMIT ?, ?";
   private static final String SQL_COUNT     = "SELECT COUNT(*) FROM company";
   private static final String SQL_DEL = "DELETE FROM computer WHERE id=?";
-  private static final Logger logger = LoggerFactory.getLogger(CompanyDAOMySQL.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(CompanyDAOMySQL.class);
+  @Autowired
+  private DataBaseManager database;
+  
+  
+  private JdbcTemplate jdbcTemplate;
+
+  @Autowired
+  public void setDataSource(DataSource dataSource) {
+      this.jdbcTemplate = new JdbcTemplate(dataSource);
+  }
+
+  
+  public CompanyDAOMySQL(){
+    LOGGER.info("CompanyDao mysql instanciated");
+  }
 
   @Override
   public Optional<Company> findById(long id) throws DAOException {
@@ -35,7 +56,7 @@ public enum CompanyDAOMySQL implements CompanyDAO {
     Connection connection = null;
 
     try {
-      connection = DataBaseConnection.CONNECTION.getConnection();
+      connection = database.getConnection();
       statement = connection.prepareStatement(SQL_FIND_ID);
       statement.setLong(1, id);
       resultat = statement.executeQuery();
@@ -44,7 +65,7 @@ public enum CompanyDAOMySQL implements CompanyDAO {
       }
 
     } catch (SQLException e) {
-      logger.debug(e.getMessage());
+      LOGGER.debug(e.getMessage());
       throw new DAOException(e);
     } finally {
       DAOUtils.closePreparedStatement(statement);
@@ -62,7 +83,7 @@ public enum CompanyDAOMySQL implements CompanyDAO {
 
     if (name != null) {
       try {
-        connection = DataBaseConnection.CONNECTION.getConnection();
+        connection = database.getConnection();
         statement = connection.prepareStatement(SQL_FIND_NAME);
         statement.setString(1, name);
         resultat = statement.executeQuery();
@@ -71,7 +92,7 @@ public enum CompanyDAOMySQL implements CompanyDAO {
         }
 
       } catch (SQLException e) {
-        logger.debug(e.getMessage());
+        LOGGER.debug(e.getMessage());
         throw new DAOException(e);
       } finally {
         DAOUtils.closePreparedStatement(statement);
@@ -89,7 +110,7 @@ public enum CompanyDAOMySQL implements CompanyDAO {
     Connection connection = null;
 
     try {
-      connection = DataBaseConnection.CONNECTION.getConnection();
+      connection = database.getConnection();
       statement = connection.createStatement();
       resultat = statement.executeQuery(SQL_COMPANIES);
       ArrayList<Company> list = new ArrayList<Company>();
@@ -100,7 +121,7 @@ public enum CompanyDAOMySQL implements CompanyDAO {
       return new CompanyList(list);
 
     } catch (SQLException e) {
-      logger.debug(e.getMessage());
+      LOGGER.debug(e.getMessage());
       throw new DAOException(e);
     } finally {
       DAOUtils.closeStatement(statement);
@@ -117,7 +138,7 @@ public enum CompanyDAOMySQL implements CompanyDAO {
     Connection connection = null;
 
     try {
-      connection = DataBaseConnection.CONNECTION.getConnection();
+      connection = database.getConnection();
       statement = connection.prepareStatement(SQL_N_COMPANIES);
       statement.setInt(1, begin);
       statement.setInt(2, nbCompanies);
@@ -130,7 +151,7 @@ public enum CompanyDAOMySQL implements CompanyDAO {
       return new CompanyList(list);
 
     } catch (SQLException e) {
-      logger.debug(e.getMessage());
+      LOGGER.debug(e.getMessage());
       throw new DAOException(e);
     } finally {
       DAOUtils.closePreparedStatement(statement);
@@ -146,7 +167,7 @@ public enum CompanyDAOMySQL implements CompanyDAO {
     Connection connection = null;
 
     try {
-      connection = DataBaseConnection.CONNECTION.getConnection();
+      connection = database.getConnection();
       statement = connection.createStatement();
       resultat = statement.executeQuery(SQL_COUNT);
       resultat.next();
@@ -154,7 +175,7 @@ public enum CompanyDAOMySQL implements CompanyDAO {
       return resultat.getInt(1);
 
     } catch (SQLException e) {
-      logger.debug(e.getMessage());
+      LOGGER.debug(e.getMessage());
       throw new DAOException(e);
     } finally {
       DAOUtils.closeStatement(statement);
@@ -169,19 +190,19 @@ public enum CompanyDAOMySQL implements CompanyDAO {
     Connection connection = null;
 
     try {
-      connection = DataBaseConnection.CONNECTION.getConnection();
+      connection = database.getConnection();
       statement = connection.prepareStatement(SQL_DEL);
       statement.setString(1, String.valueOf(id));
       int resultat = statement.executeUpdate();
       if (resultat == 1) {
-        logger.info("Company {} deleted", id);
-        return CompanyDAOMySQL.CONPANYDAO.delCompany(id);
+        LOGGER.info("Company {} deleted", id);
+        return true;
       } else {
-        logger.info("Company {} not deleted", id);
+        LOGGER.info("Company {} not deleted", id);
         return false;
       }
     } catch (SQLException e) {
-      logger.debug(e.getMessage());
+      LOGGER.debug(e.getMessage());
       throw new DAOException(e);
     } finally {
       DAOUtils.closePreparedStatement(statement);

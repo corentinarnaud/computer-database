@@ -3,18 +3,24 @@ package com.excilys.arnaud.vue;
 import com.excilys.arnaud.mapper.MapperException;
 import com.excilys.arnaud.model.dto.CompanyDto;
 import com.excilys.arnaud.model.dto.ComputerDto;
+import com.excilys.arnaud.model.dto.ComputerPage;
+import com.excilys.arnaud.model.dto.Page;
 import com.excilys.arnaud.persistance.exception.DAOException;
-import com.excilys.arnaud.service.CompanyPage;
 import com.excilys.arnaud.service.CompanyService;
-import com.excilys.arnaud.service.ComputerPage;
 import com.excilys.arnaud.service.ComputerService;
-import com.excilys.arnaud.service.Page;
 import com.excilys.arnaud.service.ServiceException;
 import java.util.Optional;
 import java.util.Scanner;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 public class CLI {
   private static final String SEPARATOR = "============================================";
+  
+  @Autowired
+  private static CompanyService companyService;
+  @Autowired
+  private static ComputerService computerService;
 
   public static void main(String[] args) {
     String inputString = "";
@@ -67,8 +73,7 @@ public class CLI {
     long numComp;
     long resultId;
     CompanyDto company = null;
-    CompanyService companyDAO = CompanyService.COMPANYSERVICE;
-    ComputerService computerService = ComputerService.COMPUTERSERVICE;
+
 
     try {
       System.out.print("\nName : ");
@@ -81,7 +86,7 @@ public class CLI {
         if (numComp < 0) {
           throw new NumberFormatException();
         }
-        Optional<CompanyDto> opt = companyDAO.findById(numComp);
+        Optional<CompanyDto> opt = companyService.findById(numComp);
         company = opt.isPresent() ? opt.get() : null;
       }
 
@@ -111,14 +116,14 @@ public class CLI {
 
   private static void showComputer(Scanner sc) {
     int num;
-    ComputerService compService = ComputerService.COMPUTERSERVICE;
+
     Optional<ComputerDto> comp;
 
     System.out.print("\nID of the computer : ");
 
     try {
       num = Integer.parseInt(sc.nextLine());
-      comp = compService.findById(num);
+      comp = computerService.findById(num);
       if (comp.isPresent()) {
         System.out.println(comp.get());
       } else {
@@ -135,13 +140,13 @@ public class CLI {
 
   private static void delComputer(Scanner sc) {
     int id;
-    ComputerService compService = ComputerService.COMPUTERSERVICE;
+
 
     System.out.print("\nNumber of the computer : ");
 
     try {
       id = Integer.parseInt(sc.nextLine());
-      compService.delComputer(id);
+      computerService.delComputer(id);
       System.out.println("Computer " + id + " corectly deleted");
     } catch (DAOException e) {
       System.out.println("Error when accessing to the base");
@@ -153,38 +158,17 @@ public class CLI {
   }
 
   private static void showCompanies(Scanner sc) {
-    CompanyService companyService = CompanyService.COMPANYSERVICE;
+    Page<CompanyDto> companyPage = companyService.getCompanies(0, 10);
+    System.out.println("List of companies :");
 
-    try {
-      CompanyPage companyPage = companyService.getCompanies();
-      System.out.println("List of companies :");
-      showPage(sc, companyPage);
-    } catch (DAOException e) {
-      System.out.println("Error when accessing to the base");
-      e.printStackTrace();
-    }
-
-  }
-
-  private static void showComputers(Scanner sc) {
-    try {
-      ComputerService computerService = ComputerService.COMPUTERSERVICE;
-      ComputerPage computerPage = computerService.getComputers();
-      System.out.println("List of computers :");
-      showPage(sc, computerPage);
-    } catch (DAOException e) {
-      System.out.println("Error when accessing to the base");
-      e.printStackTrace();
-    }
-  }
-
-  private static void showPage(Scanner sc, Page<?> page) {
+    
     boolean loop = true;
     String query = "";
+    String pattern = "";
 
-    System.out.println(page.getPage());
+    System.out.println(companyPage.getPage());
     System.out.println(
-        "\t\t\t\tPage " + page.getCurrentPage() + "/" + page.getNbPage());
+        "\t\t\t\tPage " + companyPage.getCurrentPage() + "/" + companyPage.getNbPage());
 
     while (loop) {
       System.out.println(SEPARATOR);
@@ -196,26 +180,88 @@ public class CLI {
           loop = false;
           break;
         case "p":
-          System.out.println(page.getPageN(page.getCurrentPage() - 1));
-          System.out.println("\t\t\t\tPage " + page.getCurrentPage());
+          companyPage = companyService.getCompanies(companyPage.getCurrentPage() - 1, 10);
+          System.out.println(companyPage);
+          System.out.println("\t\t\t\tPage " + companyPage.getCurrentPage());
           break;
         case "n":
-          System.out.println(page.getPageN(page.getCurrentPage() + 1));
-          System.out.println("\t\t\t\tPage " + page.getCurrentPage());
+          companyPage = companyService.getCompanies(companyPage.getCurrentPage() + 1,10);
+          System.out.println(companyPage);
+          System.out.println("\t\t\t\tPage " + companyPage.getCurrentPage());
           break;
         case "f":
-          System.out.println(page.getPageN(0));
-          System.out.println("\t\t\t\tPage " + page.getCurrentPage());
+          companyPage = companyService.getCompanies(0, 10);
+          System.out.println(companyPage);
+          System.out.println("\t\t\t\tPage " + companyPage.getCurrentPage());
           break;
         case "l":
-          System.out.println(page.getPageN(page.getNbPage() - 1));
-          System.out.println("\t\t\t\tPage " + page.getCurrentPage());
+          companyPage = companyService.getCompanies(companyPage.getNbPage(), 10);
+          System.out.println(companyPage);
+          System.out.println("\t\t\t\tPage " + companyPage.getCurrentPage());
           break;
         default:
           try {
             int pageNumber = Integer.parseInt(query);
-            System.out.println(page.getPageN(pageNumber - 1));
-            System.out.println("\t\t\t\tPage " + page.getCurrentPage());
+            companyPage = companyService.getCompanies(pageNumber, 10);
+            System.out.println(companyPage);
+            System.out.println("\t\t\t\tPage " + companyPage.getCurrentPage());
+          } catch (NumberFormatException e) {
+            System.out.println("Wrong page number");
+          }
+      }
+    }
+
+  }
+
+  private static void showComputers(Scanner sc) {
+    ComputerPage computerPage = computerService.getComputerPage(0, "", 0, 10);
+    System.out.println("List of computers :");
+
+
+    
+    boolean loop = true;
+    String query = "";
+    String pattern = "";
+
+    System.out.println(computerPage.getPage());
+    System.out.println(
+        "\t\t\t\tPage " + computerPage.getCurrentPage() + "/" + computerPage.getNbPage());
+
+    while (loop) {
+      System.out.println(SEPARATOR);
+      System.out.println(
+          "Quit : q  |  Prev : p  |  Next : n  |  First : f  |  Last : l  |  Go to page :");
+      query = sc.nextLine();
+      switch (query) {
+        case "q":
+          loop = false;
+          break;
+        case "p":
+          computerPage = computerService.getComputerPage(computerPage.getCurrentPage() - 1, pattern, 0, 10);
+          System.out.println(computerPage);
+          System.out.println("\t\t\t\tPage " + computerPage.getCurrentPage());
+          break;
+        case "n":
+          computerPage = computerService.getComputerPage(computerPage.getCurrentPage() + 1, pattern, 0, 10);
+          System.out.println(computerPage);
+          System.out.println("\t\t\t\tPage " + computerPage.getCurrentPage());
+          break;
+        case "f":
+          computerPage = computerService.getComputerPage(0, pattern, 0, 10);
+          System.out.println(computerPage);
+          System.out.println("\t\t\t\tPage " + computerPage.getCurrentPage());
+          break;
+        case "l":
+          computerPage = computerService.getComputerPage(computerPage.getNbPage(), pattern, 0, 10);
+          System.out.println(computerPage);
+          System.out.println("\t\t\t\tPage " + computerPage.getCurrentPage());
+          break;
+        default:
+          try {
+            int pageNumber = Integer.parseInt(query);
+            computerPage = computerService.getComputerPage(pageNumber, pattern, 0, 10);
+            System.out.println(computerPage);
+            System.out.println("\t\t\t\tPage " + computerPage.getCurrentPage());
           } catch (NumberFormatException e) {
             System.out.println("Wrong page number");
           }
@@ -229,8 +275,6 @@ public class CLI {
     String string;
     boolean loop = true;
     boolean update = false;
-    ComputerService computerService = ComputerService.COMPUTERSERVICE;
-    CompanyService companyDAO = CompanyService.COMPANYSERVICE;
     Optional<ComputerDto> computer;
 
     System.out.print("\nID of computer : ");
@@ -269,7 +313,7 @@ public class CLI {
             try {
               System.out.print("New company (id): ");
               companyId = Integer.parseInt(sc.nextLine());
-              Optional<CompanyDto> company = companyDAO.findById(companyId);
+              Optional<CompanyDto> company = companyService.findById(companyId);
               if (company.isPresent()) {
                 computer.get().setCompany(company.get());
                 update = true;

@@ -3,17 +3,23 @@ package com.excilys.arnaud.service;
 import com.excilys.arnaud.mapper.CompanyMapper;
 import com.excilys.arnaud.model.dto.CompanyDto;
 import com.excilys.arnaud.model.dto.CompanyDtoList;
+import com.excilys.arnaud.model.dto.Page;
 import com.excilys.arnaud.model.metier.Company;
 import com.excilys.arnaud.model.metier.CompanyList;
 import com.excilys.arnaud.persistance.CompanyDAO;
-import com.excilys.arnaud.persistance.DAOFactory;
 
+import java.util.List;
 import java.util.Optional;
 
-public enum CompanyService {
-  COMPANYSERVICE;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
-  private CompanyDAO companyDAO = DAOFactory.DAOFACTORY.getCompanyDAO();
+@Component
+public class CompanyService {
+
+  @Autowired
+  private CompanyDAO companyDAO;
   private CompanyDtoList companyDtoList = null;
 
   /** Look for Company with id id.
@@ -43,8 +49,11 @@ public enum CompanyService {
   /** Look for companies.
    * @return The Page of all the companies
    */
-  public CompanyPage getCompanies() {
-    return new CompanyPage();
+  public Page<CompanyDto> getCompanies(int page, int elementsByPage) {
+    int begin = elementsByPage * page;
+    List<CompanyDto> list = CompanyMapper.companyListToCompanyDtoList(
+        companyDAO.getNCompanies(begin, elementsByPage));
+    return new Page<CompanyDto>(list, page, elementsByPage);
   }
   
   /** Look for companies.
