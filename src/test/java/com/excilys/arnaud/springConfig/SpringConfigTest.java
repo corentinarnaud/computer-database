@@ -11,7 +11,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.excilys.arnaud.persistance.ComputerDAO;
 import com.excilys.arnaud.persistance.DataBaseManager;
-import com.excilys.arnaud.service.ComputerPage;
 import com.excilys.arnaud.service.ComputerService;
 import com.excilys.arnaud.springConfig.MainConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -31,8 +30,7 @@ public class SpringConfigTest {
     private ComputerDAO computerDAO;
     @Autowired
     private ComputerService computerService;
-    @Autowired
-    private ComputerPage computerPage;
+
     
     
 
@@ -43,7 +41,6 @@ public class SpringConfigTest {
       assertNotNull(wac);
       assertNotNull(computerDAO);
       assertNotNull(computerService);
-      assertNotNull(computerPage);
-      computerPage.getPage();
+
     }
 }

@@ -4,129 +4,91 @@ import com.excilys.arnaud.model.metier.Company;
 import com.excilys.arnaud.model.metier.Computer;
 import com.excilys.arnaud.model.metier.ComputerList;
 import com.excilys.arnaud.persistance.ComputerDAO;
-import com.excilys.arnaud.persistance.DAOUtils;
-import com.excilys.arnaud.persistance.DataBaseManager;
 import com.excilys.arnaud.persistance.exception.DAOException;
-
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+
+import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class ComputerDAOMySQL implements ComputerDAO {
   private static final Logger logger = LoggerFactory.getLogger(ComputerDAOMySQL.class);
-  private static final String SQL_INSERT = 
-      "INSERT INTO computer(name,introduced,discontinued,company_id) VALUES (? ,? ,? ,? )";
-  private static final String SQL_UPDATE = 
-      "UPDATE computer SET name=?,introduced=?, discontinued=?, company_id=? WHERE id=?";
-  private static final String SQL_DEL = 
-      "DELETE FROM computer WHERE id=?";
-  private static final String SQL_FIND_ID = 
-      "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
+  private static final String SQL_INSERT = "INSERT INTO computer(name,introduced,discontinued,company_id) VALUES (? ,? ,? ,? )";
+  private static final String SQL_UPDATE = "UPDATE computer SET name=?,introduced=?, discontinued=?, company_id=? WHERE id=?";
+  private static final String SQL_DEL = "DELETE FROM computer WHERE id=?";
+  private static final String SQL_FIND_ID = "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
       + "FROM computer LEFT JOIN company ON company_id=company.id WHERE computer.id=?";
-  private static final String SQL_FIND_NAME = 
-      "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
+  private static final String SQL_FIND_NAME = "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
       + "FROM computer LEFT JOIN company ON company_id=company.id WHERE computer.name=?";
-  private static final String SQL_COMPUTERS = 
-      "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
+  private static final String SQL_COMPUTERS = "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
       + "FROM computer LEFT JOIN company ON company_id=company.id";
-  private static final String SQL_N_COMPUTERS = 
-      "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
+  private static final String SQL_N_COMPUTERS = "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
       + "FROM computer LEFT JOIN company ON company_id=company.id ORDER BY orderby ASC LIMIT ?, ?";
-  private static final String SQL_N_COMPUTERS_PATTERN = 
-      "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
-      + "FROM computer LEFT JOIN company ON company_id=company.id " 
+  private static final String SQL_N_COMPUTERS_PATTERN = "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
+      + "FROM computer LEFT JOIN company ON company_id=company.id "
       + "WHERE computer.name LIKE ? OR company.name LIKE ? ORDER BY orderby ASC LIMIT ?, ?";
-  private static final String SQL_N_COMPUTERS_ORDER_COMPANY = 
-      "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
-      + "FROM company STRAIGHT_JOIN computer ON company_id=company.id ORDER BY company.name ASC "
-      + "LIMIT ?, ?";
-  private static final String SQL_N_COMPUTERS_PATTERN_COMPANY = 
-      "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
-      + "FROM company STRAIGHT_JOIN computer ON company_id=company.id " 
+  private static final String SQL_N_COMPUTERS_ORDER_COMPANY = "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
+      + "FROM company STRAIGHT_JOIN computer ON company_id=company.id ORDER BY company.name ASC " + "LIMIT ?, ?";
+  private static final String SQL_N_COMPUTERS_PATTERN_COMPANY = "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
+      + "FROM company STRAIGHT_JOIN computer ON company_id=company.id "
       + "WHERE computer.name LIKE ? OR company.name LIKE ? ORDER BY company.name ASC LIMIT ?, ?";
-  private static final String SQL_NUMBER_OF_COMPUTERS = 
-      "SELECT COUNT(id) FROM computer USE INDEX (PRIMARY);";
-  private static final String SQL_NUMBER_OF_COMPUTERS_PATTERN = 
-      "SELECT COUNT(id) FROM computer USE INDEX (PRIMARY) WHERE name LIKE ?";
+  private static final String SQL_NUMBER_OF_COMPUTERS = "SELECT COUNT(id) FROM computer USE INDEX (PRIMARY);";
+  private static final String SQL_NUMBER_OF_COMPUTERS_PATTERN = "SELECT COUNT(computer.id) FROM computer USE INDEX (PRIMARY) "
+      + "LEFT JOIN company ON company_id=company.id "
+      + "WHERE computer.name LIKE ? OR company.name LIKE ?";
   private static final String SQL_DELETE_FROM_COMPANY = "DELETE FROM computer WHERE company_id=?";
-  
+
+
+
+  private JdbcTemplate jdbcTemplate;
+  private SimpleJdbcInsert insertComputer;
+
   @Autowired
-  private DataBaseManager database;
-  
-  public ComputerDAOMySQL(){
-    
+  public void setDataSource(DataSource dataSource) {
+    this.jdbcTemplate = new JdbcTemplate(dataSource);
+    this.insertComputer = new SimpleJdbcInsert(dataSource).withTableName("computer").usingGeneratedKeyColumns("id");
   }
-  
+
   @Override
   public long add(Computer computer) throws DAOException {
+    Map<String, Object> parameters = new HashMap<String, Object>(5);
     long id;
-    ResultSet valeursAutoGenerees = null;
-    PreparedStatement addStatement = null;
-    Connection connection = null;
-    
+
     if (computer != null) {
+      parameters.put("name", computer.getName());
+      parameters.put("introduced", computer.getIntroduced() != null ? 
+          Timestamp.valueOf(computer.getIntroduced()) : null);
+      parameters.put("discontinued", computer.getDiscontinued() != null ? 
+          Timestamp.valueOf(computer.getDiscontinued()) : null);
+      parameters.put("company_id", computer.getCompany() != null ?
+          computer.getCompany().getId() : null);
       try {
-        connection = database.getConnection();
-        connection.setReadOnly(false);
-        addStatement = connection.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS);
-        addStatement.setString(1, computer.getName());
-
-        if (computer.getIntroduced() == null) {
-          addStatement.setNull(2, Types.TIMESTAMP);
-          addStatement.setNull(3, Types.TIMESTAMP);
-        } else {
-          addStatement.setTimestamp(2, Timestamp.valueOf(computer.getIntroduced()));
-          if (computer.getDiscontinued() == null) {
-            addStatement.setNull(3, Types.TIMESTAMP);
-          } else {
-            addStatement.setTimestamp(3, Timestamp.valueOf(computer.getDiscontinued()));
-          }
-        }
-
-        if (computer.getCompany() == null) {
-          addStatement.setString(4, null);
-        } else {
-          addStatement.setLong(4, computer.getCompany().getId());
-        }
-
-        int statut = addStatement.executeUpdate();
-        if (statut == 0) {
-          throw new DAOException(
-              "Échec de la création de l'ordinateur, " + "aucune ligne ajoutée dans la table.");
-        }
-        /* Récupération de l'id auto-généré par la requête d'insertion */
-        valeursAutoGenerees = addStatement.getGeneratedKeys();
-        if (valeursAutoGenerees.next()) {
-          id = valeursAutoGenerees.getLong(1);
-          computer.setId(id);
-        } else {
-          logger.debug("Échec de la création de l'ordinateur en base, " 
-                       + "aucun ID auto-généré retourné.");
-          throw new DAOException("Échec de la création de l'ordinateur en base, " 
-                                 + "aucun ID auto-généré retourné.");
-        }
+        id = insertComputer.executeAndReturnKey(parameters).longValue();
+        computer.setId(id);
         logger.info("Création de l'ordinateur {} en base", id);
         return id;
 
-      } catch (SQLException e) {
+      } catch (DataAccessException e) {
         logger.debug(e.getMessage());
         throw new DAOException(e.getMessage(), e.getCause());
-      } finally {
-        DAOUtils.closePreparedStatement(addStatement);
-        DAOUtils.closeResultatSet(valeursAutoGenerees);
-        DAOUtils.closeConnection(connection);
       }
     }
     return -1;
@@ -134,51 +96,19 @@ public class ComputerDAOMySQL implements ComputerDAO {
 
   @Override
   public boolean update(Computer computer) throws DAOException {
-    PreparedStatement updateStatement = null;
-    Connection connection = null;
-
+    
     if (computer != null) {
       try {
-        connection = database.getConnection();
-        connection.setReadOnly(false);
-        updateStatement = connection.prepareStatement(SQL_UPDATE);
-        updateStatement.setString(1, computer.getName());
-
-        if (computer.getIntroduced() == null) {
-          updateStatement.setNull(2, Types.TIMESTAMP);
-          updateStatement.setNull(3, Types.TIMESTAMP);
-        } else {
-          updateStatement.setTimestamp(2, Timestamp.valueOf(computer.getIntroduced()));
-          if (computer.getDiscontinued() == null) {
-            updateStatement.setNull(3, Types.TIMESTAMP);
-          } else {
-            updateStatement.setTimestamp(3, Timestamp.valueOf(computer.getDiscontinued()));
-          }
-        }
-
-        if (computer.getCompany() == null) {
-          updateStatement.setString(4, null);
-        } else {
-          updateStatement.setLong(4, computer.getCompany().getId());
-        }
-
-        updateStatement.setLong(5, computer.getId());
-
-        int statut = updateStatement.executeUpdate();
-        if (statut == 0) {
-          logger.debug("Fail to update computer {}.", computer.getId());
-          throw new DAOException("Fail to update computer.");
-        } else {
-          logger.info("Computer {} updated", computer.getId());
-          return true;
-        }
-
-      } catch (SQLException e) {
+        this.jdbcTemplate.update(SQL_UPDATE, new Object[]{ 
+            computer.getName(),
+            computer.getIntroduced() != null ? Timestamp.valueOf(computer.getIntroduced()) : null, 
+            computer.getDiscontinued() != null ? Timestamp.valueOf(computer.getDiscontinued()) : null,
+            computer.getCompany() != null ? computer.getCompany().getId() : null, computer.getId()});
+        logger.info("Computer {} updated", computer.getId());
+        return true;
+      } catch (DataAccessException e) {
         logger.debug(e.getMessage());
         throw new DAOException(e);
-      } finally {
-        DAOUtils.closePreparedStatement(updateStatement);
-        DAOUtils.closeConnection(connection);
       }
     }
     return false;
@@ -186,116 +116,39 @@ public class ComputerDAOMySQL implements ComputerDAO {
 
   @Override
   public boolean del(long id) throws DAOException {
-    PreparedStatement statement = null;
-    Connection connection = null;
-
     try {
-      connection = database.getConnection();
-      connection.setReadOnly(false);
-      statement = connection.prepareStatement(SQL_DEL);
-      statement.setString(1, String.valueOf(id));
-      int resultat = statement.executeUpdate();
-      if (resultat == 1) {
-        logger.info("Computer {} deleted", id);
-        return true;
-      } else {
-        logger.info("Computer {} not deleted", id);
-        return false;
-      }
-    } catch (SQLException e) {
+      this.jdbcTemplate.update(SQL_DEL, id);
+      logger.info("Computer {} deleted", id);
+      return true;
+    } catch (DataAccessException e) {
       logger.debug(e.getMessage());
       throw new DAOException(e);
-    } finally {
-      DAOUtils.closePreparedStatement(statement);
-      DAOUtils.closeConnection(connection);
     }
-
   }
 
   @Override
   public Optional<Computer> findById(long id) throws DAOException {
-    PreparedStatement statement = null;
-    ResultSet resultat = null;
-    Connection connection = null;
-
     try {
-      connection = database.getConnection();
-      connection.setReadOnly(true);
-      statement = connection.prepareStatement(SQL_FIND_ID);
-      statement.setString(1, String.valueOf(id));
-      resultat = statement.executeQuery();
-      if (resultat.next()) {
-        LocalDateTime introduced = null;
-        LocalDateTime discontinued = null;
-        Company comp = null;
-        if (resultat.getString("company_id") != null) {
-          comp = new Company(resultat.getLong("company_id"), resultat.getString("company.name"));
-        }
+      return Optional.ofNullable(this.jdbcTemplate.queryForObject(SQL_FIND_ID, new CompanyMapper(), id));
 
-        if (resultat.getString("introduced") != null) {
-
-          introduced = resultat.getTimestamp("introduced").toLocalDateTime();
-          if (resultat.getString("discontinued") != null) {
-            discontinued = resultat.getTimestamp("discontinued").toLocalDateTime();
-          }
-        }
-
-        return Optional.ofNullable(new Computer(Integer.parseInt(resultat.getString("computer.id")),
-            resultat.getString("computer.name"), comp, introduced, discontinued));
-      }
-
-    } catch (SQLException e) {
+    } catch (EmptyResultDataAccessException e) {
+      return Optional.empty();
+    } catch (DataAccessException e) {
       logger.debug(e.getMessage());
       throw new DAOException(e);
-    } finally {
-      DAOUtils.closePreparedStatement(statement);
-      DAOUtils.closeResultatSet(resultat);
-      DAOUtils.closeConnection(connection);
     }
-    return Optional.empty();
   }
 
   @Override
   public Optional<Computer> findByName(String name) throws DAOException {
-    PreparedStatement statement = null;
-    ResultSet resultat = null;
-    Connection connection = null;
-
     if (name != null) {
       try {
-        connection = database.getConnection();
-        statement = connection.prepareStatement(SQL_FIND_NAME);
-        connection.setReadOnly(true);
-        statement.setString(1, name);
-        resultat = statement.executeQuery();
-        if (resultat.next()) {
-          LocalDateTime introduced = null;
-          LocalDateTime discontinued = null;
-          Company comp = null;
-          if (resultat.getString("company_id") != null) {
-            comp = new Company(resultat.getLong("company_id"), resultat.getString("company.name"));
-          }
-
-          if (resultat.getString("introduced") != null) {
-
-            introduced = resultat.getTimestamp("introduced").toLocalDateTime();
-            if (resultat.getString("discontinued") != null) {
-              discontinued = resultat.getTimestamp("discontinued").toLocalDateTime();
-            }
-          }
-
-          return Optional.ofNullable(
-              new Computer(Integer.parseInt(resultat.getString("computer.id")),
-              resultat.getString("computer.name"), comp, introduced, discontinued));
-        }
-
-      } catch (SQLException e) {
+        return Optional.ofNullable(this.jdbcTemplate.queryForObject(SQL_FIND_NAME, new CompanyMapper(), name));
+      } catch (EmptyResultDataAccessException e) {
+        return Optional.empty();
+      } catch (DataAccessException e) {
         logger.debug(e.getMessage());
         throw new DAOException(e);
-      } finally {
-        DAOUtils.closePreparedStatement(statement);
-        DAOUtils.closeResultatSet(resultat);
-        DAOUtils.closeConnection(connection);
       }
     }
     return Optional.empty();
@@ -303,242 +156,107 @@ public class ComputerDAOMySQL implements ComputerDAO {
 
   @Override
   public ComputerList getComputers() throws DAOException {
-    Statement statement = null;
-    ResultSet resultat = null;
-    Connection connection = null;
-
     try {
-      ComputerList list = new ComputerList();
-      connection = database.getConnection();
-      connection.setReadOnly(true);
-      statement = connection.createStatement();
-      resultat = statement.executeQuery(SQL_COMPUTERS);
-      while (resultat.next()) {
-        LocalDateTime introduced = null;
-        LocalDateTime discontinued = null;
-        Company comp = null;
-        if (resultat.getString("company_id") != null) {
-          comp = new Company(resultat.getLong("company_id"), resultat.getString("company.name"));
-        }
+      return new ComputerList(this.jdbcTemplate.query(SQL_COMPUTERS, new CompanyMapper()));
 
-        if (resultat.getTimestamp("introduced") != null) {
-          introduced = resultat.getTimestamp("introduced").toLocalDateTime();
-          if (resultat.getTimestamp("discontinued") != null) {
-            discontinued = resultat.getTimestamp("discontinued").toLocalDateTime();
-          }
-        }
-
-        list.add(new Computer(Integer.parseInt(
-            resultat.getString("computer.id")), resultat.getString("computer.name"),
-            comp, introduced, discontinued));
-      }
-      return list;
-
-    } catch (SQLException e) {
+    } catch (DataAccessException e) {
       logger.debug(e.getMessage());
       throw new DAOException(e);
-    } finally {
-      DAOUtils.closeStatement(statement);
-      DAOUtils.closeResultatSet(resultat);
-      DAOUtils.closeConnection(connection);
-    }
+    } 
   }
 
   @Override
   public ComputerList getNComputers(int begin, int nbComputer, int orderBy) throws DAOException {
-    PreparedStatement statement = null;
-    ResultSet resultat = null;
-    Connection connection = null;
-    ComputerList list = new ComputerList();
     ComputerAtrribute[] attributes = ComputerAtrribute.values();
 
     if (begin >= 0 && nbComputer > 0) {
       try {
-        connection = database.getConnection();
-        connection.setReadOnly(true);
-
+        String query;
         if (orderBy == 4) {
-          statement = connection.prepareStatement(SQL_N_COMPUTERS_ORDER_COMPANY);
+          query = SQL_N_COMPUTERS_ORDER_COMPANY;
+
         } else if (orderBy >= 0 && orderBy < attributes.length) {
-          statement = connection.prepareStatement(
-              SQL_N_COMPUTERS.replaceAll("orderby", attributes[orderBy].getName()));
+          query = SQL_N_COMPUTERS.replaceAll("orderby", attributes[orderBy].getName());
         } else {
-          statement = connection.prepareStatement(
-              SQL_N_COMPUTERS.replaceAll("orderby", attributes[0].getName()));
+          query = SQL_N_COMPUTERS.replaceAll("orderby", attributes[0].getName());
         }
-        statement.setInt(1, begin);
-        statement.setInt(2, nbComputer);
-        resultat = statement.executeQuery();
-        while (resultat.next()) {
-          LocalDateTime introduced = null;
-          LocalDateTime discontinued = null;
-          Company comp = null;
-          if (resultat.getString("company_id") != null) {
-            comp = new Company(resultat.getLong("company_id"), resultat.getString("company.name"));
-          }
-
-          if (resultat.getString("introduced") != null) {
-            introduced = resultat.getTimestamp("introduced").toLocalDateTime();
-            if (resultat.getString("discontinued") != null) {
-              discontinued = resultat.getTimestamp("discontinued").toLocalDateTime();
-            }
-          }
-
-          list.add(new Computer(Integer.parseInt(resultat.getString("computer.id")),
-              resultat.getString("computer.name"), comp, introduced, discontinued));
-        }
-        return list;
-
-      } catch (SQLException e) {
+        
+        return new ComputerList(this.jdbcTemplate.query(query, new CompanyMapper(), begin, nbComputer));
+      } catch (DataAccessException e) {
         logger.debug(e.getMessage());
         throw new DAOException(e);
-      } finally {
-        DAOUtils.closePreparedStatement(statement);
-        DAOUtils.closeResultatSet(resultat);
-        DAOUtils.closeConnection(connection);
-      }
+      } 
     }
-    return list;
+    return new ComputerList();
   }
 
   @Override
-  public ComputerList getNComputers(String pattern, int begin, int nbComputer, int orderBy) 
-      throws DAOException {
+  public ComputerList getNComputers(String pattern, int begin, int nbComputer, int orderBy) throws DAOException {
     if (pattern == null || pattern.isEmpty()) {
       return getNComputers(begin, nbComputer, orderBy);
     }
-    PreparedStatement statement = null;
-    ResultSet resultat = null;
-    Connection connection = null;
-    ComputerList list = new ComputerList();
     ComputerAtrribute[] attributes = ComputerAtrribute.values();
-
     if (begin >= 0 && nbComputer > 0) {
       try {
-        connection = database.getConnection();
-        connection.setReadOnly(true);
-
-
+        String query;
         if (orderBy == 4) {
-          statement = connection.prepareStatement(SQL_N_COMPUTERS_PATTERN_COMPANY);
+          query = SQL_N_COMPUTERS_PATTERN_COMPANY;
         } else if (orderBy >= 0 && orderBy < attributes.length) {
-          statement = connection.prepareStatement(
-              SQL_N_COMPUTERS_PATTERN.replaceAll("orderby", attributes[orderBy].getName()));
+          query = SQL_N_COMPUTERS_PATTERN.replaceAll("orderby", attributes[orderBy].getName());
         } else {
-          statement = connection.prepareStatement(
-              SQL_N_COMPUTERS_PATTERN.replaceAll("orderby", attributes[0].getName()));
+          query = SQL_N_COMPUTERS_PATTERN.replaceAll("orderby", attributes[0].getName());
         }
-        statement.setString(1, pattern + "%");
-        statement.setString(2, pattern + "%");
-        statement.setInt(3, begin);
-        statement.setInt(4, nbComputer);
-        resultat = statement.executeQuery();
+        return new ComputerList(this.jdbcTemplate.query(query, new CompanyMapper(), pattern+"%", pattern+"%", begin, nbComputer));
 
-        while (resultat.next()) {
-
-          LocalDateTime introduced = null;
-          LocalDateTime discontinued = null;
-          Company comp = null;
-          if (resultat.getString("company_id") != null) {
-            comp = new Company(resultat.getLong("company_id"), resultat.getString("company.name"));
-          }
-
-          if (resultat.getString("introduced") != null) {
-            ;
-            introduced = resultat.getTimestamp("introduced").toLocalDateTime();
-            if (resultat.getString("discontinued") != null) {
-              discontinued = resultat.getTimestamp("discontinued").toLocalDateTime();
-            }
-          }
-
-          list.add(new Computer(Integer.parseInt(resultat.getString("computer.id")),
-              resultat.getString("computer.name"), comp, introduced, discontinued));
-        }
-
-
-      } catch (SQLException e) {
+      } catch (DataAccessException e) {
         logger.debug(e.getMessage());
         throw new DAOException(e);
-      } finally {
-        DAOUtils.closePreparedStatement(statement);
-        DAOUtils.closeResultatSet(resultat);
-        DAOUtils.closeConnection(connection);
       }
     }
-    return list;
+    return new ComputerList();
   }
 
   @Override
   public int getNumberOfComputer() throws DAOException {
-    PreparedStatement statement = null;
-    ResultSet resultat = null;
-    Connection connection = null;
-
     try {
-      connection = database.getConnection();
-      connection.setReadOnly(true);
-      statement = connection.prepareStatement(SQL_NUMBER_OF_COMPUTERS);
-      resultat = statement.executeQuery();
-      resultat.next();
-      return resultat.getInt(1);
+      return this.jdbcTemplate.queryForObject(SQL_NUMBER_OF_COMPUTERS, Integer.class);
 
-    } catch (SQLException e) {
+    } catch (DataAccessException e) {
       logger.debug(e.getMessage());
       throw new DAOException(e);
-    } finally {
-      DAOUtils.closeStatement(statement);
-      DAOUtils.closeResultatSet(resultat);
-      DAOUtils.closeConnection(connection);
     }
   }
 
   @Override
   public int getNumberOfComputer(String pattern) throws DAOException {
-    PreparedStatement statement = null;
-    ResultSet resultat = null;
-    Connection connection = null;
-
     if (pattern == null) {
       return getNumberOfComputer();
     }
-
     try {
-      connection = database.getConnection();
-      connection.setReadOnly(true);
-      statement = connection.prepareStatement(SQL_NUMBER_OF_COMPUTERS_PATTERN);
-      statement.setString(1, "%" + pattern + "%");
-      resultat = statement.executeQuery();
-      resultat.next();
-      return resultat.getInt(1);
+      return this.jdbcTemplate.queryForObject(SQL_NUMBER_OF_COMPUTERS_PATTERN, Integer.class, pattern + "%", pattern + "%");
 
-    } catch (SQLException e) {
+    } catch (DataAccessException e) {
       logger.debug(e.getMessage());
       throw new DAOException(e);
-    } finally {
-      DAOUtils.closePreparedStatement(statement);
-      DAOUtils.closeResultatSet(resultat);
-      DAOUtils.closeConnection(connection);
     }
   }
 
   @Override
   public boolean[] dels(long[] ids) throws DAOException {
-    PreparedStatement statement = null;
-    Connection connection = null;
+
 
     if (ids != null && ids.length != 0) {
       try {
-        connection = database.getConnection();
-        statement = connection.prepareStatement(SQL_DEL);
+        int[] resultat = jdbcTemplate.batchUpdate(SQL_DEL,
+        new BatchPreparedStatementSetter() {
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                    ps.setLong(1, ids[i]);
+                }
 
-        statement.setString(1, String.valueOf(ids[0]));
-        statement.addBatch();
-
-        for (int i = 1; i < ids.length; i++) {
-          statement.setString(1, String.valueOf(ids[i]));
-          statement.addBatch();
-        }
-        int[] resultat = statement.executeBatch();
+                public int getBatchSize() {
+                    return ids.length;
+                }
+            });
         if (resultat != null) {
           boolean[] booleanTab = new boolean[resultat.length];
           for (int i = 0; i < resultat.length; i++) {
@@ -553,27 +271,19 @@ public class ComputerDAOMySQL implements ComputerDAO {
         }
         return null;
 
-      } catch (SQLException e) {
+      } catch (DataAccessException e) {
         logger.debug(e.getMessage());
         throw new DAOException(e);
-      } finally {
-        DAOUtils.closePreparedStatement(statement);
-        DAOUtils.closeConnection(connection);
-      }
+      } 
     }
     return new boolean[0];
   }
 
   @Override
   public boolean delsFromCompany(long id) throws DAOException {
-    PreparedStatement statement = null;
-    Connection connection = null;
 
     try {
-      connection = database.getConnection();
-      statement = connection.prepareStatement(SQL_DELETE_FROM_COMPANY);
-      statement.setString(1, String.valueOf(id));
-      int resultat = statement.executeUpdate();
+      int resultat = this.jdbcTemplate.update(SQL_DELETE_FROM_COMPANY, id);
       if (resultat == 1) {
         logger.info("Computers of company {} deleted", id);
         return true;
@@ -581,14 +291,32 @@ public class ComputerDAOMySQL implements ComputerDAO {
         logger.info("Computers of company {} not deleted", id);
         return false;
       }
-    } catch (SQLException e) {
+    } catch (DataAccessException e) {
       logger.debug(e.getMessage());
       throw new DAOException(e);
-    } finally {
-      DAOUtils.closePreparedStatement(statement);
-      DAOUtils.closeConnection(connection);
     }
+  }
 
+  private static final class CompanyMapper implements RowMapper<Computer> {
+
+    public Computer mapRow(ResultSet rs, int rowNum) throws SQLException {
+      LocalDateTime introduced = null;
+      LocalDateTime discontinued = null;
+      Company comp = null;
+      if (rs.getString("company_id") != null) {
+        comp = new Company(rs.getLong("company_id"), rs.getString("company.name"));
+      }
+
+      if (rs.getTimestamp("introduced") != null) {
+
+        introduced = rs.getTimestamp("introduced").toLocalDateTime();
+      }
+      if (rs.getTimestamp("discontinued") != null) {
+        discontinued = rs.getTimestamp("discontinued").toLocalDateTime();
+      }
+
+      return new Computer(Long.parseLong(rs.getString("id")), rs.getString("name"), comp, introduced, discontinued);
+    }
   }
 
 }

@@ -14,6 +14,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class CompanyService {
@@ -26,6 +27,7 @@ public class CompanyService {
    * @param id the id of the company to find
    * @return an Optional that is empty if the company doesn't exist
    */
+  @Transactional(readOnly=true)
   public Optional<CompanyDto> findById(long id) {
     Optional<Company> optional = companyDAO.findById(id);
     if (optional.isPresent()) {
@@ -38,6 +40,7 @@ public class CompanyService {
    * @param name the name of the company to find
    * @return an Optional that is empty if the company doesn't exist
    */
+  @Transactional(readOnly=true)
   public Optional<CompanyDto> findByName(String name) {
     Optional<Company> optional = companyDAO.findByName(name);
     if (optional.isPresent()) {
@@ -49,6 +52,7 @@ public class CompanyService {
   /** Look for companies.
    * @return The Page of all the companies
    */
+  @Transactional(readOnly=true)
   public Page<CompanyDto> getCompanies(int page, int elementsByPage) {
     int begin = elementsByPage * page;
     List<CompanyDto> list = CompanyMapper.companyListToCompanyDtoList(
@@ -59,6 +63,7 @@ public class CompanyService {
   /** Look for companies.
    * @return The list of all the companies
    */
+  @Transactional(readOnly=true)
   public CompanyDtoList getCompanyList() {
     if (companyDtoList == null) {
       companyDtoList = CompanyMapper.companyListToCompanyDtoList(

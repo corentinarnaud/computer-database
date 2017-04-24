@@ -11,6 +11,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -29,6 +30,7 @@ public class ComputerService {
    * @return The id generated for the computer
    * @throws ServiceException if a DAO error occurred
    */
+  @Transactional
   public long add(ComputerDto computerDto) throws ServiceException {
     Computer computer = ComputerMapper.computerDtoToComputer(computerDto);
     Validator.checkDate(computer);
@@ -45,6 +47,7 @@ public class ComputerService {
    * @return true if computer is updated
    * @throws ServiceException if a DAO error occurred
    */
+  @Transactional
   public boolean update(ComputerDto computerDto) throws ServiceException {
     Computer computer = ComputerMapper.computerDtoToComputer(computerDto);
     Validator.checkDate(computer);
@@ -52,6 +55,7 @@ public class ComputerService {
     return computerDAO.update(computer);
   }
 
+  @Transactional
   public boolean delComputer(long id) {
     if (computerDAO.del(id)) {
       manageComputerNumber(-1);
@@ -64,6 +68,7 @@ public class ComputerService {
    * @param id of the computer to find
    * @return an optional of the computer
    */
+  @Transactional(readOnly=true)
   public Optional<ComputerDto> findById(long id) {
     Optional<Computer> computer = computerDAO.findById(id);
     if (computer.isPresent()) {
@@ -77,6 +82,7 @@ public class ComputerService {
    * @param name of the computer to find
    * @return an optional of the computer
    */
+  @Transactional(readOnly=true)
   public Optional<ComputerDto> findByName(String name) {
     Optional<Computer> computer = computerDAO.findByName(name);
     if (computer.isPresent()) {
@@ -86,6 +92,7 @@ public class ComputerService {
     return Optional.empty();
   }
   
+  @Transactional(readOnly=true)
   public ComputerPage getComputerPage(int page, String pattern, int orderBy, int nbElementsPage){
     List<ComputerDto> listComputer;
     int nbComputer;
@@ -108,7 +115,7 @@ public class ComputerService {
     return new ComputerPage(listComputer, nbComputer, page, pattern, orderBy);
   }
 
-
+  @Transactional()
   public boolean[] delComputers(long[] longIds) {
     if(longIds.length==1){
       return new boolean[]{ delComputer(longIds[0])};
@@ -124,7 +131,7 @@ public class ComputerService {
     return dels;
     
   }
-  
+  @Transactional(readOnly=true)
   public int getNumberComputer() {
     if ( numberComputer == -1) {
       numberComputer = computerDAO.getNumberOfComputer();
