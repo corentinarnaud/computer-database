@@ -31,8 +31,14 @@
 		<version.mariadb>1.5.9</version.mariadb>
 		<version.plugin.eclipse>2.9</version.plugin.eclipse>
 		<version.spring>4.3.7.RELEASE</version.spring>
+		<version.javax.validation>1.0.0.GA</version.javax.validation>
 	</properties>
 	<dependencies>
+		<dependency>
+    		<groupId>javax.validation</groupId>
+    		<artifactId>validation-api</artifactId>
+    		<version>${version.javax.validation}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>

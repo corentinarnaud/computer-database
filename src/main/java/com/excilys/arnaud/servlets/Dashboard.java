@@ -3,62 +3,45 @@ package com.excilys.arnaud.servlets;
 
 import com.excilys.arnaud.model.dto.ComputerPage;
 import com.excilys.arnaud.service.ComputerService;
-import java.io.IOException;
 import java.util.HashMap;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Repository;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 
-@WebServlet("/dashboard")
-public class Dashboard extends HttpServlet {
+@Controller
+@RequestMapping("/dashboard")
+public class Dashboard{
 
-  /**
-   * .
-   * 
-   */
-  private static final long serialVersionUID = -8598220867287616063L;
+
   private static final Logger LOGGER = LoggerFactory.getLogger(Dashboard.class);
 
   @Autowired
   private ComputerService computerService; 
   
   
-  public void init(ServletConfig config) throws ServletException {
-    super.init(config);
-    SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this,
-      config.getServletContext());
-  }
 
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+  @RequestMapping(method = RequestMethod.GET)
+  public String doGet(ModelMap model, @RequestParam Map<String, String> param) {
 
-    HashMap<DashboardParam, String> parametersMap = getParameters(request);
-    traitement(request, parametersMap);
-    this.getServletContext().getRequestDispatcher("/views/dashboard.jsp").forward(request, response);
+    HashMap<DashboardParam, String> parametersMap = getParameters(param);
+    traitement(model, parametersMap);
+    return "dashboard";
 
   }
 
   @RequestMapping(method = RequestMethod.POST)
-  @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    String ids = request.getParameter("selection");
+  public void doPost(ModelMap model, @RequestParam Map<String, String> param) {
+    String ids = (String) param.getOrDefault("selection", "");
     if (!StringUtils.isEmpty(ids)) {
       String[] tabId = ids.split(",");
       long[] longIds = new long[tabId.length];
@@ -67,19 +50,19 @@ public class Dashboard extends HttpServlet {
       }
       computerService.delComputers(longIds);
     }
-    doGet(request, response);
+    doGet(model, param);
   }
 
-  private HashMap<DashboardParam, String> getParameters(HttpServletRequest request) {
+  private HashMap<DashboardParam, String> getParameters(Map<String, String> mapParam) {
     HashMap<DashboardParam, String> parametersMap = new HashMap<>();
     for (DashboardParam param : DashboardParam.values()) {
       parametersMap.put(param,
-          request.getParameter(param.toString()) != null ? request.getParameter(param.toString()) : "");
+          mapParam.getOrDefault(param.toString(), ""));
     }
     return parametersMap;
   }
 
-  private void traitement(HttpServletRequest request, HashMap<DashboardParam, String> parametersMap) {
+  private void traitement(ModelMap model, HashMap<DashboardParam, String> parametersMap) {
     int pageNumber, nbElementsByPage, order;
 
 
@@ -88,7 +71,7 @@ public class Dashboard extends HttpServlet {
     if (!parametersMap.get(DashboardParam.ELEMENTS).equals("")) {
       try {
         nbElementsByPage = Integer.parseInt(parametersMap.get(DashboardParam.ELEMENTS));
-        request.setAttribute(DashboardParam.ELEMENTS.toString(), nbElementsByPage);
+        model.addAttribute(DashboardParam.ELEMENTS.toString(), nbElementsByPage);
       } catch (NumberFormatException e) {
         LOGGER.debug("Exception on parsing elements by page " + e.getMessage());
         nbElementsByPage = 10;
@@ -100,7 +83,7 @@ public class Dashboard extends HttpServlet {
     if (!parametersMap.get(DashboardParam.ORDER).equals("")) {
       try {
         order = Integer.parseInt(parametersMap.get(DashboardParam.ORDER));
-        request.setAttribute(DashboardParam.ORDER.toString(), order);
+        model.addAttribute(DashboardParam.ORDER.toString(), order);
       } catch (NumberFormatException e) {
         LOGGER.debug("Exceptione on parsing order param " + e.getMessage());
         order = 0;
@@ -123,11 +106,11 @@ public class Dashboard extends HttpServlet {
     
     ComputerPage computerPage = computerService.getComputerPage(pageNumber - 1, parametersMap.get(DashboardParam.SEARCH), order, nbElementsByPage); 
     
-    request.setAttribute(DashboardParam.SEARCH.toString(), parametersMap.get(DashboardParam.SEARCH));
-    request.setAttribute("listComputer", computerPage.getPage());
-    request.setAttribute("nbComputer", computerPage.getNbElement());
-    request.setAttribute("currentPage", computerPage.getCurrentPage() + 1);
-    request.setAttribute("maxPage", computerPage.getNbPage());
+    model.addAttribute(DashboardParam.SEARCH.toString(), parametersMap.get(DashboardParam.SEARCH));
+    model.addAttribute("listComputer", computerPage.getPage());
+    model.addAttribute("nbComputer", computerPage.getNbElement());
+    model.addAttribute("currentPage", computerPage.getCurrentPage() + 1);
+    model.addAttribute("maxPage", computerPage.getNbPage());
 
   }
 

@@ -164,7 +164,7 @@ public class CLI {
     
     boolean loop = true;
     String query = "";
-    String pattern = "";
+
 
     System.out.println(companyPage.getPage());
     System.out.println(

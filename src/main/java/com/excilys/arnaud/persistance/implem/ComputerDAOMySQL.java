@@ -9,7 +9,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +30,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class ComputerDAOMySQL implements ComputerDAO {
   private static final Logger logger = LoggerFactory.getLogger(ComputerDAOMySQL.class);
-  private static final String SQL_INSERT = "INSERT INTO computer(name,introduced,discontinued,company_id) VALUES (? ,? ,? ,? )";
   private static final String SQL_UPDATE = "UPDATE computer SET name=?,introduced=?, discontinued=?, company_id=? WHERE id=?";
   private static final String SQL_DEL = "DELETE FROM computer WHERE id=?";
   private static final String SQL_FIND_ID = "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "

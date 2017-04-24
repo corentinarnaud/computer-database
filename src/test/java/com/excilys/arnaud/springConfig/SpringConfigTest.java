@@ -10,7 +10,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.excilys.arnaud.persistance.ComputerDAO;
-import com.excilys.arnaud.persistance.DataBaseManager;
 import com.excilys.arnaud.service.ComputerService;
 import com.excilys.arnaud.springConfig.MainConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -21,9 +20,7 @@ import com.zaxxer.hikari.HikariDataSource;
 public class SpringConfigTest {
 
     @Autowired
-    private HikariDataSource dataSource;
-    @Autowired
-    private DataBaseManager dataBaseManager;    
+    private HikariDataSource dataSource;    
     @Autowired
     private WebApplicationContext wac;
     @Autowired
@@ -37,7 +34,6 @@ public class SpringConfigTest {
     @Test
     public void springConfiguration() {
       assertNotNull(dataSource);
-      assertNotNull(dataBaseManager);
       assertNotNull(wac);
       assertNotNull(computerDAO);
       assertNotNull(computerService);

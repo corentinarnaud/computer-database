@@ -1,9 +1,14 @@
 package com.excilys.arnaud.model.dto;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 public class ComputerDto {
 
+  
   private String id;
+  @NotNull
+  @Size(min=1,max=50)
   private String name;
   private CompanyDto company;
   private String introduced;

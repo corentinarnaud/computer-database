@@ -8,55 +8,38 @@ import com.excilys.arnaud.service.CompanyService;
 import com.excilys.arnaud.service.ComputerService;
 import com.excilys.arnaud.service.ServiceException;
 
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+import java.util.Map;
 import java.util.Optional;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 
 
 
-@WebServlet("/addComputer")
-public class AddComputer extends HttpServlet  {
+@Controller
+@RequestMapping("/addComputer")
+public class AddComputer{
 
-  /** serialVersionUID.
-   * 
-   */
-  private static final long serialVersionUID = 8749145544902853202L;
   
   @Autowired
   private CompanyService companyService;
   @Autowired
   private ComputerService computerService;
   
-  public void init(ServletConfig config) throws ServletException {
-    super.init(config);
-    SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this,
-      config.getServletContext());
-  }
   
-  
-  @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) 
-      throws ServletException, IOException {
+  @RequestMapping(method = RequestMethod.POST)
+  public String doPost(ModelMap model, @RequestParam Map<String, String> param) {
     CompanyDtoList companyList = companyService.getCompanyList();
-    String name = request.getParameter("computerName");
-    String introducedString = request.getParameter("introduced");
-    String discontinuedString = request.getParameter("discontinued");
-    String companyIDString = request.getParameter("companyId");
+    String name = param.get("computerName");
+    String introducedString = param.get("introduced");
+    String discontinuedString = param.get("discontinued");
+    String companyIDString = param.get("companyId");
     CompanyDto company = null;
     
     
@@ -82,20 +65,17 @@ public class AddComputer extends HttpServlet  {
     }
 
     
-    request.setAttribute("listCompany", companyList);
-    this.getServletContext().getRequestDispatcher("/views/addComputer.jsp")
-    .forward(request, response);
+    model.addAttribute("listCompany", companyList);
+    return "addComputer";
   }
   
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) 
-      throws ServletException, IOException {
+  @RequestMapping(method = RequestMethod.GET)
+  public String doGet(ModelMap model) {
     
     CompanyDtoList companyList = companyService.getCompanyList();
-    request.setAttribute("listCompany", companyList);
+    model.addAttribute("listCompany", companyList);
     
-    this.getServletContext().getRequestDispatcher("/views/addComputer.jsp")
-    .forward(request, response);
+    return "addComputer";
   }
   
   
