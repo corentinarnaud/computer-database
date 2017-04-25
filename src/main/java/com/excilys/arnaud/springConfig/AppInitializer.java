@@ -25,7 +25,9 @@ public class AppInitializer implements WebApplicationInitializer {
     ServletRegistration.Dynamic servlet = servletContext.addServlet("dispatcher", new DispatcherServlet(rootContext));
     
     servlet.setLoadOnStartup(1);
-    servlet.addMapping("/");
+    servlet.addMapping("/dashboard");
+    servlet.addMapping("/addComputer");
+    servlet.addMapping("/editComputer");
    
   }
 
