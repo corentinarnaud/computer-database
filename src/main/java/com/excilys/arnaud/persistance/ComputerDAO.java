@@ -2,12 +2,12 @@ package com.excilys.arnaud.persistance;
 
 import com.excilys.arnaud.model.metier.Computer;
 import com.excilys.arnaud.model.metier.ComputerList;
+import com.excilys.arnaud.persistance.exception.DAOException;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 
-public interface ComputerDAO extends DAO{
+public interface ComputerDAO{
 
   /** .
    * @param computer : Computer to add

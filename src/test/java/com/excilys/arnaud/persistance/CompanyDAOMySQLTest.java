@@ -4,17 +4,25 @@ import static org.junit.Assert.*;
 
 import com.excilys.arnaud.model.metier.Company;
 import com.excilys.arnaud.model.metier.CompanyList;
-import com.excilys.arnaud.persistance.mysql.CompanyDAOMySQL;
+import com.excilys.arnaud.persistance.implem.CompanyDAOMySQL;
+import com.excilys.arnaud.springConfig.MainConfig;
 
 import java.util.Optional;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class)
+@WebAppConfiguration
+@ContextConfiguration(classes = MainConfig.class)
 public class CompanyDAOMySQLTest {
-  private CompanyDAOMySQL companyDAOMySQL = CompanyDAOMySQL.CONPANYDAO;
+  @Autowired
+  private CompanyDAO companyDAOMySQL;
 
   @Test
   public void findByIdTest() {

@@ -1,4 +1,4 @@
-package com.excilys.arnaud.persistance.mysql;
+package com.excilys.arnaud.persistance.implem;
 
 
 
@@ -7,7 +7,8 @@ public enum ComputerAtrribute {
   NAME("computer.name"),
   INTRODUCED("introduced"),
   DISCONTINUED("discontinued"),
-  COMPANY("company.name");
+  COMPANY("company.name"),
+  COMPANY_ID("company_id");
   
   private String name;
   

@@ -4,14 +4,14 @@
 	<groupId>com.excilys.arnaud</groupId>
 	<artifactId>ComputerDatabase</artifactId>
 	<packaging>war</packaging>
-	<version>1.0.3-RELEASE</version>
+	<version>1.0.4</version>
 	<name>ComputerDatabase Maven Webapp</name>
 	<url>http://maven.apache.org</url>
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<version.junit>4.10</version.junit>
+		<version.junit>4.12</version.junit>
 		<version.mockito>1.9.5</version.mockito>
 		<version.powermock>1.5.6</version.powermock>
 		<version.dbunit>2.4.9</version.dbunit>
@@ -30,8 +30,46 @@
 		<version.plugin.tomcat>2.2</version.plugin.tomcat>
 		<version.mariadb>1.5.9</version.mariadb>
 		<version.plugin.eclipse>2.9</version.plugin.eclipse>
+		<version.spring>4.3.7.RELEASE</version.spring>
+		<version.javax.validation>1.0.0.GA</version.javax.validation>
 	</properties>
 	<dependencies>
+		<dependency>
+    		<groupId>javax.validation</groupId>
+    		<artifactId>validation-api</artifactId>
+    		<version>${version.javax.validation}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${version.spring}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+			<version>${version.spring}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${version.spring}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${version.spring}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${version.spring}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${version.spring}</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
 		<dependency>
 			<groupId>org.mariadb.jdbc</groupId>
@@ -150,6 +188,14 @@
 		<finalName>ComputerDatabase</finalName>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.tomcat.maven</groupId>
 				<artifactId>tomcat7-maven-plugin</artifactId>
 				<version>${version.plugin.tomcat}</version>
@@ -193,11 +239,6 @@
 					<suppressionsLocation>config/checkstyle/suppressions.xml</suppressionsLocation>
 					<suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>selenium-maven-plugin</artifactId>
-				<version>1.0.1</version>
 			</plugin>
 		</plugins>
 	</reporting>

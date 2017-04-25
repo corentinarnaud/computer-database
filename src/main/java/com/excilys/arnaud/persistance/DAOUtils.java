@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import com.excilys.arnaud.persistance.exception.DAOException;
+
 public class DAOUtils {
 
   public static void closeResultatSet(ResultSet resultat) throws DAOException {

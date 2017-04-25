@@ -2,10 +2,11 @@ package com.excilys.arnaud.persistance;
 
 import com.excilys.arnaud.model.metier.Company;
 import com.excilys.arnaud.model.metier.CompanyList;
+import com.excilys.arnaud.persistance.exception.DAOException;
 
 import java.util.Optional;
 
-public interface CompanyDAO extends DAO{
+public interface CompanyDAO{
 
   public Optional<Company> findById(long id) throws DAOException;
 

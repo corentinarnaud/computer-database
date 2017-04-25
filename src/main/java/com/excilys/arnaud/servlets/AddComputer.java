@@ -1,46 +1,45 @@
 package com.excilys.arnaud.servlets;
 
+import com.excilys.arnaud.mapper.MapperException;
 import com.excilys.arnaud.model.dto.CompanyDto;
 import com.excilys.arnaud.model.dto.CompanyDtoList;
 import com.excilys.arnaud.model.dto.ComputerDto;
 import com.excilys.arnaud.service.CompanyService;
 import com.excilys.arnaud.service.ComputerService;
 import com.excilys.arnaud.service.ServiceException;
-import com.excilys.arnaud.service.mapper.MapperException;
 
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+import java.util.Map;
 import java.util.Optional;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 
 
 
-@WebServlet("/addComputer")
-public class AddComputer extends HttpServlet  {
+@Controller
+@RequestMapping("/addComputer")
+public class AddComputer{
 
-  /** serialVersionUID.
-   * 
-   */
-  private static final long serialVersionUID = 8749145544902853202L;
+  
+  @Autowired
+  private CompanyService companyService;
+  @Autowired
+  private ComputerService computerService;
   
   
-  @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) 
-      throws ServletException, IOException {
-    CompanyDtoList companyList = CompanyService.COMPANYSERVICE.getCompanyList();
-    String name = request.getParameter("computerName");
-    String introducedString = request.getParameter("introduced");
-    String discontinuedString = request.getParameter("discontinued");
-    String companyIDString = request.getParameter("companyId");
+  @RequestMapping(method = RequestMethod.POST)
+  public String doPost(ModelMap model, @RequestParam Map<String, String> param) {
+    CompanyDtoList companyList = companyService.getCompanyList();
+    String name = param.get("computerName");
+    String introducedString = param.get("introduced");
+    String discontinuedString = param.get("discontinued");
+    String companyIDString = param.get("companyId");
     CompanyDto company = null;
     
     
@@ -51,11 +50,11 @@ public class AddComputer extends HttpServlet  {
        
         if (companyIDString != null && !companyIDString.isEmpty() && !companyIDString.equals("0")) {
           Optional<CompanyDto> opt = 
-              CompanyService.COMPANYSERVICE.findById(Long.parseLong(companyIDString));
+              companyService.findById(Long.parseLong(companyIDString));
           company = opt.isPresent() ? opt.get() : null;
         }
       
-        ComputerService.COMPUTERSERVICE.add(
+        computerService.add(
             new ComputerDto(name, company, introducedString, discontinuedString));
       } catch (ServiceException e) {
         // TODO Auto-generated catch block
@@ -66,20 +65,17 @@ public class AddComputer extends HttpServlet  {
     }
 
     
-    request.setAttribute("listCompany", companyList);
-    this.getServletContext().getRequestDispatcher("/views/addComputer.jsp")
-    .forward(request, response);
+    model.addAttribute("listCompany", companyList);
+    return "addComputer";
   }
   
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) 
-      throws ServletException, IOException {
+  @RequestMapping(method = RequestMethod.GET)
+  public String doGet(ModelMap model) {
     
-    CompanyDtoList companyList = CompanyService.COMPANYSERVICE.getCompanyList();
-    request.setAttribute("listCompany", companyList);
+    CompanyDtoList companyList = companyService.getCompanyList();
+    model.addAttribute("listCompany", companyList);
     
-    this.getServletContext().getRequestDispatcher("/views/addComputer.jsp")
-    .forward(request, response);
+    return "addComputer";
   }
   
   

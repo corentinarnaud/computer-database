@@ -1,4 +1,4 @@
-package com.excilys.arnaud.persistance;
+package com.excilys.arnaud.persistance.exception;
 
 public class DAOConfigurationException extends RuntimeException {
   /** .

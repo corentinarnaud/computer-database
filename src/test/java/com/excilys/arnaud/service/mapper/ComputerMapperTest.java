@@ -3,6 +3,8 @@ package com.excilys.arnaud.service.mapper;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import com.excilys.arnaud.mapper.ComputerMapper;
+import com.excilys.arnaud.mapper.MapperException;
 import com.excilys.arnaud.model.dto.ComputerDto;
 import com.excilys.arnaud.model.metier.Computer;
 import java.time.LocalDate;
@@ -25,13 +27,13 @@ public class ComputerMapperTest {
         afterDate, formatter).atStartOfDay());
     ComputerDto computerDto = new ComputerDto("15656", "dsghsrhges", null, beforeDate, afterDate);
     Computer resultat = new Computer(15656, "dsghsrhges", null, introduced, discontinued);
-    Computer computer = ComputerMapper.COMPUTERMAPPER.computerDtoToComputer(computerDto);
+    Computer computer = ComputerMapper.computerDtoToComputer(computerDto);
     
     assertTrue(computer.equals(resultat));
     
     computerDto = new ComputerDto("15656", "dsghsrhges", null, "sdgqsgg", null);
     try {
-      computer = ComputerMapper.COMPUTERMAPPER.computerDtoToComputer(computerDto);
+      computer = ComputerMapper.computerDtoToComputer(computerDto);
       fail("Eception Was Not Thrown");
     } catch (MapperException e) {
       assertTrue(e.getMessage().contains(" must be at format yyyy-MM-dd"));
@@ -39,7 +41,7 @@ public class ComputerMapperTest {
     
     computerDto = new ComputerDto("15656", "dsghsrhges", null, "1235-12-10", "sdgqsgg");
     try {
-      computer = ComputerMapper.COMPUTERMAPPER.computerDtoToComputer(computerDto);
+      computer = ComputerMapper.computerDtoToComputer(computerDto);
       fail("Eception Was Not Thrown");
     } catch (MapperException e) {
       assertTrue(e.getMessage().contains(" must be at format yyyy-MM-dd"));
@@ -47,7 +49,7 @@ public class ComputerMapperTest {
     
     computerDto = new ComputerDto("vsgswr", "dsghsrhges", null, null, null);
     try {
-      computer = ComputerMapper.COMPUTERMAPPER.computerDtoToComputer(computerDto);
+      computer = ComputerMapper.computerDtoToComputer(computerDto);
       fail("Eception Was Not Thrown");
     } catch (MapperException e) {
       assertTrue(e.getMessage().contains(" can't be parse to long"));
@@ -65,7 +67,7 @@ public class ComputerMapperTest {
     LocalDateTime discontinued = LocalDateTime.from(LocalDate.parse(
         afterDate, formatter).atStartOfDay());
     Computer computer = new Computer(15656, "dsghsrhges", null, introduced, discontinued);
-    ComputerDto computerDto = ComputerMapper.COMPUTERMAPPER.computerToComputerDto(computer);
+    ComputerDto computerDto = ComputerMapper.computerToComputerDto(computer);
 
     assertTrue(computerDto.getId().equals("15656"));
     assertTrue(computerDto.getName().equals("dsghsrhges"));

@@ -1,69 +1,69 @@
 package com.excilys.arnaud.servlets;
 
+import com.excilys.arnaud.mapper.MapperException;
 import com.excilys.arnaud.model.dto.CompanyDto;
 import com.excilys.arnaud.model.dto.CompanyDtoList;
 import com.excilys.arnaud.model.dto.ComputerDto;
 import com.excilys.arnaud.service.CompanyService;
 import com.excilys.arnaud.service.ComputerService;
 import com.excilys.arnaud.service.ServiceException;
-import com.excilys.arnaud.service.mapper.MapperException;
-
-import java.io.IOException;
-import java.text.ParseException;
+import java.util.Map;
 import java.util.Optional;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
-@WebServlet("/editComputer")
-public class EditComputer extends HttpServlet {
 
-  /**
-   * serialVersionUID.
-   * 
-   */
-  private static final long serialVersionUID = -6942829491462214116L;
+@Controller
+@RequestMapping("/editComputer")
+public class EditComputer{
 
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-    String idString = request.getParameter("id");
+  @Autowired
+  private CompanyService companyService;
+  @Autowired
+  private ComputerService computerService;
+  
+
+
+  @RequestMapping(method = RequestMethod.GET)
+  public String doGet(ModelMap model, @RequestParam Map<String, String> param){
+
+    String idString = param.get("id");
     long id = 0;
 
     if (idString == null) {
-      this.getServletContext().getRequestDispatcher("/views/404.jsp").forward(request, response);
+      return "404";
     }
     try {
       id = Long.valueOf(idString);
     } catch (NumberFormatException e) {
-      this.getServletContext().getRequestDispatcher("/views/404.jsp").forward(request, response);
-      return;
+      return "404";
     }
 
-    CompanyDtoList companyList = CompanyService.COMPANYSERVICE.getCompanyList();
-    request.setAttribute("listCompany", companyList);
+    CompanyDtoList companyList = companyService.getCompanyList();
+    model.addAttribute("listCompany", companyList);
 
-    Optional<ComputerDto> computerDto = ComputerService.COMPUTERSERVICE.findById(id);
+    Optional<ComputerDto> computerDto = computerService.findById(id);
     if (!computerDto.isPresent()) {
-      this.getServletContext().getRequestDispatcher("/views/404.jsp").forward(request, response);
-      return;
+      return "404";
     }
-    request.setAttribute("computer", computerDto.get());
+    model.addAttribute("computer", computerDto.get());
 
-    this.getServletContext().getRequestDispatcher("/views/editComputer.jsp").forward(request, response);
+    return "editComputer";
   }
 
-  @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) 
-      throws ServletException, IOException {
-    String idString = request.getParameter("id");
-    String name = request.getParameter("computerName");
-    String introducedString = request.getParameter("introduced");
-    String discontinuedString = request.getParameter("discontinued");
-    String companyIDString = request.getParameter("companyId");
+  @RequestMapping(method = RequestMethod.POST)
+  public String doPost(ModelMap model, @RequestParam Map<String, String> param) {
+    String idString = param.get("id");
+    String name = param.get("computerName");
+    String introducedString = param.get("introduced");
+    String discontinuedString = param.get("discontinued");
+    String companyIDString = param.get("companyId");
     CompanyDto company = null;
 
     
@@ -74,11 +74,11 @@ public class EditComputer extends HttpServlet {
         
         if (companyIDString != null && !companyIDString.isEmpty() && !companyIDString.equals("0")) {
           Optional<CompanyDto> opt = 
-              CompanyService.COMPANYSERVICE.findById(Long.parseLong(companyIDString));
+              companyService.findById(Long.parseLong(companyIDString));
           company = opt.isPresent() ? opt.get() : null;
         }
       
-        ComputerService.COMPUTERSERVICE.update(
+        computerService.update(
             new ComputerDto(idString, name, company, introducedString, discontinuedString));
       } catch (ServiceException e) {
         // TODO Auto-generated catch block
@@ -87,7 +87,7 @@ public class EditComputer extends HttpServlet {
         e.printStackTrace();
       }
     }
-    response.sendRedirect("/ComputerDatabase/dashboard");
+    return "redirect:/dashboard";
   }
 
 }

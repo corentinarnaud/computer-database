@@ -1,10 +1,12 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="h" uri="/WEB-INF/tags.tld"%>
+<%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page isELIgnored="false"%>
 <html>
 <head>
-<title>Computer Database</title>
+<title><spring:message code="title"/></title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="utf-8">
 <!-- Bootstrap -->
@@ -19,12 +21,12 @@
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
 			<a class="navbar-brand" href="/ComputerDatabase/dashboard">
-				Application - Computer Database </a>
+				<spring:message code="application"/> - <spring:message code="title"/></a>
 		</div>
 	</header>
 	<section id="main">
 		<div class="container">
-			<h1 id="homeTitle">${ nbComputer } Computers found</h1>
+			<h1 id="homeTitle">${ nbComputer } <spring:message code="found"/></h1>
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">
 					<form id="searchForm" action="#" method="GET" class="form-inline">
@@ -37,9 +39,9 @@
 				</div>
 				<div class="pull-right">
 					<a class="btn btn-success" id="addComputer"
-						href="/ComputerDatabase/addComputer">Add Computer</a> <a
+						href="/ComputerDatabase/addComputer"><spring:message code="add"/></a> <a
 						class="btn btn-default" id="editComputer" href="#"
-						onclick="$.fn.toggleEditMode();">Edit</a>
+						onclick="$.fn.toggleEditMode();"><spring:message code="edit"/></a>
 				</div>
 			</div>
 		</div>
@@ -63,27 +65,34 @@
 							</a>
 						</span></th>
 						<th><a href="<h:link page="${ 1 }" nbElements="${ elements }" 
-								search="${ search }" orderBy="1"/>">Computer name</a></th>
+								search="${ search }" orderBy="1"/>"><spring:message code="name"/></a></th>
 						<th><a href="<h:link page="${ 1 }" nbElements="${ elements }" 
-								search="${ search }" orderBy="2"/>">Introduced date</a></th>
+								search="${ search }" orderBy="2"/>"><spring:message code="introduced"/></a></th>
 						<!-- Table header for Discontinued Date -->
 						<th><a href="<h:link page="${ 1 }" nbElements="${ elements }" 
-								search="${ search }" orderBy="3"/>">Discontinued date</a></th>
+								search="${ search }" orderBy="3"/>"><spring:message code="discontinued"/></a></th>
 						<!-- Table header for Company -->
 						<th><a href="<h:link page="${ 1 }" nbElements="${ elements }" 
-								search="${ search }" orderBy="4"/>">Company</a></th>
+								search="${ search }" orderBy="4"/>"><spring:message code="company"/></a></th>
 
 					</tr>
 				</thead>
 				<!-- Browse attribute computers -->
+				<spring:message code="date" var="date"/>
 				<tbody id="results">
 					<c:forEach var="computer" items="${ listComputer }">
 						<tr>
 							<td class="editMode"><input type="checkbox" name="cb"
 								class="cb" value="${ computer.getId() }"></td>
 							<td><a href="editComputer?id=${ computer.getId() }" onclick="">${ computer.getName() }</a></td>
-							<td>${ computer.getIntroduced() }</td>
-							<td>${ computer.getDiscontinued() }</td>
+							<td>
+								<fmt:parseDate value="${ computer.getIntroduced() }" pattern="yyyy-MM-dd" var="introduce"/>
+								<fmt:formatDate pattern="${ date }" value="${ introduce }" />
+							</td>
+							<td>
+								<fmt:parseDate value="${ computer.getDiscontinued() }" pattern="yyyy-MM-dd" var="discontinue"/>
+								<fmt:formatDate pattern="${ date }" value="${ discontinue }"/>
+							</td>
 							<td>${ computer.getCompany().getName() }</td>
 
 						</tr>
