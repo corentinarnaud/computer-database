@@ -6,7 +6,8 @@ import static org.junit.Assert.fail;
 import com.excilys.arnaud.mapper.CompanyMapper;
 import com.excilys.arnaud.mapper.MapperException;
 import com.excilys.arnaud.model.dto.CompanyDto;
-import com.excilys.arnaud.model.metier.Company;
+import com.excilys.arnaud.model.work.Company;
+
 import org.junit.Test;
 
 public class CompanyMapperTest {

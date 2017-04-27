@@ -1,15 +1,39 @@
-package com.excilys.arnaud.model.metier;
+package com.excilys.arnaud.model.work;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class Computer {
-  private static final String FORMAT = "MM/dd/yyyy";
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
+@Entity
+@Table(name="computer")
+public class Computer implements Serializable {
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -4034527847960439679L;
+  private static final String FORMAT = "MM/dd/yyyy";
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id", updatable = false, nullable = false)
   private long          id = -1;
+  @Column(name="name", nullable = false)
   private String        name;
+  @ManyToOne(fetch=FetchType.EAGER, targetEntity=Company.class)
+  @JoinColumn(name="company_id", referencedColumnName = "id")
   private Company       company;
+  @Column
   private LocalDateTime introduced;
+  @Column
   private LocalDateTime discontinued;
 
   public Computer(long id, String name, Company company, 
@@ -28,6 +52,10 @@ public class Computer {
     this(-1, name, company, introduced, discontinued);
   }
 
+  public Computer(){
+    
+  }
+  
   @Override
   public String toString() {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern(FORMAT);

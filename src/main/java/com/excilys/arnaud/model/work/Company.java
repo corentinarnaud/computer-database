@@ -1,13 +1,33 @@
-package com.excilys.arnaud.model.metier;
+package com.excilys.arnaud.model.work;
 
-public class Company {
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="company")
+public class Company implements Serializable {
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -2699461159618380772L;
+  @Id
   private long   id;
+  @Column(name="name")
   private String name;
 
+  public Company(){
+    
+  }
+  
   public Company(long id, String name) {
     this.id = id;
     this.name = name;
   }
+
 
   public long getId() {
     return id;

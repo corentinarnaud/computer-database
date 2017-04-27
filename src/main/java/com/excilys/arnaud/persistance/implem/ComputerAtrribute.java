@@ -3,8 +3,8 @@ package com.excilys.arnaud.persistance.implem;
 
 
 public enum ComputerAtrribute {
-  ID("computer.id"),
-  NAME("computer.name"),
+  ID("id"),
+  NAME("name"),
   INTRODUCED("introduced"),
   DISCONTINUED("discontinued"),
   COMPANY("company.name"),

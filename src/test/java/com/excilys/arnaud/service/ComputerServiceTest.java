@@ -2,15 +2,13 @@ package com.excilys.arnaud.service;
 
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
 
 import org.junit.Before;
 
 import com.excilys.arnaud.mapper.ComputerMapper;
-import com.excilys.arnaud.model.dto.ComputerDto;
 import com.excilys.arnaud.model.dto.ComputerDtoList;
 import com.excilys.arnaud.model.dto.ComputerPage;
-import com.excilys.arnaud.model.metier.ComputerList;
+import com.excilys.arnaud.model.work.ComputerList;
 import com.excilys.arnaud.persistance.implem.ComputerDAOMySQL;
 import com.excilys.arnaud.springConfig.MainConfig;
 
@@ -20,7 +18,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;

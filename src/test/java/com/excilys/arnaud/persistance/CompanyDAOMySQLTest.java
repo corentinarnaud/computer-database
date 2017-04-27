@@ -2,15 +2,13 @@ package com.excilys.arnaud.persistance;
 
 import static org.junit.Assert.*;
 
-import com.excilys.arnaud.model.metier.Company;
-import com.excilys.arnaud.model.metier.CompanyList;
-import com.excilys.arnaud.persistance.implem.CompanyDAOMySQL;
+import com.excilys.arnaud.model.work.Company;
+import com.excilys.arnaud.model.work.CompanyList;
 import com.excilys.arnaud.springConfig.MainConfig;
 
 import java.util.Optional;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -63,6 +61,46 @@ public class CompanyDAOMySQLTest {
     assertFalse(companyList == null);
     assertTrue(companyList.size() == 42);
     assertTrue(companyList.get(5).getId() == 5 + 1);
+  }
+  
+  @Test
+  public void getCompaniesNTestNormalCase() {
+    CompanyList companyList = companyDAOMySQL.getNCompanies(10, 10);
+    assertFalse(companyList == null);
+    assertTrue(companyList.size() == 10);
+    assertTrue(companyList.get(5).getId() == 15 + 1);
+  }
+  
+  
+  @Test
+  public void getCompaniesNTestNegatifBegin() {
+    CompanyList companyList = companyDAOMySQL.getNCompanies(-12, 10);
+    assertFalse(companyList == null);
+    assertTrue(companyList.size() == 10);
+    assertTrue(companyList.get(5).getId() == 5 + 1);
+  }
+  
+  @Test
+  public void getCompaniesNTestNegatifNumber() {
+    CompanyList companyList = companyDAOMySQL.getNCompanies(0, -10);
+    assertFalse(companyList == null);
+    assertTrue(companyList.size() == 42);
+    assertTrue(companyList.get(5).getId() == 5 + 1);
+  }
+  
+  @Test
+  public void getNumberOfCompanyTest(){
+    int nb = companyDAOMySQL.getNumberOfCompany();
+    assertTrue(nb == 42);
+  }
+  
+  @Test
+  public void delCompanyTestThrowError(){
+    try {
+      assertFalse(companyDAOMySQL.delCompany(1));
+    } catch (Exception e){
+      e.printStackTrace();
+    }
   }
 
 }

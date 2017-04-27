@@ -4,7 +4,7 @@ import com.excilys.arnaud.mapper.CompanyMapper;
 import com.excilys.arnaud.model.dto.CompanyDto;
 import com.excilys.arnaud.model.dto.CompanyDtoList;
 import com.excilys.arnaud.model.dto.Page;
-import com.excilys.arnaud.model.metier.Company;
+import com.excilys.arnaud.model.work.Company;
 import com.excilys.arnaud.persistance.CompanyDAO;
 
 import java.util.List;

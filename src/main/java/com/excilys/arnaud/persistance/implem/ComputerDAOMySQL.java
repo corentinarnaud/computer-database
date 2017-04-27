@@ -1,88 +1,53 @@
 package com.excilys.arnaud.persistance.implem;
 
-import com.excilys.arnaud.model.metier.Company;
-import com.excilys.arnaud.model.metier.Computer;
-import com.excilys.arnaud.model.metier.ComputerList;
+import com.excilys.arnaud.model.work.Computer;
+import com.excilys.arnaud.model.work.ComputerList;
 import com.excilys.arnaud.persistance.ComputerDAO;
 import com.excilys.arnaud.persistance.exception.DAOException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
 
-import javax.sql.DataSource;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional("txManager")
 @Repository
 public class ComputerDAOMySQL implements ComputerDAO {
   private static final Logger logger = LoggerFactory.getLogger(ComputerDAOMySQL.class);
-  private static final String SQL_UPDATE = "UPDATE computer SET name=?,introduced=?, discontinued=?, company_id=? WHERE id=?";
-  private static final String SQL_DEL = "DELETE FROM computer WHERE id=?";
-  private static final String SQL_FIND_ID = "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
-      + "FROM computer LEFT JOIN company ON company_id=company.id WHERE computer.id=?";
-  private static final String SQL_FIND_NAME = "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
-      + "FROM computer LEFT JOIN company ON company_id=company.id WHERE computer.name=?";
-  private static final String SQL_COMPUTERS = "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
-      + "FROM computer LEFT JOIN company ON company_id=company.id";
-  private static final String SQL_N_COMPUTERS = "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
-      + "FROM computer LEFT JOIN company ON company_id=company.id ORDER BY orderby ASC LIMIT ?, ?";
-  private static final String SQL_N_COMPUTERS_PATTERN = "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
-      + "FROM computer LEFT JOIN company ON company_id=company.id "
-      + "WHERE computer.name LIKE ? OR company.name LIKE ? ORDER BY orderby ASC LIMIT ?, ?";
-  private static final String SQL_N_COMPUTERS_ORDER_COMPANY = "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
-      + "FROM company STRAIGHT_JOIN computer ON company_id=company.id ORDER BY company.name ASC " + "LIMIT ?, ?";
-  private static final String SQL_N_COMPUTERS_PATTERN_COMPANY = "SELECT computer.id,computer.name, introduced, discontinued, company_id, company.name "
-      + "FROM company STRAIGHT_JOIN computer ON company_id=company.id "
-      + "WHERE computer.name LIKE ? OR company.name LIKE ? ORDER BY company.name ASC LIMIT ?, ?";
-  private static final String SQL_NUMBER_OF_COMPUTERS = "SELECT COUNT(id) FROM computer USE INDEX (PRIMARY);";
-  private static final String SQL_NUMBER_OF_COMPUTERS_PATTERN = "SELECT COUNT(computer.id) FROM computer USE INDEX (PRIMARY) "
-      + "LEFT JOIN company ON company_id=company.id "
-      + "WHERE computer.name LIKE ? OR company.name LIKE ?";
-  private static final String SQL_DELETE_FROM_COMPANY = "DELETE FROM computer WHERE company_id=?";
 
 
+  @PersistenceContext
+  EntityManager entityManager;
 
-  private JdbcTemplate jdbcTemplate;
-  private SimpleJdbcInsert insertComputer;
 
-  @Autowired
-  public void setDataSource(DataSource dataSource) {
-    this.jdbcTemplate = new JdbcTemplate(dataSource);
-    this.insertComputer = new SimpleJdbcInsert(dataSource).withTableName("computer").usingGeneratedKeyColumns("id");
-  }
 
   @Override
   public long add(Computer computer) throws DAOException {
-    Map<String, Object> parameters = new HashMap<String, Object>(5);
-    long id;
 
     if (computer != null) {
-      parameters.put("name", computer.getName());
-      parameters.put("introduced", computer.getIntroduced() != null ? 
-          Timestamp.valueOf(computer.getIntroduced()) : null);
-      parameters.put("discontinued", computer.getDiscontinued() != null ? 
-          Timestamp.valueOf(computer.getDiscontinued()) : null);
-      parameters.put("company_id", computer.getCompany() != null ?
-          computer.getCompany().getId() : null);
+
       try {
-        id = insertComputer.executeAndReturnKey(parameters).longValue();
-        computer.setId(id);
-        logger.info("Création de l'ordinateur {} en base", id);
-        return id;
+        entityManager.persist(computer);
+        entityManager.flush();
+        entityManager.refresh(computer);
+        logger.info("Création de l'ordinateur {} en base", computer.getId());
+        return computer.getId();
 
       } catch (DataAccessException e) {
         logger.debug(e.getMessage());
@@ -94,19 +59,23 @@ public class ComputerDAOMySQL implements ComputerDAO {
 
   @Override
   public boolean update(Computer computer) throws DAOException {
-    
+
     if (computer != null) {
-      try {
-        this.jdbcTemplate.update(SQL_UPDATE, new Object[]{ 
-            computer.getName(),
-            computer.getIntroduced() != null ? Timestamp.valueOf(computer.getIntroduced()) : null, 
-            computer.getDiscontinued() != null ? Timestamp.valueOf(computer.getDiscontinued()) : null,
-            computer.getCompany() != null ? computer.getCompany().getId() : null, computer.getId()});
+      CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+      CriteriaUpdate<Computer> cd = cb.createCriteriaUpdate(Computer.class);
+      Root<Computer> root = cd.from(Computer.class);
+      cd.set(root.get("name"), computer.getName());
+      cd.set(root.get("introduced"), computer.getIntroduced());
+      cd.set(root.get("discontinued"), computer.getDiscontinued());
+      cd.set(root.get("company"), computer.getCompany());
+      cd.where(cb.equal(root.get("id"), computer.getId()));
+      int result = entityManager.createQuery(cd).executeUpdate();
+      if (result == 1) {
         logger.info("Computer {} updated", computer.getId());
         return true;
-      } catch (DataAccessException e) {
-        logger.debug(e.getMessage());
-        throw new DAOException(e);
+      } else {
+        logger.info("Computer {} not updated", computer.getId());
+        return false;
       }
     }
     return false;
@@ -115,9 +84,18 @@ public class ComputerDAOMySQL implements ComputerDAO {
   @Override
   public boolean del(long id) throws DAOException {
     try {
-      this.jdbcTemplate.update(SQL_DEL, id);
-      logger.info("Computer {} deleted", id);
-      return true;
+      CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+      CriteriaDelete<Computer> cd = cb.createCriteriaDelete(Computer.class);
+      Root<Computer> root = cd.from(Computer.class);
+      cd.where(cb.equal(root.get("id"), id));
+      int result = entityManager.createQuery(cd).executeUpdate();
+      if (result == 1) {
+        logger.info("Computer {} deleted", id);
+        return true;
+      } else {
+        logger.info("Computer {} not deleted", id);
+        return false;
+      }
     } catch (DataAccessException e) {
       logger.debug(e.getMessage());
       throw new DAOException(e);
@@ -127,13 +105,17 @@ public class ComputerDAOMySQL implements ComputerDAO {
   @Override
   public Optional<Computer> findById(long id) throws DAOException {
     try {
-      return Optional.ofNullable(this.jdbcTemplate.queryForObject(SQL_FIND_ID, new CompanyMapper(), id));
+      CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+      CriteriaQuery<Computer> cq = cb.createQuery(Computer.class);
+      Root<Computer> root = cq.from(Computer.class);
+      root.fetch("company", JoinType.LEFT);
 
-    } catch (EmptyResultDataAccessException e) {
+      ParameterExpression<Long> p = cb.parameter(Long.class);
+      cq.select(root).where(cb.equal(root.get("id"), p));
+      return Optional.ofNullable(entityManager.createQuery(cq).setParameter(p, id).getSingleResult());
+
+    } catch (NoResultException e) {
       return Optional.empty();
-    } catch (DataAccessException e) {
-      logger.debug(e.getMessage());
-      throw new DAOException(e);
     }
   }
 
@@ -141,12 +123,15 @@ public class ComputerDAOMySQL implements ComputerDAO {
   public Optional<Computer> findByName(String name) throws DAOException {
     if (name != null) {
       try {
-        return Optional.ofNullable(this.jdbcTemplate.queryForObject(SQL_FIND_NAME, new CompanyMapper(), name));
-      } catch (EmptyResultDataAccessException e) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Computer> cq = cb.createQuery(Computer.class);
+        Root<Computer> root = cq.from(Computer.class);
+        root.fetch("company", JoinType.LEFT);
+        ParameterExpression<String> p = cb.parameter(String.class);
+        cq.select(root).where(cb.equal(root.get("name"), p));
+        return Optional.ofNullable(entityManager.createQuery(cq).setParameter(p, name).getSingleResult());
+      } catch (NoResultException e) {
         return Optional.empty();
-      } catch (DataAccessException e) {
-        logger.debug(e.getMessage());
-        throw new DAOException(e);
       }
     }
     return Optional.empty();
@@ -154,13 +139,13 @@ public class ComputerDAOMySQL implements ComputerDAO {
 
   @Override
   public ComputerList getComputers() throws DAOException {
-    try {
-      return new ComputerList(this.jdbcTemplate.query(SQL_COMPUTERS, new CompanyMapper()));
+    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Computer> cq = cb.createQuery(Computer.class);
+    Root<Computer> root = cq.from(Computer.class);
+    root.fetch("company", JoinType.LEFT);
+    cq.select(root);
 
-    } catch (DataAccessException e) {
-      logger.debug(e.getMessage());
-      throw new DAOException(e);
-    } 
+    return new ComputerList(entityManager.createQuery(cq).getResultList());
   }
 
   @Override
@@ -168,22 +153,21 @@ public class ComputerDAOMySQL implements ComputerDAO {
     ComputerAtrribute[] attributes = ComputerAtrribute.values();
 
     if (begin >= 0 && nbComputer > 0) {
-      try {
-        String query;
-        if (orderBy == 4) {
-          query = SQL_N_COMPUTERS_ORDER_COMPANY;
+      CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+      CriteriaQuery<Computer> cq = cb.createQuery(Computer.class);
+      Root<Computer> root = cq.from(Computer.class);
+      root.fetch("company", JoinType.LEFT);
+      if (orderBy == 4) {
+        cq.orderBy(cb.asc(root.get("company").get("name")));
 
-        } else if (orderBy >= 0 && orderBy < attributes.length) {
-          query = SQL_N_COMPUTERS.replaceAll("orderby", attributes[orderBy].getName());
-        } else {
-          query = SQL_N_COMPUTERS.replaceAll("orderby", attributes[0].getName());
-        }
-        
-        return new ComputerList(this.jdbcTemplate.query(query, new CompanyMapper(), begin, nbComputer));
-      } catch (DataAccessException e) {
-        logger.debug(e.getMessage());
-        throw new DAOException(e);
-      } 
+      } else if (orderBy >= 0 && orderBy < attributes.length) {
+        cq.orderBy(cb.asc(root.get(attributes[orderBy].getName())));
+      } else {
+        cq.orderBy(cb.asc(root.get(attributes[0].getName())));
+      }
+
+      return new ComputerList(
+          entityManager.createQuery(cq).setFirstResult(begin).setMaxResults(nbComputer).getResultList());
     }
     return new ComputerList();
   }
@@ -196,15 +180,23 @@ public class ComputerDAOMySQL implements ComputerDAO {
     ComputerAtrribute[] attributes = ComputerAtrribute.values();
     if (begin >= 0 && nbComputer > 0) {
       try {
-        String query;
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Computer> cq = cb.createQuery(Computer.class);
+        Root<Computer> root = cq.from(Computer.class);
+        root.fetch("company", JoinType.LEFT);
+        Predicate l1 = cb.like(root.get("name"), pattern + "%");
+        Predicate l2 = cb.like(root.get("company").get("name"), pattern + "%");
+        cq.select(root).where(cb.or(l1, l2));
+
         if (orderBy == 4) {
-          query = SQL_N_COMPUTERS_PATTERN_COMPANY;
+          cq.orderBy(cb.asc(root.get("company").get("name")));
         } else if (orderBy >= 0 && orderBy < attributes.length) {
-          query = SQL_N_COMPUTERS_PATTERN.replaceAll("orderby", attributes[orderBy].getName());
+          cq.orderBy(cb.asc(root.get(attributes[orderBy].getName())));
         } else {
-          query = SQL_N_COMPUTERS_PATTERN.replaceAll("orderby", attributes[0].getName());
+          cq.orderBy(cb.asc(root.get(attributes[0].getName())));
         }
-        return new ComputerList(this.jdbcTemplate.query(query, new CompanyMapper(), pattern+"%", pattern+"%", begin, nbComputer));
+        return new ComputerList(
+            entityManager.createQuery(cq).setFirstResult(begin).setMaxResults(nbComputer).getResultList());
 
       } catch (DataAccessException e) {
         logger.debug(e.getMessage());
@@ -217,7 +209,11 @@ public class ComputerDAOMySQL implements ComputerDAO {
   @Override
   public int getNumberOfComputer() throws DAOException {
     try {
-      return this.jdbcTemplate.queryForObject(SQL_NUMBER_OF_COMPUTERS, Integer.class);
+      CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+      CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+      Root<Computer> root = cq.from(Computer.class);
+      cq.select(cb.count(root));
+      return entityManager.createQuery(cq).getSingleResult().intValue();
 
     } catch (DataAccessException e) {
       logger.debug(e.getMessage());
@@ -230,91 +226,62 @@ public class ComputerDAOMySQL implements ComputerDAO {
     if (pattern == null) {
       return getNumberOfComputer();
     }
-    try {
-      return this.jdbcTemplate.queryForObject(SQL_NUMBER_OF_COMPUTERS_PATTERN, Integer.class, pattern + "%", pattern + "%");
-
-    } catch (DataAccessException e) {
-      logger.debug(e.getMessage());
-      throw new DAOException(e);
-    }
+    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+    Root<Computer> root = cq.from(Computer.class);
+    Predicate l1 = cb.like(root.get("name"), pattern + "%");
+    Predicate l2 = cb.like(root.get("company").get("name"), pattern + "%");
+    cq.select(cb.count(root)).where(cb.or(l1, l2));
+    return entityManager.createQuery(cq).getSingleResult().intValue();
+   
   }
 
   @Override
-  public boolean[] dels(long[] ids) throws DAOException {
+  public int dels(List<Long> ids) throws DAOException {
 
-
-    if (ids != null && ids.length != 0) {
+    if (ids != null && ids.size() != 0) {
       try {
-        int[] resultat = jdbcTemplate.batchUpdate(SQL_DEL,
-        new BatchPreparedStatementSetter() {
-            public void setValues(PreparedStatement ps, int i) throws SQLException {
-                    ps.setLong(1, ids[i]);
-                }
 
-                public int getBatchSize() {
-                    return ids.length;
-                }
-            });
-        if (resultat != null) {
-          boolean[] booleanTab = new boolean[resultat.length];
-          for (int i = 0; i < resultat.length; i++) {
-            booleanTab[i] = resultat[i] != 0;
-            if (booleanTab[i]) {
-              logger.info("Computer {} deleted", ids[i]);
-            } else {
-              logger.info("Computer {} not deleted", ids[i]);
-            }
-          }
-          return booleanTab;
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaDelete<Computer> cd = cb.createCriteriaDelete(Computer.class);
+        Root<Computer> root = cd.from(Computer.class);
+        cd.where(root.get("id").in(ids));
+        int result = entityManager.createQuery(cd).executeUpdate();
+        if (result == ids.size()) {
+          logger.info("Computer {} deleted", ids);
+          return result;
+        } else if (result <= 0) {
+          logger.info("Computer {} not deleted", ids);
+          return result;
+        } else {
+          logger.info("Some computer are deleted, the other not");
+          return 0;
         }
-        return null;
-
       } catch (DataAccessException e) {
         logger.debug(e.getMessage());
         throw new DAOException(e);
-      } 
+      }
     }
-    return new boolean[0];
+    return 0;
+
   }
 
   @Override
   public boolean delsFromCompany(long id) throws DAOException {
 
-    try {
-      int resultat = this.jdbcTemplate.update(SQL_DELETE_FROM_COMPANY, id);
-      if (resultat == 1) {
-        logger.info("Computers of company {} deleted", id);
-        return true;
-      } else {
-        logger.info("Computers of company {} not deleted", id);
-        return false;
-      }
-    } catch (DataAccessException e) {
-      logger.debug(e.getMessage());
-      throw new DAOException(e);
+    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+    CriteriaDelete<Computer> cd = cb.createCriteriaDelete(Computer.class);
+    Root<Computer> root = cd.from(Computer.class);
+    cd.where(cb.equal(root.get("company").get("id"), id));
+    int result = entityManager.createQuery(cd).executeUpdate();
+    if (result > 0) {
+      logger.info("Computers of company {} deleted", id);
+      return true;
+    } else {
+      logger.info("Computers of company {} not deleted", id);
+      return false;
     }
-  }
 
-  private static final class CompanyMapper implements RowMapper<Computer> {
-
-    public Computer mapRow(ResultSet rs, int rowNum) throws SQLException {
-      LocalDateTime introduced = null;
-      LocalDateTime discontinued = null;
-      Company comp = null;
-      if (rs.getString("company_id") != null) {
-        comp = new Company(rs.getLong("company_id"), rs.getString("company.name"));
-      }
-
-      if (rs.getTimestamp("introduced") != null) {
-
-        introduced = rs.getTimestamp("introduced").toLocalDateTime();
-      }
-      if (rs.getTimestamp("discontinued") != null) {
-        discontinued = rs.getTimestamp("discontinued").toLocalDateTime();
-      }
-
-      return new Computer(Long.parseLong(rs.getString("id")), rs.getString("name"), comp, introduced, discontinued);
-    }
   }
 
 }
