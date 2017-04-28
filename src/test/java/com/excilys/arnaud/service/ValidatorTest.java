@@ -3,10 +3,11 @@ package com.excilys.arnaud.service;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import com.excilys.arnaud.model.metier.Computer;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import org.junit.Test;
+
+import com.excilys.arnaud.model.work.Computer;
 
 
 

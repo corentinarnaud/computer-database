@@ -1,9 +1,10 @@
 package com.excilys.arnaud.persistance;
 
-import com.excilys.arnaud.model.metier.Computer;
-import com.excilys.arnaud.model.metier.ComputerList;
+import com.excilys.arnaud.model.work.Computer;
+import com.excilys.arnaud.model.work.ComputerList;
 import com.excilys.arnaud.persistance.exception.DAOException;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -35,7 +36,7 @@ public interface ComputerDAO{
    * @return true if deletion works, false otherwise
    * @throws DAOException : if the connection fail
    */
-  public boolean[] dels(long[] ids) throws DAOException;
+  public int dels(List<Long> ids) throws DAOException;
   
   /** Delete all computer of a company.
    * @param id : ID of a company

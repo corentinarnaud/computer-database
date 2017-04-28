@@ -3,7 +3,7 @@ package com.excilys.arnaud.service;
 import com.excilys.arnaud.mapper.ComputerMapper;
 import com.excilys.arnaud.model.dto.ComputerDto;
 import com.excilys.arnaud.model.dto.ComputerPage;
-import com.excilys.arnaud.model.metier.Computer;
+import com.excilys.arnaud.model.work.Computer;
 import com.excilys.arnaud.persistance.ComputerDAO;
 
 import java.util.List;
@@ -116,18 +116,12 @@ public class ComputerService {
   }
 
   @Transactional()
-  public boolean[] delComputers(long[] longIds) {
-    if(longIds.length==1){
-      return new boolean[]{ delComputer(longIds[0])};
+  public int delComputers(List<Long> longIds) {
+    if(longIds.size()==1){
+      return delComputer(longIds.get(0)) ? 1 : 0;
     }
-    boolean[] dels = computerDAO.dels(longIds);
-    int nbDels = 0;
-    for (boolean id : dels) {
-      if (id == true) {
-        nbDels++;
-      }
-    }
-    manageComputerNumber(-nbDels);
+    int dels = computerDAO.dels(longIds);
+    manageComputerNumber(-dels);
     return dels;
     
   }

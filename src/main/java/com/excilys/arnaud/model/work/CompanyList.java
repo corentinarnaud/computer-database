@@ -1,4 +1,4 @@
-package com.excilys.arnaud.model.metier;
+package com.excilys.arnaud.model.work;
 
 import java.util.ArrayList;
 import java.util.List;

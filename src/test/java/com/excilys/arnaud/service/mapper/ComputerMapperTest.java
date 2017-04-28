@@ -6,7 +6,8 @@ import static org.junit.Assert.fail;
 import com.excilys.arnaud.mapper.ComputerMapper;
 import com.excilys.arnaud.mapper.MapperException;
 import com.excilys.arnaud.model.dto.ComputerDto;
-import com.excilys.arnaud.model.metier.Computer;
+import com.excilys.arnaud.model.work.Computer;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

@@ -3,6 +3,8 @@ package com.excilys.arnaud.servlets;
 
 import com.excilys.arnaud.model.dto.ComputerPage;
 import com.excilys.arnaud.service.ComputerService;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,9 +46,9 @@ public class Dashboard{
     String ids = (String) param.getOrDefault("selection", "");
     if (!StringUtils.isEmpty(ids)) {
       String[] tabId = ids.split(",");
-      long[] longIds = new long[tabId.length];
+      ArrayList<Long> longIds = new ArrayList<>();
       for (int i = 0; i < tabId.length; i++) {
-        longIds[i] = Long.parseLong(tabId[i]);
+        longIds.add(Long.parseLong(tabId[i]));
       }
       computerService.delComputers(longIds);
     }

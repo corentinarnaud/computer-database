@@ -3,7 +3,7 @@ package com.excilys.arnaud.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.excilys.arnaud.model.metier.Computer;
+import com.excilys.arnaud.model.work.Computer;
 
 public class Validator {
   private static Logger logger = LoggerFactory.getLogger(Validator.class);

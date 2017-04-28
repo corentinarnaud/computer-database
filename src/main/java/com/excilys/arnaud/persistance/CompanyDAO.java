@@ -1,7 +1,7 @@
 package com.excilys.arnaud.persistance;
 
-import com.excilys.arnaud.model.metier.Company;
-import com.excilys.arnaud.model.metier.CompanyList;
+import com.excilys.arnaud.model.work.Company;
+import com.excilys.arnaud.model.work.CompanyList;
 import com.excilys.arnaud.persistance.exception.DAOException;
 
 import java.util.Optional;

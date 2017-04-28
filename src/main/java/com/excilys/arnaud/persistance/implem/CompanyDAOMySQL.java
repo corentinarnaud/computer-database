@@ -1,42 +1,35 @@
 package com.excilys.arnaud.persistance.implem;
 
-import com.excilys.arnaud.model.metier.Company;
-import com.excilys.arnaud.model.metier.CompanyList;
+import com.excilys.arnaud.model.work.Company;
+import com.excilys.arnaud.model.work.CompanyList;
 import com.excilys.arnaud.persistance.CompanyDAO;
 import com.excilys.arnaud.persistance.exception.DAOException;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Optional;
 
-import javax.sql.DataSource;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Root;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+
 
 @Repository
 public class CompanyDAOMySQL implements CompanyDAO {
-
-  private static final String SQL_FIND_ID = "SELECT id, name  FROM company WHERE id = ?";
-  private static final String SQL_FIND_NAME = "SELECT id, name  FROM company WHERE name=?";
-  private static final String SQL_COMPANIES = "SELECT id, name  FROM company";
-  private static final String SQL_N_COMPANIES = "SELECT id, name  FROM company LIMIT ?, ?";
-  private static final String SQL_COUNT = "SELECT COUNT(*) FROM company";
-  private static final String SQL_DEL = "DELETE FROM computer WHERE id = ?";
+  
   private static final Logger LOGGER = LoggerFactory.getLogger(CompanyDAOMySQL.class);
-
-  private JdbcTemplate jdbcTemplate;
-
-  @Autowired
-  public void setDataSource(DataSource dataSource) {
-    this.jdbcTemplate = new JdbcTemplate(dataSource);
-  }
+  
+  @PersistenceContext
+  EntityManager entityManager;
 
   public CompanyDAOMySQL() {
     LOGGER.info("CompanyDao mysql instanciated");
@@ -45,20 +38,28 @@ public class CompanyDAOMySQL implements CompanyDAO {
   @Override
   public Optional<Company> findById(long id) throws DAOException {
     try {
-      return Optional.ofNullable(this.jdbcTemplate.queryForObject(SQL_FIND_ID, new CompanyMapper(), id));
-    } catch (EmptyResultDataAccessException e) {
+      CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+      CriteriaQuery<Company> cq = cb.createQuery(Company.class);
+      Root<Company> root = cq.from(Company.class);
+      ParameterExpression<Long> p = cb.parameter(Long.class);
+      cq.select(root).where(cb.equal(root.get("id"), p));
+      
+      return Optional.ofNullable(entityManager.createQuery(cq).setParameter(p, id).getSingleResult());
+    } catch (NoResultException e) {
       return Optional.empty();
-    } catch (DataAccessException e) {
-      LOGGER.debug(e.getMessage());
-      throw new DAOException(e);
-    }
+    } 
   }
 
   @Override
   public Optional<Company> findByName(String name) throws DAOException {
     try {
-      return Optional.ofNullable(this.jdbcTemplate.queryForObject(SQL_FIND_NAME, new CompanyMapper(), name));
-    } catch (EmptyResultDataAccessException e) {
+      CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+      CriteriaQuery<Company> cq = cb.createQuery(Company.class);
+      Root<Company> root = cq.from(Company.class);
+      ParameterExpression<String> p = cb.parameter(String.class);
+      cq.select(root).where(cb.equal(root.get("name"), p));
+      return Optional.ofNullable(entityManager.createQuery(cq).setParameter(p, name).getSingleResult());
+    } catch (NoResultException e) {
       return Optional.empty();
     } catch (DataAccessException e) {
       LOGGER.debug(e.getMessage());
@@ -69,7 +70,11 @@ public class CompanyDAOMySQL implements CompanyDAO {
   @Override
   public CompanyList getCompanies() throws DAOException {
     try {
-      return new CompanyList(this.jdbcTemplate.query(SQL_COMPANIES, new CompanyMapper()));
+      CriteriaQuery<Company> cq = entityManager.getCriteriaBuilder().createQuery(Company.class);
+      Root<Company> root = cq.from(Company.class);
+      cq.select(root);
+      
+      return new CompanyList(entityManager.createQuery(cq).getResultList());
     } catch (DataAccessException e) {
       LOGGER.debug(e.getMessage());
       throw new DAOException(e);
@@ -79,7 +84,12 @@ public class CompanyDAOMySQL implements CompanyDAO {
   @Override
   public CompanyList getNCompanies(int begin, int nbCompanies) throws DAOException {
     try {
-      return new CompanyList(this.jdbcTemplate.query(SQL_N_COMPANIES, new CompanyMapper(), begin, nbCompanies));
+      CriteriaQuery<Company> cq = entityManager.getCriteriaBuilder().createQuery(Company.class);
+      Root<Company> root = cq.from(Company.class);
+      cq.select(root);
+      
+      return new CompanyList(entityManager.createQuery(cq)
+          .setFirstResult(begin).setMaxResults(nbCompanies).getResultList());
     } catch (DataAccessException e) {
       LOGGER.debug(e.getMessage());
       throw new DAOException(e);
@@ -89,7 +99,11 @@ public class CompanyDAOMySQL implements CompanyDAO {
   @Override
   public int getNumberOfCompany() {
     try {
-      return this.jdbcTemplate.queryForObject(SQL_COUNT, Integer.class);
+      CriteriaBuilder qb = entityManager.getCriteriaBuilder();
+      CriteriaQuery<Long> cq = qb.createQuery(Long.class);
+      cq.select(qb.count(cq.from(Company.class)));
+      
+      return entityManager.createQuery(cq).getSingleResult().intValue();
     } catch (DataAccessException e) {
       LOGGER.debug(e.getMessage());
       throw new DAOException(e);
@@ -99,7 +113,21 @@ public class CompanyDAOMySQL implements CompanyDAO {
   @Override
   public boolean delCompany(long id) {
     try {
-      int resultat = this.jdbcTemplate.update(SQL_DEL);
+      CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+
+      // create delete
+      CriteriaDelete<Company> delete = cb.
+       createCriteriaDelete(Company.class);
+
+      // set the root class
+      Root<Company> e = delete.from(Company.class);
+
+      // set where clause
+      delete.where(cb.equal(e.get("id"), id));
+
+      // perform update
+      int resultat = entityManager.createQuery(delete).executeUpdate();
+
       if (resultat == 1) {
         LOGGER.info("Company {} deleted", id);
         return true;
@@ -107,16 +135,9 @@ public class CompanyDAOMySQL implements CompanyDAO {
         LOGGER.info("Company {} not deleted", id);
         return false;
       }
-    } catch (DataAccessException e) {
+    } catch (PersistenceException e) {
       LOGGER.debug(e.getMessage());
-      throw new DAOException(e);
-    }
-  }
-
-  private static final class CompanyMapper implements RowMapper<Company> {
-
-    public Company mapRow(ResultSet rs, int rowNum) throws SQLException {
-      return new Company(Long.parseLong(rs.getString("id")), rs.getString("name"));
+      return false;
     }
   }
 

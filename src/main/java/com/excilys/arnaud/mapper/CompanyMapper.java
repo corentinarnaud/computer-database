@@ -2,8 +2,8 @@ package com.excilys.arnaud.mapper;
 
 import com.excilys.arnaud.model.dto.CompanyDto;
 import com.excilys.arnaud.model.dto.CompanyDtoList;
-import com.excilys.arnaud.model.metier.Company;
-import com.excilys.arnaud.model.metier.CompanyList;
+import com.excilys.arnaud.model.work.Company;
+import com.excilys.arnaud.model.work.CompanyList;
 
 public class CompanyMapper {
 

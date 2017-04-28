@@ -3,9 +3,9 @@ package com.excilys.arnaud.mapper;
 import com.excilys.arnaud.model.dto.CompanyDto;
 import com.excilys.arnaud.model.dto.ComputerDto;
 import com.excilys.arnaud.model.dto.ComputerDtoList;
-import com.excilys.arnaud.model.metier.Company;
-import com.excilys.arnaud.model.metier.Computer;
-import com.excilys.arnaud.model.metier.ComputerList;
+import com.excilys.arnaud.model.work.Company;
+import com.excilys.arnaud.model.work.Computer;
+import com.excilys.arnaud.model.work.ComputerList;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
