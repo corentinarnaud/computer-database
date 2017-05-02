@@ -28,6 +28,8 @@ public class AppInitializer implements WebApplicationInitializer {
     servlet.addMapping("/dashboard");
     servlet.addMapping("/addComputer");
     servlet.addMapping("/editComputer");
+    servlet.addMapping("/login");
+    servlet.addMapping("/delete");
    
   }
 

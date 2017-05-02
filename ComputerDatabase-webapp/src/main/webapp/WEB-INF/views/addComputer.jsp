@@ -27,6 +27,7 @@
                     <h1><spring:message code="add"/></h1>
                     <form action="addComputer" method="POST">
                         <fieldset>
+                        	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                             <div class="form-group">
                                 <label for="computerName"><spring:message code="name"/></label>
                                 <input name="computerName" type="text" class="form-control" 

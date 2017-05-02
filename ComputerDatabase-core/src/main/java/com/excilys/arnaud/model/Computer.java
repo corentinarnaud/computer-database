@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -28,7 +29,7 @@ public class Computer implements Serializable {
   private long          id = -1;
   @Column(name="name", nullable = false)
   private String        name;
-  @ManyToOne(fetch=FetchType.EAGER, targetEntity=Company.class)
+  @ManyToOne(cascade = {CascadeType.MERGE}, fetch=FetchType.EAGER, targetEntity=Company.class)
   @JoinColumn(name="company_id", referencedColumnName = "id")
   private Company       company;
   @Column

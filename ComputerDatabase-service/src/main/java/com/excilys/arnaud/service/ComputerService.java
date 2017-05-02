@@ -30,7 +30,7 @@ public class ComputerService {
    * @return The id generated for the computer
    * @throws ServiceException if a DAO error occurred
    */
-  @Transactional
+  @Transactional("txManager")
   public long add(ComputerDto computerDto) throws ServiceException {
     Computer computer = ComputerMapper.computerDtoToComputer(computerDto);
     Validator.checkDate(computer);

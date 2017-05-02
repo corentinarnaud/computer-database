@@ -29,6 +29,7 @@
                     <h1><spring:message code="editComputer"/></h1>
 
                     <form action="editComputer" method="POST">
+                    	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                         <input name="id" type="hidden" value="${ computer.getId() }" id="id"/> <!-- TODO: Change this value with the computer id -->
                         <fieldset>
                             <div class="form-group">

@@ -28,7 +28,7 @@ import com.excilys.arnaud.persistence.exception.DAOException;
 @Transactional("txManager")
 @Repository
 public class ComputerDAOMySQL implements ComputerDAO {
-  private static final Logger logger = LoggerFactory.getLogger(ComputerDAOMySQL.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(ComputerDAOMySQL.class);
 
   @PersistenceContext
   EntityManager entityManager;
@@ -37,11 +37,11 @@ public class ComputerDAOMySQL implements ComputerDAO {
   public long add(Computer computer) throws DAOException {
 
     if (computer != null) {
-
+      LOGGER.debug("try to add " + computer);
       entityManager.persist(computer);
       entityManager.flush();
       entityManager.refresh(computer);
-      logger.info("Création de l'ordinateur {} en base", computer.getId());
+      LOGGER.info("Création de l'ordinateur {} en base", computer.getId());
       return computer.getId();
 
     }
@@ -63,10 +63,10 @@ public class ComputerDAOMySQL implements ComputerDAO {
       cd.where(cb.equal(root.get("id"), computer.getId()));
       int result = entityManager.createQuery(cd).executeUpdate();
       if (result == 1) {
-        logger.info("Computer {} updated", computer.getId());
+        LOGGER.info("Computer {} updated", computer.getId());
         return true;
       } else {
-        logger.info("Computer {} not updated", computer.getId());
+        LOGGER.info("Computer {} not updated", computer.getId());
         return false;
       }
     }
@@ -81,10 +81,10 @@ public class ComputerDAOMySQL implements ComputerDAO {
     cd.where(cb.equal(root.get("id"), id));
     int result = entityManager.createQuery(cd).executeUpdate();
     if (result == 1) {
-      logger.info("Computer {} deleted", id);
+      LOGGER.info("Computer {} deleted", id);
       return true;
     } else {
-      logger.info("Computer {} not deleted", id);
+      LOGGER.info("Computer {} not deleted", id);
       return false;
     }
 
@@ -223,13 +223,13 @@ public class ComputerDAOMySQL implements ComputerDAO {
       cd.where(root.get("id").in(ids));
       int result = entityManager.createQuery(cd).executeUpdate();
       if (result == ids.size()) {
-        logger.info("Computer {} deleted", ids);
+        LOGGER.info("Computer {} deleted", ids);
         return result;
       } else if (result <= 0) {
-        logger.info("Computer {} not deleted", ids);
+        LOGGER.info("Computer {} not deleted", ids);
         return result;
       } else {
-        logger.info("Some computer are deleted, the other not");
+        LOGGER.info("Some computer are deleted, the other not");
         return 0;
       }
     }
@@ -246,10 +246,10 @@ public class ComputerDAOMySQL implements ComputerDAO {
     cd.where(cb.equal(root.get("company").get("id"), id));
     int result = entityManager.createQuery(cd).executeUpdate();
     if (result > 0) {
-      logger.info("Computers of company {} deleted", id);
+      LOGGER.info("Computers of company {} deleted", id);
       return true;
     } else {
-      logger.info("Computers of company {} not deleted", id);
+      LOGGER.info("Computers of company {} not deleted", id);
       return false;
     }
 

@@ -24,7 +24,7 @@ import com.excilys.arnaud.model.ComputerList;
 public class ComputerDAOMySQLTest {
   @Autowired
   private ComputerDAO computerDAO;
-  /*
+  
   @Test
   public void findByIdTest() {
     Optional<Computer> computer;
@@ -273,7 +273,7 @@ public class ComputerDAOMySQLTest {
     int nb = computerDAO.getNumberOfComputer();
     assertTrue(nb == 573);
   }
-  */
+  
   @Test
   public void getNumberOfCompanyTestPattern(){
     int nb = computerDAO.getNumberOfComputer("s");

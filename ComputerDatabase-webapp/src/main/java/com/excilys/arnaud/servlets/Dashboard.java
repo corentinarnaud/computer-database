@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 
 @Controller
-@RequestMapping("/dashboard")
 public class Dashboard{
 
 
@@ -32,7 +31,7 @@ public class Dashboard{
   
   
 
-  @RequestMapping(method = RequestMethod.GET)
+  @RequestMapping(path="/dashboard", method = RequestMethod.GET)
   public String doGet(ModelMap model, @RequestParam Map<String, String> param) {
 
     HashMap<DashboardParam, String> parametersMap = getParameters(param);
@@ -41,7 +40,7 @@ public class Dashboard{
 
   }
 
-  @RequestMapping(method = RequestMethod.POST)
+  @RequestMapping(path="/delete", method = RequestMethod.POST)
   public void doPost(ModelMap model, @RequestParam Map<String, String> param) {
     String ids = (String) param.getOrDefault("selection", "");
     if (!StringUtils.isEmpty(ids)) {
