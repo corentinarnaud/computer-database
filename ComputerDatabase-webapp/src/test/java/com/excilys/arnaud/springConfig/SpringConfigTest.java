@@ -11,7 +11,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.excilys.arnaud.persistence.ComputerDAO;
 import com.excilys.arnaud.service.ComputerService;
-import com.excilys.arnaud.springconfig.MainConfig;
+import com.excilys.arnaud.springConfig.MainConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 @RunWith(SpringJUnit4ClassRunner.class)
