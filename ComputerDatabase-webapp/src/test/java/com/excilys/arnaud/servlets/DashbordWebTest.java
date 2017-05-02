@@ -7,10 +7,12 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
+@Category(IntegrationTest.class)
 public class DashbordWebTest {
   private WebDriver driver;
   private String baseUrl;
@@ -39,6 +41,7 @@ public class DashbordWebTest {
         this.driver.findElement(By.tagName("h1")).getText().contains("Computers found"));
 
 
+
     this.driver.findElement(By.id("a2")).click();
     Assert.assertTrue(this.driver.findElements(By.xpath("//tr")).size() == 51);
 
@@ -59,10 +62,10 @@ public class DashbordWebTest {
     Assert.assertTrue(driver.getCurrentUrl().contains("page=2"));
     
     this.driver.findElement(By.id("lastpage")).click();
-    Assert.assertTrue(driver.getCurrentUrl().contains("page=100001"));
+    Assert.assertTrue(driver.getCurrentUrl().contains("page=58"));
     
     this.driver.findElement(By.id("prev")).click();
-    Assert.assertTrue(driver.getCurrentUrl().contains("page=10000"));
+    Assert.assertTrue(driver.getCurrentUrl().contains("page=57"));
     
     this.driver.findElement(By.id("firstpage")).click();
     Assert.assertTrue(driver.getCurrentUrl().contains("page=1"));
