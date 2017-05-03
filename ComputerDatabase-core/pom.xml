@@ -10,6 +10,7 @@
 	</parent>
 	<artifactId>ComputerDatabase-core</artifactId>
 	<name>ComputerDatabase-core</name>
+	<version>1.0.1-SNAPSHOT</version>
 	<url>http://maven.apache.org</url>
 	<properties>
 	</properties>
@@ -43,4 +44,7 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	<build>
+		<finalName>ComputerDatabase-core</finalName>
+	</build>
 </project>

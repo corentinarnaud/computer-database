@@ -38,7 +38,7 @@ public class ComputerDAOMySQL implements ComputerDAO {
   public long add(Computer computer) throws DAOException {
 
     if (computer != null) {
-      if(computer.getId() > 0) {
+      if(computer.getId() >= 0) {
         computer.setId(-1);
       }
       LOGGER.debug("try to add " + computer);

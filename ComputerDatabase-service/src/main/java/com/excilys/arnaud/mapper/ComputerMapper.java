@@ -26,7 +26,7 @@ public class ComputerMapper {
   public static Computer computerDtoToComputer(ComputerDto computerDto) {
     LocalDateTime introduced;
     LocalDateTime discontinued;
-    long id = 0;
+    long id = -1;
     Company company;
     
     try {

@@ -10,6 +10,7 @@
 	</parent>
 	<artifactId>ComputerDatabase-persistence</artifactId>
 	<name>ComputerDatabase-persistence</name>
+	<version>1.0.1-SNAPSHOT</version>
 	<url>http://maven.apache.org</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -54,5 +55,7 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
+	<build>
+		<finalName>ComputerDatabase-persistence</finalName>
+	</build>
 </project>

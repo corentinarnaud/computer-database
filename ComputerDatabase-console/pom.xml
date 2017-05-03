@@ -9,7 +9,7 @@
 		<version>1.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>ComputerDatabase-console</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<name>ComputerDatabase-console</name>
 	<url>http://maven.apache.org</url>
 	<properties>

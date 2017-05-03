@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -30,7 +32,7 @@ import com.zaxxer.hikari.HikariDataSource;
 @Configuration
 @EnableTransactionManagement
 @ComponentScan(basePackages = "com.excilys.arnaud.persistence")
-//@PropertySource({ "classpath:/../resources/config.properties" })
+//@PropertySource({ "classpath:config.properties", "classpath:/hibernate.properties"})
 public class PersistenceConfig {
   private static final String PROPERTY_DATASOURCE_FILE      = "config.properties";
   private static final String PROPERTY_DATASOURCE_HIBERNATE = "hibernate.properties";
@@ -48,7 +50,8 @@ public class PersistenceConfig {
   private static final String PROPERTY_SESSION_CONTEXT      = "hibernate.current.session.context.class";
   private static final Logger LOGGER = LoggerFactory.getLogger(PersistenceConfig.class);
 
-  
+  @Autowired
+  Environment env;
 
   @Bean
   public DataSource dataSource() throws IllegalArgumentException {
@@ -59,9 +62,7 @@ public class PersistenceConfig {
     cfg.setUsername(properties.getProperty(PROPERTY_USER));
     cfg.setPassword(properties.getProperty(PROPERTY_PASSWORD));
     cfg.setMaximumPoolSize(Integer.parseInt(properties.getProperty(PROPERTY_NB_POOL)));
-    
     LOGGER.info("Database created");
-
     return new HikariDataSource(cfg);
   }
   
@@ -72,7 +73,6 @@ public class PersistenceConfig {
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
     InputStream fichierProperties = classLoader
         .getResourceAsStream(propertyFile);
-
     if (fichierProperties == null) {
       throw new DAOConfigurationException(
           "Property file " + propertyFile + " not found.");

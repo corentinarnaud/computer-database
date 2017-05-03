@@ -10,6 +10,7 @@
 	</parent>
 	<artifactId>ComputerDatabase-service</artifactId>
 	<name>ComputerDatabase-service</name>
+	<version>1.0.1-SNAPSHOT</version>
 	<url>http://maven.apache.org</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -38,4 +39,7 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	<build>
+		<finalName>ComputerDatabase-service</finalName>
+	</build>
 </project>
