@@ -21,7 +21,7 @@
 			<artifactId>spring-context</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>${parent.groupId}</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>ComputerDatabase-service</artifactId>
 		</dependency>
 	</dependencies>

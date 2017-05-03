@@ -47,17 +47,17 @@
 		<dependencies>
 			<!-- Module Dependency -->
 			<dependency>
-				<groupId>${groupId}</groupId>
+				<groupId>${project.groupId}</groupId>
 				<artifactId>ComputerDatabase-service</artifactId>
 				<version>1.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
-				<groupId>${groupId}</groupId>
+				<groupId>${project.groupId}</groupId>
 				<artifactId>ComputerDatabase-core</artifactId>
 				<version>1.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
-				<groupId>${groupId}</groupId>
+				<groupId>${project.groupId}</groupId>
 				<artifactId>ComputerDatabase-persistence</artifactId>
 				<version>1.0-SNAPSHOT</version>
 			</dependency>
