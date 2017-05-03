@@ -9,7 +9,7 @@
   </appender>
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
        <file>
-           /home/excilys/Téléchargements/apache-tomcat-8.5.12/logs/ComputerDatabase-log-${byDay}.log
+           ${user.home}/logs/ComputerDatabase-log-%d{dd/MM/yyyy}.log
        </file>
        <append>true</append>
        <encoder>

@@ -25,16 +25,16 @@ public class Computer implements Serializable {
   private static final String FORMAT = "MM/dd/yyyy";
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "id", updatable = false, nullable = false)
+  @Column(name = "id", updatable = false, nullable = false, unique=true)
   private long          id = -1;
   @Column(name="name", nullable = false)
   private String        name;
   @ManyToOne(cascade = {CascadeType.MERGE}, fetch=FetchType.EAGER, targetEntity=Company.class)
-  @JoinColumn(name="company_id", referencedColumnName = "id")
+  @JoinColumn(name="company_id", referencedColumnName = "id", nullable = true)
   private Company       company;
-  @Column
+  @Column(name="introduced", updatable = true, nullable=true)
   private LocalDateTime introduced;
-  @Column
+  @Column(name="discontinued", updatable = true, nullable=true)
   private LocalDateTime discontinued;
 
   public Computer(long id, String name, Company company, 
@@ -124,8 +124,6 @@ public class Computer implements Serializable {
   }
 
   public void setId(long id) {
-    // On peut changer l'id que si il n'as pas été initialiser
-    if (this.id == -1)
       this.id = id;
   }
 

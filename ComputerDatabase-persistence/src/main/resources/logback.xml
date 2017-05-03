@@ -9,7 +9,7 @@
   </appender>
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
        <file>
-           ${user.home}/logs/ComputerDatabase-log-${byDay}.log
+           ${user.home}/logs/ComputerDatabase-log-%d{dd/MM/yyyy}.log
        </file>
        <append>true</append>
        <encoder>

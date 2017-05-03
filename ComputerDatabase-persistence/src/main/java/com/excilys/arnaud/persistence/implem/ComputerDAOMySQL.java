@@ -18,6 +18,7 @@ import javax.persistence.criteria.Root;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.arnaud.model.Computer;
@@ -25,7 +26,7 @@ import com.excilys.arnaud.model.ComputerList;
 import com.excilys.arnaud.persistence.ComputerDAO;
 import com.excilys.arnaud.persistence.exception.DAOException;
 
-@Transactional("txManager")
+@Transactional(transactionManager = "txManager", propagation=Propagation.REQUIRED)
 @Repository
 public class ComputerDAOMySQL implements ComputerDAO {
   private static final Logger LOGGER = LoggerFactory.getLogger(ComputerDAOMySQL.class);
@@ -37,6 +38,9 @@ public class ComputerDAOMySQL implements ComputerDAO {
   public long add(Computer computer) throws DAOException {
 
     if (computer != null) {
+      if(computer.getId() > 0) {
+        computer.setId(-1);
+      }
       LOGGER.debug("try to add " + computer);
       entityManager.persist(computer);
       entityManager.flush();
