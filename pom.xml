@@ -16,7 +16,7 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<computerdatabase.core>1.0.1-SNAPSHOT</computerdatabase.core>
+		<computerdatabase.core>1.0.2-SNAPSHOT</computerdatabase.core>
 		<computerdatabase.persistence>1.0.1-SNAPSHOT</computerdatabase.persistence>
 		<computerdatabase.service>1.0.1-SNAPSHOT</computerdatabase.service>
 		<version.junit>4.12</version.junit>
@@ -62,7 +62,7 @@
 			<dependency>
 				<groupId>com.excilys.arnaud</groupId>
 				<artifactId>ComputerDatabase-persistence</artifactId>
-				<version>${computerdatabase.core}</version>
+				<version>${computerdatabase.persistence}</version>
 			</dependency>
 
 			<!-- Hibernate dependency -->
