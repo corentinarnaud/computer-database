@@ -27,7 +27,7 @@
 			<artifactId>spring-security-config</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>${groupId}</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>ComputerDatabase-service</artifactId>
 		</dependency>
 		<dependency>
