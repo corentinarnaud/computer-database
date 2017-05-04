@@ -24,7 +24,7 @@ public class UserService {
   
   public boolean registerNewUserAccount(UserDto userDto){
     User user = UserMapper.userDtoToUser(userDto, Arrays.asList("USER"));
-    if(userDAO.exist(user)) {
+    if(!userDAO.exist(user)) {
       return userDAO.add(user);
     }
     return false;

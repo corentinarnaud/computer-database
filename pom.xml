@@ -5,7 +5,7 @@
 
 	<groupId>com.excilys.arnaud</groupId>
 	<artifactId>ComputerDatabase</artifactId>
-	<version>1.1-RELEASE</version>
+	<version>1.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>ComputerDatabase</name>
@@ -44,6 +44,7 @@
 		<version.hibernate.jpa>1.0.0.Final</version.hibernate.jpa>
 		<version.hibernate.annotations>3.5.6-Final</version.hibernate.annotations>
 		<version.hibernate.core>5.2.10.Final</version.hibernate.core>
+		<version.hibernate.validation>5.4.1.Final</version.hibernate.validation>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<dependencyManagement>
@@ -86,7 +87,11 @@
 				<artifactId>hibernate-entitymanager</artifactId>
 				<version>${version.hibernate.core}</version>
 			</dependency>
-
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-validator</artifactId>
+				<version>${version.hibernate.validation}</version>
+			</dependency>
 			<!-- -->
 			<dependency>
 				<groupId>javax.validation</groupId>

@@ -1,19 +1,31 @@
 package com.excilys.arnaud.dto;
 
+
+
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
 
 import com.excilys.arnaud.dto.validation.PasswordMatches;
 
 @PasswordMatches
 public class UserDto {
+  @Override
+  public String toString() {
+    return "UserDto [name=" + name + ", password=" + password + ", matchingPassword=" + matchingPassword + "]";
+  }
+  
+
   @NotNull
-  @Size(min=1)
+  @NotEmpty
   private String name;
 
   @NotNull
-  @Size(min=1)
+  @NotEmpty
   private String password;
+  
+  @NotNull
+  @NotEmpty
   private String matchingPassword;
   
   
