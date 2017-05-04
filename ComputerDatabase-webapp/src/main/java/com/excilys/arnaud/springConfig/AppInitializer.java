@@ -30,6 +30,8 @@ public class AppInitializer implements WebApplicationInitializer {
     servlet.addMapping("/editComputer");
     servlet.addMapping("/login");
     servlet.addMapping("/delete");
+    servlet.addMapping("/registration");
+    
    
   }
 

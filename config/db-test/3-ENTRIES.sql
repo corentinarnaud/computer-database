@@ -1,4 +1,5 @@
-use `computer-database-db`;
+use `computer-database-db-test`;
+insert into user    (name,password) values ( 'admin', 'admin');
 insert into company (id,name) values (  1,'Apple Inc.');
 insert into company (id,name) values (  2,'Thinking Machines');
 insert into company (id,name) values (  3,'RCA');

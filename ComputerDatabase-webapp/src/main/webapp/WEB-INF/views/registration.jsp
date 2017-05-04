@@ -25,24 +25,22 @@
 			<form name="f" action="#" method="POST">
 				<fieldset>
 					<legend>
-						<spring:message code="login" />
+						<spring:message code="register" />
 					</legend>
 					<c:if test="${param.error ne null}">
 						<div class="alert alert-error">
-							<spring:message code="invalid" />
+							<spring:message code="exist" />
 						</div>
 					</c:if>
-					<c:if test="${param.logout ne null}">
-						<div class="alert alert-success">
-						<spring:message code="logout"/></div>
-					</c:if>
 					<label for="username"><spring:message code="username" /></label> 
-					<input type="text" id="username" name="username" /> 
-					<label for="password"><spring:message code="password" /></label> 
-					<input type="password" id="password" name="password" />
+					<input type="text" id="username" name="${user.name}" /> 
+					<label for="password"><spring:message code="password" /></label>
+					<input type="password" id="password" name="${ user.password }" />
+					<label for="repeatPassword"><spring:message code="repeatPassword" /></label>
+					<input type="password" id="repeatPassword" name="${ user.matchingPassword }" />
 					<div class="form-actions">
 						<button type="submit" class="btn">
-							<spring:message code="connection" />
+							<spring:message code="register" />
 						</button>
 					</div>
 					<input type="hidden" name="${_csrf.parameterName}"
@@ -51,6 +49,5 @@
 			</form>
 		</div>
 	</section>
-	<script src="/ComputerDatabase/js/login.js"></script>
 </body>
 </html>

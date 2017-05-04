@@ -92,7 +92,7 @@ public class ComputerDAOMySQLTest {
   public void getComputersTest() {
     ComputerList computerList = computerDAO.getComputers();
     assertFalse(computerList == null);
-    assertTrue(computerList.size() == 573);
+    assertTrue(computerList.size() == 574);
     assertTrue(computerList.get(5).getId() == 5 + 1);
   }
   
@@ -128,8 +128,8 @@ public class ComputerDAOMySQLTest {
     ComputerList computerList = computerDAO.getNComputers(0, 10, 2);
     assertFalse(computerList == null);
     assertTrue(computerList.size() == 10);
-    assertTrue(computerList.get(0).getId() == 348);
-    assertTrue(computerList.get(1).getId() == 365);
+    assertTrue(computerList.get(0).getId() == 480);
+    assertTrue(computerList.get(1).getId() == 286);
 
   }
   
@@ -272,7 +272,7 @@ public class ComputerDAOMySQLTest {
   @Test
   public void getNumberOfCompanyTest(){
     int nb = computerDAO.getNumberOfComputer();
-    assertTrue(nb == 573);
+    assertTrue(nb == 574);
   }
   
   @Test
