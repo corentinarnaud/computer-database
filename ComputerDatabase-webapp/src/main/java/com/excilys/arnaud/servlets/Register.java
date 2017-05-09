@@ -53,7 +53,7 @@ public class Register {
         return new ModelAndView("registration", "user", accountDto);
     } 
     else {
-        return new ModelAndView("login", "user", accountDto);
+        return new ModelAndView("dashboard", "user", accountDto);
     }
   }
   

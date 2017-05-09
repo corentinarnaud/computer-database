@@ -81,7 +81,6 @@ public class EditComputer{
         computerService.update(
             new ComputerDto(idString, name, company, introducedString, discontinuedString));
       } catch (ServiceException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       } catch (MapperException e) {
         e.printStackTrace();

@@ -6,11 +6,10 @@
 	<parent>
 		<groupId>com.excilys.arnaud</groupId>
 		<artifactId>ComputerDatabase</artifactId>
-		<version>1.0-SNAPSHOT</version>
+		<version>1.2</version>
 	</parent>
 	<artifactId>ComputerDatabase-core</artifactId>
 	<name>ComputerDatabase-core</name>
-	<version>1.0.2-SNAPSHOT</version>
 	<url>http://maven.apache.org</url>
 	<properties>
 	</properties>

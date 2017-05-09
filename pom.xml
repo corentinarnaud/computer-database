@@ -5,7 +5,7 @@
 
 	<groupId>com.excilys.arnaud</groupId>
 	<artifactId>ComputerDatabase</artifactId>
-	<version>1.1-SNAPSHOT</version>
+	<version>1.2</version>
 	<packaging>pom</packaging>
 
 	<name>ComputerDatabase</name>
@@ -16,9 +16,6 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<computerdatabase.core>1.0.2-SNAPSHOT</computerdatabase.core>
-		<computerdatabase.persistence>1.0.2-SNAPSHOT</computerdatabase.persistence>
-		<computerdatabase.service>1.0.1-SNAPSHOT</computerdatabase.service>
 		<version.junit>4.12</version.junit>
 		<version.mockito>1.9.5</version.mockito>
 		<version.powermock>1.5.6</version.powermock>
@@ -45,6 +42,7 @@
 		<version.hibernate.annotations>3.5.6-Final</version.hibernate.annotations>
 		<version.hibernate.core>5.2.10.Final</version.hibernate.core>
 		<version.hibernate.validation>5.4.1.Final</version.hibernate.validation>
+		<version.jackson>2.9.0.pr3</version.jackson>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<dependencyManagement>
@@ -53,19 +51,24 @@
 			<dependency>
 				<groupId>com.excilys.arnaud</groupId>
 				<artifactId>ComputerDatabase-service</artifactId>
-				<version>${computerdatabase.service}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.excilys.arnaud</groupId>
 				<artifactId>ComputerDatabase-core</artifactId>
-				<version>${computerdatabase.core}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.excilys.arnaud</groupId>
 				<artifactId>ComputerDatabase-persistence</artifactId>
-				<version>${computerdatabase.persistence}</version>
+				<version>${project.version}</version>
 			</dependency>
-
+			<!-- Jackson -->
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>${version.jackson}</version>
+			</dependency>
 			<!-- Hibernate dependency -->
 			<dependency>
 				<groupId>org.hibernate</groupId>

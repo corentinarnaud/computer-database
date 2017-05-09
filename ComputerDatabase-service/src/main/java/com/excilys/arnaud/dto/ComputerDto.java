@@ -3,6 +3,8 @@ package com.excilys.arnaud.dto;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.excilys.arnaud.dto.validation.CheckRegex;
+
 public class ComputerDto {
 
   
@@ -11,8 +13,19 @@ public class ComputerDto {
   @Size(min=1,max=50)
   private String name;
   private CompanyDto company;
+  @CheckRegex("\\d{4}-\\d{2}-\\d{2}")
   private String introduced;
+  @CheckRegex("\\d{4}-\\d{2}-\\d{2}")
   private String discontinued;
+
+  
+  public ComputerDto(){
+    
+  }
+  
+  public void setId(String id) {
+    this.id = id;
+  }
 
   public ComputerDto(String id, String name, 
       CompanyDto company, String introduced, String discontinued) {

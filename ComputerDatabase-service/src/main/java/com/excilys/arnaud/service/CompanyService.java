@@ -6,6 +6,7 @@ import com.excilys.arnaud.dto.Page;
 import com.excilys.arnaud.mapper.CompanyMapper;
 import com.excilys.arnaud.model.Company;
 import com.excilys.arnaud.persistence.CompanyDAO;
+import com.excilys.arnaud.persistence.ComputerDAO;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +20,11 @@ public class CompanyService {
 
   @Autowired
   private CompanyDAO companyDAO;
+  @Autowired
+  private ComputerDAO computerDAO;
+  
   private CompanyDtoList companyDtoList = null;
+  private int numberCompany = -1;
 
   /** Look for Company with id id.
    * @param id the id of the company to find
@@ -51,11 +56,11 @@ public class CompanyService {
    * @return The Page of all the companies
    */
   @Transactional(readOnly=true)
-  public Page<CompanyDto> getCompanies(int page, int elementsByPage) {
+  public Page<CompanyDto> getCompanyPage(int page, int elementsByPage) {
     int begin = elementsByPage * page;
     List<CompanyDto> list = CompanyMapper.companyListToCompanyDtoList(
         companyDAO.getNCompanies(begin, elementsByPage));
-    return new Page<CompanyDto>(list, page, elementsByPage);
+    return new Page<CompanyDto>(list, getNumberCompany(), page);
   }
   
   /** Look for companies.
@@ -69,5 +74,21 @@ public class CompanyService {
     }
     return companyDtoList;
   }
+  
+  @Transactional(readOnly=true)
+  public int getNumberCompany() {
+    if ( numberCompany == -1) {
+      numberCompany = companyDAO.getNumberOfCompany();
+    }
+    return numberCompany;
+  }
+  
+  
+  @Transactional()
+  public boolean delCompany(long id){
+    computerDAO.delsFromCompany(id);
+    return companyDAO.delCompany(id);
+  }
+  
   
 }

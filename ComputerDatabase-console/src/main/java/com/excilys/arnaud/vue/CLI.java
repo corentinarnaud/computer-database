@@ -148,7 +148,7 @@ public class CLI {
   }
 
   private static void showCompanies(Scanner sc) {
-    Page<CompanyDto> companyPage = companyService.getCompanies(0, 10);
+    Page<CompanyDto> companyPage = companyService.getCompanyPage(0, 10);
     System.out.println("List of companies :");
 
     
@@ -170,29 +170,29 @@ public class CLI {
           loop = false;
           break;
         case "p":
-          companyPage = companyService.getCompanies(companyPage.getCurrentPage() - 1, 10);
+          companyPage = companyService.getCompanyPage(companyPage.getCurrentPage() - 1, 10);
           System.out.println(companyPage);
           System.out.println("\t\t\t\tPage " + companyPage.getCurrentPage());
           break;
         case "n":
-          companyPage = companyService.getCompanies(companyPage.getCurrentPage() + 1,10);
+          companyPage = companyService.getCompanyPage(companyPage.getCurrentPage() + 1,10);
           System.out.println(companyPage);
           System.out.println("\t\t\t\tPage " + companyPage.getCurrentPage());
           break;
         case "f":
-          companyPage = companyService.getCompanies(0, 10);
+          companyPage = companyService.getCompanyPage(0, 10);
           System.out.println(companyPage);
           System.out.println("\t\t\t\tPage " + companyPage.getCurrentPage());
           break;
         case "l":
-          companyPage = companyService.getCompanies(companyPage.getNbPage(), 10);
+          companyPage = companyService.getCompanyPage(companyPage.getNbPage(), 10);
           System.out.println(companyPage);
           System.out.println("\t\t\t\tPage " + companyPage.getCurrentPage());
           break;
         default:
           try {
             int pageNumber = Integer.parseInt(query);
-            companyPage = companyService.getCompanies(pageNumber, 10);
+            companyPage = companyService.getCompanyPage(pageNumber, 10);
             System.out.println(companyPage);
             System.out.println("\t\t\t\tPage " + companyPage.getCurrentPage());
           } catch (NumberFormatException e) {

@@ -1,6 +1,6 @@
 package com.excilys.arnaud.service;
 
-public class ServiceException extends Exception {
+public class ServiceException extends RuntimeException {
 
   /** .
    * 

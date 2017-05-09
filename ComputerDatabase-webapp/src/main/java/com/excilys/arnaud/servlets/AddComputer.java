@@ -57,7 +57,6 @@ public class AddComputer{
         computerService.add(
             new ComputerDto(name, company, introducedString, discontinuedString));
       } catch (ServiceException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       } catch( MapperException e ){
         e.printStackTrace();

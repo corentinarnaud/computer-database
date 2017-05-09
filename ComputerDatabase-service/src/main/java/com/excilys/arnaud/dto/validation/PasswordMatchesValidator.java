@@ -6,14 +6,13 @@ import javax.validation.ConstraintValidatorContext;
 import com.excilys.arnaud.dto.UserDto;
 
 public class PasswordMatchesValidator 
-implements ConstraintValidator<PasswordMatches, Object> { 
+implements ConstraintValidator<PasswordMatches, UserDto> { 
    
   @Override
   public void initialize(PasswordMatches constraintAnnotation) {       
   }
   @Override
-  public boolean isValid(Object obj, ConstraintValidatorContext context){   
-      UserDto user = (UserDto) obj;
+  public boolean isValid(UserDto user, ConstraintValidatorContext context){   
       return user.getPassword().equals(user.getMatchingPassword());    
   }     
 }
